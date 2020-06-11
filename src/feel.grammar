@@ -1,0 +1,398 @@
+@precedence {
+  name,
+  type,
+  call,
+  filter @left,
+  qnamePath @left,
+  path @left,
+  instanceOf,
+  prefix,
+  exp @left,
+  times @left,
+  add @left,
+  compare @left,
+  and @left,
+  or @left,
+  unaryTest @cut,
+  then @left,
+  else @left,
+  paren
+}
+
+@top Expressions {
+  expression0+
+}
+
+expression0 {
+  expression ";"?
+}
+
+expression {
+  textualExpression |
+  boxedExpression
+}
+
+textualExpressions {
+  commaSep<textualExpression>
+}
+
+textualExpression {
+  ForExpression {
+    kw<"for"> InExpressions<IterationContext> ckw<"return"> expression
+  } |
+  IfExpression {
+    kw<"if"> expression !then kw<"then"> expression (!else kw<"else"> expression)?
+  } |
+  QuantifiedExpression {
+    (kw<"some"> | kw<"every">) InExpressions<expression> ckw<"satisfies"> expression
+  } |
+  Disjunction {
+    expression !or kw<"or"> expression
+  } |
+  Conjunction {
+    expression !and kw<"and"> expression
+  } |
+  Comparison |
+  ArithmeticExpression |
+  InstanceOf {
+    expression !instanceOf kw<"instance"> ckw<"of"> Type
+  } |
+  PathExpression {
+    expression !path "." Name
+  } |
+  FilterExpression {
+    expression !filter "[" expression "]"
+  } |
+  FunctionInvocation |
+  literal |
+  QualifiedName ~qname /* TODO(nikku): should be name according to spec */ |
+  kw<"?"> |
+  SimplePositiveUnaryTest |
+  ParenthesizedExpression { "(" expression !paren ")" }
+}
+
+boxedExpression {
+  List |
+  FunctionDefinition |
+  Context
+}
+
+InExpressions<Expr> {
+  commaSep1<InExpression<Expr>>
+}
+
+InExpression<Expr> {
+  Name kw<"in"> Expr
+}
+
+IterationContext {
+  expression (".." expression)?
+}
+
+ArithmeticExpression {
+  expression !add (ArithOp<"+"> | minus) expression |
+  expression !times (ArithOp<"*"> | divide) expression |
+  expression !exp ArithOp<"^" | "**"> expression |
+  !prefix (ArithOp<"+"> | minus) expression
+}
+
+Comparison {
+  expression !compare CompareOp<"=" | "!="> expression |
+  expression !compare CompareOp<">" | ">=" | "<" | "<="> expression |
+  expression !compare kw<"between"> expression kw<"and"> expression |
+  expression !compare kw<"in"> PositiveUnaryTest |
+  expression !compare kw<"in"> "(" PositiveUnaryTests ")"
+}
+
+SimplePositiveUnaryTest {
+  CompareOp<">" | ">=" | "<" | "<="> endpoint |
+  Interval
+}
+
+@top UnaryTests {
+  Wildcard { minus ~maybeNum } |
+  PositiveUnaryTests |
+  ckw<"not"> "(" PositiveUnaryTests ")"
+}
+
+PositiveUnaryTests {
+  commaSep1<PositiveUnaryTest>
+}
+
+PositiveUnaryTest {
+  expression
+}
+
+FunctionDefinition {
+  kw<"function"> "(" FormalParameters ")" kw<"external">? FunctionBody { expression }
+}
+
+FormalParameters {
+  commaSep<FormalParameter>
+}
+
+FormalParameter {
+  ParameterName (":" Type)?
+}
+
+Type {
+  QualifiedName |
+  SpecialType |
+  ListType { ckw<"list"> !type "<" Type !type ">" } |
+  ContextType { ckw<"context"> !type "<" ContextEntryTypes !type ">" } |
+  FunctionType { kw<"function"> !type "<" ArgumentTypes !type ">" "->" Type }
+}
+
+ArgumentTypes {
+  commaSep<ArgumentType>
+}
+
+ArgumentType {
+  Type
+}
+
+ContextEntryTypes {
+  commaSep1<ContextEntryType>
+}
+
+ContextEntryType {
+  Name ":" Type
+}
+
+Context {
+  "{" commaSep<ContextEntry> "}"
+}
+
+ContextEntry {
+  Key ":" expression
+}
+
+Key {
+  Name |
+  SpecialKey |
+  StringLiteral
+}
+
+DateTimeConstructor {
+  (
+    ckw<"date"> |
+    ckw<"time"> |
+    DateAndTime |
+    ckw<"duration">
+  ) parameters
+}
+
+FunctionInvocation {
+  (SpecialFunctionName | expression) !call parameters
+}
+
+parameters {
+  "(" (NamedParameters | PositionalParameters)? ")"
+}
+
+NamedParameters {
+  commaSep1<NamedParameter>
+}
+
+NamedParameter {
+  ParameterName ":" expression
+}
+
+ParameterName {
+  Name | SpecialParameterName
+}
+
+PositionalParameters {
+  commaSep1<expression>
+}
+
+endpoint {
+  QualifiedName ~qname |
+  simpleLiteral ~literal
+}
+
+literal {
+  kw<"null"> |
+  simpleLiteral ~literal
+}
+
+simpleLiteral {
+  NumericLiteral |
+  StringLiteral |
+  BooleanLiteral |
+  DateTimeLiteral
+}
+
+QualifiedName {
+  Name (!qnamePath "." Name)*
+}
+
+Interval {
+  ( "]" | "(" | "[" ) ~interval endpoint ".." endpoint ( ")" | "[" | "]" )
+}
+
+List {
+  "[" ~interval commaSep<expression> "]"
+}
+
+SpecialKey {
+  ckw<"method"> ckw<"signature">
+}
+
+SpecialParameterName {
+  ckw<"start"> ckw<"position"> |
+  ckw<"decimal"> (ckw<"sep"> | ckw<"separator">) |
+  ckw<"grouping"> (ckw<"sep"> | ckw<"separator">)
+}
+
+SpecialType {
+  ckw<"days"> kw<"and"> ckw<"time"> ckw<"duration"> |
+  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
+  DateAndTime
+}
+
+SpecialFunctionName {
+  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
+  ckw<"string"> ckw<"length"> |
+  ckw<"upper"> ckw<"case"> |
+  ckw<"lower"> ckw<"case"> |
+  ckw<"substring"> ckw<"before"> |
+  ckw<"substring"> ckw<"after"> |
+  ckw<"starts"> ckw<"with"> |
+  ckw<"ends"> ckw<"with"> |
+  ckw<"list"> ckw<"contains"> |
+  ckw<"insert"> ckw<"before"> |
+  ckw<"index"> ckw<"of"> |
+  ckw<"distinct"> ckw<"values"> |
+  ckw<"met"> ckw<"by"> |
+  ckw<"overlaps"> ckw<"before"> |
+  ckw<"overlaps"> ckw<"after"> |
+  ckw<"finished"> ckw<"by"> |
+  ckw<"started"> ckw<"by"> |
+  ckw<"day"> ckw<"of"> ckw<"year"> |
+  ckw<"day"> ckw<"of"> ckw<"week"> |
+  ckw<"month"> ckw<"of"> ckw<"year"> |
+  ckw<"week"> ckw<"of"> ckw<"year"> |
+  ckw<"get"> ckw<"value"> |
+  ckw<"get"> ckw<"entries">
+}
+
+DateTimeLiteral {
+  DateTimeConstructor
+}
+
+NumericLiteral {
+  minus? ~maybeNum number
+}
+
+BooleanLiteral {
+  kw<"true"> | kw<"false">
+}
+
+kw<Term> {
+  @specialize[name={Term}]<Name, Term>
+}
+
+ckw<Term> {
+  @extend[name={Term}]<Name, Term>
+}
+
+commaSep1<Expr> {
+  Expr ("," Expr)*
+}
+
+commaSep<Expr> {
+  "" | Expr ("," Expr)*
+}
+
+@skip { whitespace | LineComment | BlockComment }
+
+@tokens {
+
+  LineComment[skipped=true] { "//" ![\n]* }
+
+  BlockComment[skipped=true] { "/*" blockCommentRest }
+
+  blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
+
+  blockCommentAfterStar { "/" | "*" blockCommentAfterStar | ![/*] blockCommentRest }
+
+  VerticalSpace {
+    $[\u000A-\u000D]
+  }
+
+  whitespace {
+    VerticalSpace | std.whitespace+
+  }
+
+  digit {
+    $[0-9]
+  }
+
+  digits {
+    digit+
+  }
+
+  divide[name=ArithOp] { "/" }
+
+  minus[name=ArithOp] { "-" }
+
+  /* 35. string literal = """, { character – (""" | vertical space) | string escape sequence}, """ ; */
+  StringLiteral {
+    '"' (![\\\n"] | "\\" _)* '"'?
+  }
+
+  DateAndTime {
+    "date" whitespace "and" whitespace "time"
+  }
+
+  number {
+    (digits ("." digits)? | "." digits)
+  }
+
+  @precedence { BlockComment, LineComment, divide }
+
+  @precedence {
+    DateAndTime,
+    Name
+  }
+
+  @precedence {
+    number,
+    "."
+  }
+
+  nameStart {
+    nameStartChar namePartChar*
+  }
+
+  nameStartChar {
+    "?" | $[A-Z] | "_" | $[a-z] |
+    $[\u{200C}-\u{200D}] | $[$\u{2070}-\u{218F}] | $[\u{2C00}-\u{2FEF}] | $[\u{3001}-\u{D7FF}] | $[\u{F900}-\u{FDCF}] | $[\u{FDF0}-\u{FFFD}] | $[\u{10000}-\u{EFFFF}]
+  }
+
+  namePartChar {
+    nameStartChar | digit | $[\u0300-\u036F] | $[\u203F-\u2040]
+  }
+
+  namePart {
+    namePartChar+
+  }
+
+  Name {
+    nameStart (namePart)*
+  }
+
+  ">" "<" ">=" "<="
+
+  "(" ")" "[" "]" "{" "}"
+
+  ArithOp<Expr> {
+    Expr
+  }
+
+  CompareOp<Expr> {
+    Expr
+  }
+
+}

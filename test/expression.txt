@@ -1,0 +1,378 @@
+# Literals
+
+1
+true
+"FOO"
+date and  time("2018-12-08T10:30:01");
+-1220.12;
+.12;
+
+==>
+
+Expressions(
+  NumericLiteral,
+  BooleanLiteral(true),
+  StringLiteral,
+  DateTimeLiteral(...),
+  NumericLiteral(ArithOp),
+  NumericLiteral
+)
+
+
+# Arithmetic Operators
+
+1+2
+1-2
+1*2
+1^2
+1**2
+1/2;
+-1
+1+2*3**5
+
+==>
+
+Expressions(
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral),
+  NumericLiteral(ArithOp),
+  ArithmeticExpression(NumericLiteral,ArithOp,
+    ArithmeticExpression(NumericLiteral,ArithOp,
+      ArithmeticExpression(NumericLiteral,ArithOp,NumericLiteral)))
+)
+
+
+# Comparison
+
+a = b
+a != b
+a > b
+a < b
+
+a between b and c
+a between b() and c-d
+
+INPUT in 10
+
+a in [ 1 .. 4 ]
+a in [1..4]
+a in ([ 1 .. 4 ])
+a in (1..4)
+a in (((1..4)))
+a in ((1..4), (5..8))
+a in (< 20, > 10)
+
+==>
+
+Expressions(
+  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
+  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
+  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
+  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
+
+  Comparison(QualifiedName(...),between,QualifiedName(...),and,QualifiedName(...)),
+  Comparison(QualifiedName(...),between,
+FunctionInvocation(...),and,ArithmeticExpression(...)),
+
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(NumericLiteral)),
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(QualifiedName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
+  Comparison(QualifiedName(...),in,"(",PositiveUnaryTests(PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...))),PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),")"),
+  Comparison(QualifiedName(...),in,"(",PositiveUnaryTests(PositiveUnaryTest(SimplePositiveUnaryTest(CompareOp,NumericLiteral)),PositiveUnaryTest(SimplePositiveUnaryTest(CompareOp,NumericLiteral))),")")
+)
+
+
+# Conjunction and Disjunction
+
+a and b
+a or b
+
+a and b or c and d
+
+==>
+
+Expressions(
+  Conjunction(QualifiedName(...),and,QualifiedName(...)),
+  Disjunction(QualifiedName(...),or,QualifiedName(...)),
+
+  Disjunction(
+    Conjunction(QualifiedName(...),and,QualifiedName(...)),or,Conjunction(QualifiedName(...),and,QualifiedName(...))
+  )
+)
+
+
+# Parenthesis
+
+(a);
+(a + b) * c
+
+==>
+
+Expressions(
+  ParenthesizedExpression(...),
+  ArithmeticExpression(...)
+)
+
+
+# Context
+
+{}
+{ a: a, b: b }
+{🐎: "😀"}
+{
+
+==>
+
+Expressions(
+  Context("{","}"),
+  Context("{",ContextEntry(Key(Name),QualifiedName(...)),ContextEntry(Key(Name),QualifiedName(...)),"}"),
+  Context("{",ContextEntry(Key(Name),StringLiteral),"}"),
+  Context(⚠)
+)
+
+
+# Interval
+
+[a..b];
+(a..b);
+]a..b[;
+[1 .. 2];
+(1 .. 2);
+]1 .. 2[;
+
+time("10:30:05") in [time("10:30:02")..time("10:30:04")]
+duration("P11Y") in [[duration("P5Y") .. duration("P7Y")], [duration("P10Y") .. duration("P12Y")]]
+date and time("2018-12-08T10:30:01") in (date and time("2018-12-08T10:30:02")..date and time("2018-12-08T10:30:04")]
+date("2018-12-01") in (date("2018-12-02")..date("2018-12-04"));
+
+[a..b;
+[a..;
+[a
+
+==>
+
+Expressions(
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),QualifiedName(Name),"]")),
+  SimplePositiveUnaryTest(Interval("(",QualifiedName(Name),QualifiedName(Name),")")),
+  SimplePositiveUnaryTest(Interval("]",QualifiedName(Name),QualifiedName(Name),"[")),
+  SimplePositiveUnaryTest(Interval("[",NumericLiteral,NumericLiteral,"]")),
+  SimplePositiveUnaryTest(Interval("(",NumericLiteral,NumericLiteral,")")),
+  SimplePositiveUnaryTest(Interval("]",NumericLiteral,NumericLiteral,"[")),
+
+  Comparison(DateTimeLiteral(DateTimeConstructor(time,"(",PositionalParameters(StringLiteral),")")),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval("[",DateTimeLiteral(DateTimeConstructor(time,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(time,"(",PositionalParameters(StringLiteral),")")),"]")))),
+  Comparison(DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),in,PositiveUnaryTest(List("[",SimplePositiveUnaryTest(Interval("[",DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),"]")),SimplePositiveUnaryTest(Interval("[",DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),"]")),"]"))),
+  Comparison(DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(StringLiteral),")")),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval("(",DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(StringLiteral),")")),"]")))),
+  Comparison(DateTimeLiteral(DateTimeConstructor(date,"(",PositionalParameters(StringLiteral),")")),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval("(",DateTimeLiteral(DateTimeConstructor(date,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(date,"(",PositionalParameters(StringLiteral),")")),")")))),
+
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),QualifiedName(Name),⚠)),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),⚠)),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),⚠)),
+)
+
+
+# List
+
+[];
+[1];
+[1 + 3, 2 * 5];
+[a, [1, { a: 1 } ], [], [1 .. 3], (1) ];
+[;
+
+==>
+
+Expressions(
+  List("[","]"),
+  List("[",NumericLiteral,"]"),
+  List("[",ArithmeticExpression(...),ArithmeticExpression(...),"]"),
+  List(...),
+  List("[",⚠)
+)
+
+
+# Name
+
+a;
+a**'s;
+a b
+
+==>
+
+Expressions(
+  QualifiedName(...),
+  ArithmeticExpression(QualifiedName(...),ArithOp,⚠,QualifiedName(...)),
+  QualifiedName(Name), QualifiedName(Name)
+)
+
+
+# Qualified Name
+
+a.B
+
+==>
+
+Expressions(QualifiedName(Name,Name))
+
+
+# Quantified Expression
+
+every a in b satisfies c
+some a in b satisfies c
+every a in b, c in d satisfies c
+some a in b, c in d satisfies c
+
+==>
+
+Expressions(
+  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,QualifiedName(Name)),
+  QuantifiedExpression(some,InExpressions(InExpression(...)),satisfies,QualifiedName(Name)),
+  QuantifiedExpression(every,InExpressions(InExpression(...),InExpression(...)),satisfies,QualifiedName(Name)),
+  QuantifiedExpression(some,InExpressions(InExpression(...),InExpression(...)),satisfies,QualifiedName(Name))
+)
+
+
+# Filter Expression
+
+a[c];
+a[c].b;
+["a", "b"][ "b" ]
+
+
+==>
+
+Expressions(
+  FilterExpression(QualifiedName(...),"[",QualifiedName(...),"]"),
+  PathExpression(FilterExpression(QualifiedName(...),"[",QualifiedName(...),"]"),Name),
+  FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]")
+)
+
+
+# Path Expression
+
+(a).b;
+(a).b.c;
+a+b.c
+
+==>
+
+Expressions(
+  PathExpression(ParenthesizedExpression(...),Name),
+  PathExpression(PathExpression(ParenthesizedExpression(...),Name),Name),
+  ArithmeticExpression(QualifiedName(...),ArithOp,QualifiedName(Name,Name)))
+
+# For Expression
+
+for i in 0..4 return if i = 0 then 1 else i * partial[-1]
+for a in c..e return partial[-1]
+for a in c return d
+for a in c, b in d return d
+for fruit in [ ." ]
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(...),return,IfExpression(...)),
+  ForExpression(for,InExpressions(...),return,FilterExpression(...)),
+  ForExpression(for,InExpressions(...),return,QualifiedName(...)),
+  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,QualifiedName(...)),
+  ForExpression(for,InExpressions(...),⚠),
+  StringLiteral
+)
+
+
+# Function Definition
+
+function() a
+function(a, b) a
+function(a, b) external a
+function(n1) external {java:{class:"java.lang.Math",method signature:"cos(double)"}}
+
+==>
+
+Expressions(
+  FunctionDefinition(function,"(",FormalParameters,")",FunctionBody(...)),
+  FunctionDefinition(function,"(",FormalParameters(FormalParameter(ParameterName(Name)),FormalParameter(ParameterName(Name))),")",FunctionBody(...)),
+  FunctionDefinition(function,"(",FormalParameters(...),")",external,FunctionBody(...)),
+  FunctionDefinition(...)
+)
+
+
+# Function Invocation
+
+a()
+a(foo: f, bar: b)
+a(foo, bar)
+
+a(stringa: f, bar: b)
+a(string: f, bar: b)
+
+==>
+
+Expressions(
+  FunctionInvocation(QualifiedName(...),"(",")"),
+  FunctionInvocation(QualifiedName(...),"(",NamedParameters(NamedParameter(ParameterName(Name),QualifiedName(...)),NamedParameter(...)),")"),
+  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(QualifiedName(...),QualifiedName(...)),")"),
+  FunctionInvocation(QualifiedName(...),"(",NamedParameters(NamedParameter(ParameterName(Name),QualifiedName(...)),NamedParameter(ParameterName(Name),QualifiedName(...))),")"),
+  FunctionInvocation(QualifiedName(...),"(",NamedParameters(NamedParameter(ParameterName(Name),QualifiedName(...)),NamedParameter(ParameterName(Name),QualifiedName(...))),")")
+)
+
+
+# Built-in Functions
+
+not(false)
+sort([1, 2, 3])
+concatenate([1, 2], [3, 4])
+string(5)
+substring(string:"foobar",start position :3)
+number(from: "1.000.000,01", decimal sep:",", grouping sep:".")
+number(from: "1.000.000,01", decimal separator:",", grouping separator:".")
+date and time(date("2017-01-01"),time("23:59:01"))
+duration("P2M").years
+
+list contains([1, 2], 1)
+distinct values(1, 1, 4)
+
+==>
+
+Expressions(FunctionInvocation(QualifiedName(Name),"(",PositionalParameters(BooleanLiteral(false)),")"),FunctionInvocation(QualifiedName(Name),"(",PositionalParameters(List("[",NumericLiteral,NumericLiteral,NumericLiteral,"]")),")"),FunctionInvocation(QualifiedName(Name),"(",PositionalParameters(List("[",NumericLiteral,NumericLiteral,"]"),List("[",NumericLiteral,NumericLiteral,"]")),")"),FunctionInvocation(QualifiedName(Name),"(",PositionalParameters(NumericLiteral),")"),FunctionInvocation(QualifiedName(Name),"(",NamedParameters(NamedParameter(ParameterName(Name),StringLiteral),NamedParameter(ParameterName(SpecialParameterName(start,position)),NumericLiteral)),")"),FunctionInvocation(QualifiedName(Name),"(",NamedParameters(NamedParameter(ParameterName(Name),StringLiteral),NamedParameter(ParameterName(SpecialParameterName(decimal,sep)),StringLiteral),NamedParameter(ParameterName(SpecialParameterName(grouping,sep)),StringLiteral)),")"),FunctionInvocation(QualifiedName(Name),"(",NamedParameters(NamedParameter(ParameterName(Name),StringLiteral),NamedParameter(ParameterName(SpecialParameterName(decimal,separator)),StringLiteral),NamedParameter(ParameterName(SpecialParameterName(grouping,separator)),StringLiteral)),")"),DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(DateTimeLiteral(DateTimeConstructor(date,"(",PositionalParameters(StringLiteral),")")),DateTimeLiteral(DateTimeConstructor(time,"(",PositionalParameters(StringLiteral),")"))),")")),PathExpression(DateTimeLiteral(DateTimeConstructor(duration,"(",PositionalParameters(StringLiteral),")")),Name),FunctionInvocation(SpecialFunctionName(list,contains),"(",PositionalParameters(List("[",NumericLiteral,NumericLiteral,"]"),NumericLiteral),")"),FunctionInvocation(SpecialFunctionName(distinct,values),"(",PositionalParameters(NumericLiteral,NumericLiteral,NumericLiteral),")"))
+
+
+# Instance Of
+
+a instance of list< context< foo: function<foo> -> bar > >;
+a instance of list<boolean>;
+a instance of function<string> -> string;
+
+a instance of function<string, boolean> -> string;
+
+a instance of function<> -> string;
+a instance of context<foo: string>;
+a instance of string;
+a instance of b.C;
+a instance of years and months duration;
+a instance of b
+
+==>
+
+Expressions(InstanceOf(QualifiedName(Name),instance,of,Type(ListType(list,"<",Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name)))))),">")),">"))),InstanceOf(QualifiedName(Name),instance,of,Type(ListType(list,"<",Type(QualifiedName(Name)),">"))),InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name))),ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes,">",Type(QualifiedName(Name))))),InstanceOf(QualifiedName(Name),instance,of,Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(QualifiedName(Name)))),">"))),InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name))),InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name,Name))),InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(years,and,months,duration))),InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name))))
+
+
+# Simple Positive Unary Test
+
+>= 10;
+> a;
+>= a.b
+
+==>
+
+Expressions(
+  SimplePositiveUnaryTest(CompareOp,NumericLiteral),
+  SimplePositiveUnaryTest(CompareOp,QualifiedName(...)),
+  SimplePositiveUnaryTest(CompareOp,QualifiedName(...))
+)
