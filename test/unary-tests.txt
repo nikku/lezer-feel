@@ -1,0 +1,70 @@
+# Literals { "top": "UnaryTests" }
+
+1,
+true,
+"FOO",
+-1220.12,
+.12
+
+==>
+
+UnaryTests(PositiveUnaryTests(
+  PositiveUnaryTest(NumericLiteral),
+  PositiveUnaryTest(BooleanLiteral(true)),
+  PositiveUnaryTest(StringLiteral),
+  PositiveUnaryTest(NumericLiteral(...)),
+  PositiveUnaryTest(NumericLiteral)
+))
+
+
+# Date Time Literals { "top": "UnaryTests" }
+
+date and  time("2018-12-08T10:30:01"),
+date and time(date("2017-01-01"),time("23:59:01")),
+date("2017-01-01"),
+time("23:59:01"),
+duration("asddsa")
+
+==>
+
+UnaryTests(PositiveUnaryTests(
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(
+    DateTimeLiteral(...),
+    DateTimeLiteral(...)
+  ),")"))),
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...)))
+))
+
+
+# ? Placeholder { "top": "UnaryTests" }
+
+? > 10,
+? * 10 in [1..5]
+
+==>
+
+UnaryTests(PositiveUnaryTests(
+  PositiveUnaryTest(Comparison("?",CompareOp,NumericLiteral)),
+  PositiveUnaryTest(Comparison(ArithmeticExpression("?",ArithOp,NumericLiteral),in,PositiveUnaryTest(...)))
+))
+
+
+# Negation { "top": "UnaryTests" }
+
+not(a)
+
+==>
+
+UnaryTests(not,"(",PositiveUnaryTests(...),")")
+
+
+# Wildcard { "top": "UnaryTests" }
+
+-
+
+==>
+
+UnaryTests(Wildcard(ArithOp))
