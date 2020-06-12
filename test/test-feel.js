@@ -27,18 +27,3 @@ for (let file of fs.readdirSync(caseDir)) {
       tester(file)(name, () => run(parser))
   })
 }
-
-
-describe('unary tests', function() {
-
-  it('Literals');
-
-  it('Question Placeholder');
-
-  it('Interval');
-
-  it('Negation');
-
-  it('Wildcard');
-
-});
