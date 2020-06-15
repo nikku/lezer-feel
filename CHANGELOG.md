@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.0.3
+
+* `FIX`: always return parameters
+
 ## 0.0.2
 
 * `CHORE`: `@detectDelim`
