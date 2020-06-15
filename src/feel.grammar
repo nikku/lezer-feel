@@ -189,7 +189,7 @@ FunctionInvocation {
 }
 
 parameters {
-  "(" (NamedParameters | PositionalParameters)? ")"
+  "(" (NamedParameters | PositionalParameters) ")"
 }
 
 NamedParameters {
@@ -205,7 +205,7 @@ ParameterName {
 }
 
 PositionalParameters {
-  commaSep1<expression>
+  commaSep<expression>
 }
 
 endpoint {

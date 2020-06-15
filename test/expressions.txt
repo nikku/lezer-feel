@@ -315,7 +315,7 @@ a(string: f, bar: b)
 ==>
 
 Expressions(
-  FunctionInvocation(QualifiedName(...),"(",")"),
+  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(), ")"),
   FunctionInvocation(QualifiedName(...),"(",NamedParameters(NamedParameter(ParameterName(Name),QualifiedName(...)),NamedParameter(...)),")"),
   FunctionInvocation(QualifiedName(...),"(",PositionalParameters(QualifiedName(...),QualifiedName(...)),")"),
   FunctionInvocation(QualifiedName(...),"(",NamedParameters(NamedParameter(ParameterName(Name),QualifiedName(...)),NamedParameter(ParameterName(Name),QualifiedName(...))),")"),
