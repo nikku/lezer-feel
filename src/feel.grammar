@@ -19,6 +19,8 @@
   paren
 }
 
+@detectDelim
+
 @top Expressions {
   expression0+
 }
