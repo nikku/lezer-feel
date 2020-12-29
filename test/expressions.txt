@@ -419,6 +419,7 @@ number(from: "1.000.000,01", decimal sep:",", grouping sep:".")
 number(from: "1.000.000,01", decimal separator:",", grouping separator:".")
 
 date and time("2018-12-08T10:30:01")
+years and months duration()
 
 string(5).length
 
@@ -449,6 +450,7 @@ Expressions(
   ),")"),
 
   DateTimeLiteral(...),
+  FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),
 
   PathExpression(FunctionInvocation(...),Name),
 
