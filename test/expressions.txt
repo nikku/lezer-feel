@@ -407,6 +407,23 @@ Expressions(
 )
 
 
+# Date Time Literals / Conjunction
+
+a > 5 and years and months duration();
+years and months duration() and a > 5
+
+==>
+
+Expressions(
+  Conjunction(
+    Comparison(...),and,FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")")
+  ),
+  Conjunction(
+    FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),and,Comparison(...)
+  )
+)
+
+
 # Built-in Functions
 
 not(false)
