@@ -379,7 +379,7 @@ duration("P2M")
 ==>
 
 Expressions(
-  DateTimeLiteral(DateTimeConstructor(DateAndTime,"(",PositionalParameters(
+  DateTimeLiteral(DateTimeConstructor(date,and,time,"(",PositionalParameters(
     DateTimeLiteral(...),
     DateTimeLiteral(...)
   ),")")),

@@ -178,8 +178,8 @@ Key {
 DateTimeConstructor {
   (
     ckw<"date"> |
+    ckw<"date"> kw<"and"> ckw<"time"> |
     ckw<"time"> |
-    DateAndTime |
     ckw<"duration">
   ) parameters
 }
@@ -250,7 +250,7 @@ SpecialParameterName {
 SpecialType {
   ckw<"days"> kw<"and"> ckw<"time"> ckw<"duration"> |
   ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
-  DateAndTime
+  ckw<"date"> kw<"and"> ckw<"time">
 }
 
 SpecialFunctionName {
@@ -344,20 +344,11 @@ commaSep<Expr> {
     '"' (![\\\n"] | "\\" _)* '"'?
   }
 
-  DateAndTime {
-    "date" whitespace "and" whitespace "time"
-  }
-
   number {
     (digits ("." digits)? | "." digits)
   }
 
   @precedence { BlockComment, LineComment, divide }
-
-  @precedence {
-    DateAndTime,
-    Name
-  }
 
   @precedence {
     number,
