@@ -372,6 +372,8 @@ Expressions(
 
 date and time(date("2017-01-01"),time("23:59:01"));
 date and  time("2018-12-08T10:30:01");
+time("23:59:01")
+date("2017-01-01")
 duration("P2M")
 
 ==>
@@ -381,6 +383,8 @@ Expressions(
     DateTimeLiteral(...),
     DateTimeLiteral(...)
   ),")")),
+  DateTimeLiteral(DateTimeConstructor(...)),
+  DateTimeLiteral(DateTimeConstructor(...)),
   DateTimeLiteral(DateTimeConstructor(...)),
   DateTimeLiteral(DateTimeConstructor(...))
 )
