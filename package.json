@@ -14,12 +14,12 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^8.0.1",
-    "lezer-generator": "^0.10.1",
+    "lezer-generator": "^0.13.1",
     "mocha": "^7.1.1",
     "rollup": "^2.15.0"
   },
   "dependencies": {
-    "lezer": "^0.10.0"
+    "lezer": "^0.13.1"
   },
   "repository": {
     "type": "git",

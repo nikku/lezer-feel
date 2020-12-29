@@ -25,7 +25,7 @@
   expression0+
 }
 
-expression0 {
+expression0[@dynamicPrecedence=-1] {
   expression ";"?
 }
 
@@ -53,7 +53,7 @@ textualExpression {
   Disjunction {
     expression !or kw<"or"> expression
   } |
-  Conjunction {
+  Conjunction[@dynamicPrecedence=-1] {
     expression !and kw<"and"> expression
   } |
   Comparison |
@@ -186,7 +186,7 @@ DateTimeConstructor {
   ) parameters
 }
 
-FunctionInvocation {
+FunctionInvocation[@dynamicPrecedence=-1] {
   (SpecialFunctionName | expression) !call parameters
 }
 
@@ -298,11 +298,11 @@ BooleanLiteral {
 }
 
 kw<Term> {
-  @specialize[name={Term}]<identifier, Term>
+  @specialize[@name={Term}]<identifier, Term>
 }
 
 ckw<Term> {
-  @extend[name={Term}]<identifier, Term>
+  @extend[@name={Term}]<identifier, Term>
 }
 
 commaSep1<Expr> {
@@ -317,9 +317,9 @@ commaSep<Expr> {
 
 @tokens {
 
-  LineComment[skipped=true] { "//" ![\n]* }
+  LineComment { "//" ![\n]* }
 
-  BlockComment[skipped=true] { "/*" blockCommentRest }
+  BlockComment { "/*" blockCommentRest }
 
   blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
 
@@ -341,9 +341,9 @@ commaSep<Expr> {
     digit+
   }
 
-  divide[name=ArithOp] { "/" }
+  divide[@name=ArithOp] { "/" }
 
-  minus[name=ArithOp] { "-" }
+  minus[@name=ArithOp] { "-" }
 
   /* 35. string literal = """, { character – (""" | vertical space) | string escape sequence}, """ ; */
   StringLiteral {
