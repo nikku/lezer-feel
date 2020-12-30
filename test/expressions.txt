@@ -2,6 +2,7 @@
 
 1
 true
+false
 "FOO";
 -1220.12;
 .12;
@@ -10,7 +11,8 @@ true
 
 Expressions(
   NumericLiteral,
-  BooleanLiteral(true),
+  BooleanLiteral,
+  BooleanLiteral,
   StringLiteral,
   NumericLiteral(ArithOp),
   NumericLiteral
@@ -446,7 +448,7 @@ distinct values(1, 1, 4)
 ==>
 
 Expressions(
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(BooleanLiteral(false)),")"),
+  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(BooleanLiteral),")"),
   FunctionInvocation(QualifiedName(...),"(",PositionalParameters(List(...)),")"),
   FunctionInvocation(QualifiedName(...),"(",PositionalParameters(List(...),List(...)),")"),
   FunctionInvocation(QualifiedName(...),"(",PositionalParameters(NumericLiteral),")"),

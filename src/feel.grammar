@@ -288,7 +288,7 @@ NumericLiteral {
 }
 
 BooleanLiteral {
-  kw<"true"> | kw<"false">
+  @specialize<Name, "true" | "false">
 }
 
 kw<Term> {

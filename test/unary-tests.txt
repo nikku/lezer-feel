@@ -2,6 +2,7 @@
 
 1,
 true,
+false,
 "FOO",
 -1220.12,
 .12
@@ -10,7 +11,8 @@ true,
 
 UnaryTests(PositiveUnaryTests(
   PositiveUnaryTest(NumericLiteral),
-  PositiveUnaryTest(BooleanLiteral(true)),
+  PositiveUnaryTest(BooleanLiteral),
+  PositiveUnaryTest(BooleanLiteral),
   PositiveUnaryTest(StringLiteral),
   PositiveUnaryTest(NumericLiteral(...)),
   PositiveUnaryTest(NumericLiteral)
