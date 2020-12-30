@@ -3,7 +3,7 @@
   type,
   call,
   filter @left,
-  qnamePath @left,
+  qname @left,
   path @left,
   instanceOf,
   prefix,
@@ -69,7 +69,7 @@ textualExpression {
   } |
   FunctionInvocation |
   literal |
-  QualifiedName ~qname /* TODO(nikku): should be name according to spec */ |
+  Name |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression { "(" expression !paren ")" }
@@ -211,7 +211,7 @@ PositionalParameters {
 }
 
 endpoint {
-  QualifiedName ~qname |
+  QualifiedName |
   simpleLiteral ~literal
 }
 
@@ -228,7 +228,7 @@ simpleLiteral {
 }
 
 QualifiedName {
-  Name (!qnamePath "." Name)*
+  Name (!qname "." Name)*
 }
 
 Name {
