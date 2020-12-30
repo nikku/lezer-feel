@@ -34,9 +34,11 @@ expression {
   boxedExpression
 }
 
-textualExpressions {
-  commaSep<textualExpression>
-}
+// TODO(nikku): drop, as it is not used anywhere
+//
+// textualExpressions {
+//  commaSep<textualExpression>
+// }
 
 textualExpression {
   ForExpression {
