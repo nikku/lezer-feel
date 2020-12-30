@@ -28,7 +28,7 @@
   "scripts": {
     "build": "lezer-generator src/feel.grammar -o src/parser && rollup -c",
     "build-debug": "lezer-generator src/feel.grammar --names -o src/parser && rollup -c",
-    "prepare": "npm run build",
+    "pretest": "npm run build",
     "test": "mocha test/test-*.js",
     "all": "npm run build && npm test"
   }
