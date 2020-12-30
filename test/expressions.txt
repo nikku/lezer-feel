@@ -426,6 +426,32 @@ Expressions(
 )
 
 
+# Special Function Name / Conjunction
+
+years and months duration() and a > 5
+
+==>
+
+Expressions(
+  Conjunction(
+    FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),and,Comparison(...)
+  )
+)
+
+
+# Conjunction / Special Function Name
+
+a > 5 and years and months duration()
+
+==>
+
+Expressions(
+  Conjunction(
+    Comparison(...),and,FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")")
+  )
+)
+
+
 # Built-in Functions
 
 not(false)
