@@ -69,23 +69,23 @@ a in (< 20, > 10)
 ==>
 
 Expressions(
-  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
-  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
-  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
-  Comparison(QualifiedName(...),CompareOp,QualifiedName(...)),
+  Comparison(Name,CompareOp,Name),
+  Comparison(Name,CompareOp,Name),
+  Comparison(Name,CompareOp,Name),
+  Comparison(Name,CompareOp,Name),
 
-  Comparison(QualifiedName(...),between,QualifiedName(...),and,QualifiedName(...)),
-  Comparison(QualifiedName(...),between, FunctionInvocation(...),and,ArithmeticExpression(...)),
+  Comparison(Name,between,Name,and,Name),
+  Comparison(Name,between, FunctionInvocation(...),and,ArithmeticExpression(...)),
 
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(NumericLiteral)),
+  Comparison(Name,in,PositiveUnaryTest(NumericLiteral)),
 
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(QualifiedName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
-  Comparison(QualifiedName(...),in,"(",PositiveUnaryTests(...),")"),
-  Comparison(QualifiedName(...),in,"(",PositiveUnaryTests(...),")")
+  Comparison(Name,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(Name,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(Name,in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
+  Comparison(Name,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(Name,in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
+  Comparison(Name,in,"(",PositiveUnaryTests(...),")"),
+  Comparison(Name,in,"(",PositiveUnaryTests(...),")")
 )
 
 
@@ -98,10 +98,10 @@ a and b or c and d
 ==>
 
 Expressions(
-  Conjunction(QualifiedName(...),and,QualifiedName(...)),
-  Disjunction(QualifiedName(...),or,QualifiedName(...)),
+  Conjunction(Name,and,Name),
+  Disjunction(Name,or,Name),
   Disjunction(
-    Conjunction(QualifiedName(...),and,QualifiedName(...)),or,Conjunction(QualifiedName(...),and,QualifiedName(...))
+    Conjunction(Name,and,Name),or,Conjunction(Name,and,Name)
   )
 )
 
@@ -130,7 +130,7 @@ Expressions(
 
 Expressions(
   Context("{","}"),
-  Context("{",ContextEntry(Key(Name),QualifiedName(...)),ContextEntry(Key(Name),QualifiedName(...)),"}"),
+  Context("{",ContextEntry(Key(Name),Name),ContextEntry(Key(Name),Name),"}"),
   Context("{",ContextEntry(Key(Name),StringLiteral),"}"),
   Context("{",
     ContextEntry(Key(Name),Context("{",
@@ -211,7 +211,7 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),⚠)),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(...),⚠)),
   List("[",⚠)
 )
 
@@ -224,8 +224,8 @@ a b
 ==>
 
 Expressions(
-  QualifiedName(...),
-  QualifiedName(Name), QualifiedName(Name)
+  Name,
+  Name, Name
 )
 
 
@@ -236,17 +236,8 @@ a**'s
 ==>
 
 Expressions(
-  ArithmeticExpression(QualifiedName(...),ArithOp,⚠,QualifiedName(...))
+  ArithmeticExpression(Name,ArithOp,⚠,Name)
 )
-
-
-# Qualified Name
-
-a.B
-
-==>
-
-Expressions(QualifiedName(Name,Name))
 
 
 # Special Names
@@ -258,9 +249,9 @@ year
 ==>
 
 Expressions(
-  Conjunction(QualifiedName(...),and,QualifiedName(...)),
-  Conjunction(QualifiedName(...),and,QualifiedName(...)),
-  QualifiedName(...)
+  Conjunction(Name,and,Name),
+  Conjunction(Name,and,Name),
+  Name
 )
 
 
@@ -274,10 +265,10 @@ some a in b, c in d satisfies c
 ==>
 
 Expressions(
-  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,QualifiedName(Name)),
-  QuantifiedExpression(some,InExpressions(InExpression(...)),satisfies,QualifiedName(Name)),
-  QuantifiedExpression(every,InExpressions(InExpression(...),InExpression(...)),satisfies,QualifiedName(Name)),
-  QuantifiedExpression(some,InExpressions(InExpression(...),InExpression(...)),satisfies,QualifiedName(Name))
+  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,Name),
+  QuantifiedExpression(some,InExpressions(InExpression(...)),satisfies,Name),
+  QuantifiedExpression(every,InExpressions(InExpression(...),InExpression(...)),satisfies,Name),
+  QuantifiedExpression(some,InExpressions(InExpression(...),InExpression(...)),satisfies,Name)
 )
 
 
@@ -291,14 +282,15 @@ a[c].b;
 ==>
 
 Expressions(
-  FilterExpression(QualifiedName(...),"[",QualifiedName(...),"]"),
-  PathExpression(FilterExpression(QualifiedName(...),"[",QualifiedName(...),"]"),Name),
+  FilterExpression(Name,"[",Name,"]"),
+  PathExpression(FilterExpression(Name,"[",Name,"]"),Name),
   FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]")
 )
 
 
 # Path Expression
 
+a.B;
 (a).b;
 (a).b.c;
 a+b.c
@@ -306,9 +298,11 @@ a+b.c
 ==>
 
 Expressions(
+  PathExpression(Name,Name),
   PathExpression(ParenthesizedExpression(...),Name),
   PathExpression(PathExpression(ParenthesizedExpression(...),Name),Name),
-  ArithmeticExpression(QualifiedName(...),ArithOp,QualifiedName(Name,Name)))
+  ArithmeticExpression(Name,ArithOp,PathExpression(Name,Name))
+)
 
 
 # For Expression
@@ -323,8 +317,8 @@ for a in c, b in d return d
 Expressions(
   ForExpression(for,InExpressions(...),return,IfExpression(...)),
   ForExpression(for,InExpressions(...),return,FilterExpression(...)),
-  ForExpression(for,InExpressions(...),return,QualifiedName(...)),
-  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,QualifiedName(...))
+  ForExpression(for,InExpressions(...),return,Name),
+  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,Name)
 )
 
 
@@ -372,22 +366,22 @@ a(string: f, bar: b)
 ==>
 
 Expressions(
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(), ")"),
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name),QualifiedName(...)),
-    NamedParameter(ParameterName(Name),QualifiedName(...))
+  FunctionInvocation(Name(...),"(",PositionalParameters(), ")"),
+  FunctionInvocation(Name(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name),Name),
+    NamedParameter(ParameterName(Name),Name)
   ),")"),
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(
-    QualifiedName(...),
-    QualifiedName(...)
+  FunctionInvocation(Name(...),"(",PositionalParameters(
+    Name,
+    Name
   ),")"),
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name),QualifiedName(...)),
-    NamedParameter(ParameterName(Name),QualifiedName(...))
+  FunctionInvocation(Name(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name),Name),
+    NamedParameter(ParameterName(Name),Name)
   ),")"),
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name),QualifiedName(...)),
-    NamedParameter(ParameterName(Name),QualifiedName(...))
+  FunctionInvocation(Name(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name),Name),
+    NamedParameter(ParameterName(Name),Name)
   ),")")
 )
 
@@ -498,21 +492,21 @@ distinct values(1, 1, 4)
 ==>
 
 Expressions(
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(BooleanLiteral),")"),
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(List(...)),")"),
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(List(...),List(...)),")"),
-  FunctionInvocation(QualifiedName(...),"(",PositionalParameters(NumericLiteral),")"),
+  FunctionInvocation(Name,"(",PositionalParameters(BooleanLiteral),")"),
+  FunctionInvocation(Name,"(",PositionalParameters(List(...)),")"),
+  FunctionInvocation(Name,"(",PositionalParameters(List(...),List(...)),")"),
+  FunctionInvocation(Name,"(",PositionalParameters(NumericLiteral),")"),
 
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
+  FunctionInvocation(Name,"(",NamedParameters(
     NamedParameter(...),
     NamedParameter(ParameterName(SpecialParameterName(start,position)),NumericLiteral)
   ),")"),
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
+  FunctionInvocation(Name,"(",NamedParameters(
     NamedParameter(...),
     NamedParameter(ParameterName(SpecialParameterName(decimal,sep)),StringLiteral),
     NamedParameter(...)
   ),")"),
-  FunctionInvocation(QualifiedName(...),"(",NamedParameters(
+  FunctionInvocation(Name,"(",NamedParameters(
     NamedParameter(...),
     NamedParameter(ParameterName(SpecialParameterName(decimal,separator)),StringLiteral),
     NamedParameter(ParameterName(SpecialParameterName(grouping,separator)),StringLiteral)
@@ -545,17 +539,17 @@ a instance of b
 ==>
 
 Expressions(
-  InstanceOf(QualifiedName(Name),instance,of,Type(ListType(list,"<",Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name)))))),">")),">"))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(ListType(list,"<",Type(QualifiedName(Name)),">"))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),
+  InstanceOf(Name,instance,of,Type(ListType(list,"<",Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name)))))),">")),">"))),
+  InstanceOf(Name,instance,of,Type(ListType(list,"<",Type(QualifiedName(Name)),">"))),
+  InstanceOf(Name,instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),
 
-  InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name))),ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),
+  InstanceOf(Name,instance,of,Type(FunctionType(function,"<",ArgumentTypes(ArgumentType(Type(QualifiedName(Name))),ArgumentType(Type(QualifiedName(Name)))),">",Type(QualifiedName(Name))))),
 
-  InstanceOf(QualifiedName(Name),instance,of,Type(FunctionType(function,"<",ArgumentTypes,">",Type(QualifiedName(Name))))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(QualifiedName(Name)))),">"))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name,Name))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(QualifiedName(Name)))
+  InstanceOf(Name,instance,of,Type(FunctionType(function,"<",ArgumentTypes,">",Type(QualifiedName(Name))))),
+  InstanceOf(Name,instance,of,Type(ContextType(context,"<",ContextEntryTypes(ContextEntryType(Name,Type(QualifiedName(Name)))),">"))),
+  InstanceOf(Name,instance,of,Type(QualifiedName(Name))),
+  InstanceOf(Name,instance,of,Type(QualifiedName(Name,Name))),
+  InstanceOf(Name,instance,of,Type(QualifiedName(Name)))
 )
 
 
@@ -568,9 +562,9 @@ a instance of date and time
 ==>
 
 Expressions(
-  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(years,and,months,duration))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(days,and,time,duration))),
-  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(date,and,time)))
+  InstanceOf(Name,instance,of,Type(SpecialType(years,and,months,duration))),
+  InstanceOf(Name,instance,of,Type(SpecialType(days,and,time,duration))),
+  InstanceOf(Name,instance,of,Type(SpecialType(date,and,time)))
 )
 
 
