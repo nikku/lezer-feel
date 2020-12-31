@@ -1,5 +1,6 @@
 import { parser } from '../dist/index.es.js';
 import { fileTests } from 'lezer-generator/dist/test';
+import { buildParser } from 'lezer-generator';
 
 import fs from 'fs';
 import path from 'path';
@@ -8,17 +9,24 @@ import { fileURLToPath } from 'url';
 
 const caseDir = path.dirname(fileURLToPath(import.meta.url));
 
-function tester(name) {
+function parseTest(name) {
 
-  if (/^\s*-/.test(name)) {
-    return it.skip;
+  let test = it;
+
+  if (name.startsWith('-')) {
+    test = it.skip;
   }
 
-  if (/\s*\*/.test(name)) {
-    return it.only;
+  if (name.startsWith('*')) {
+    test = it.only;
   }
 
-  return it;
+  const testName = name.replace(/^[-*]\s+/, '');
+
+  return {
+    test,
+    testName
+  };
 }
 
 
@@ -31,10 +39,29 @@ for (const file of fs.readdirSync(caseDir)) {
 
   describe(name, () => {
 
-    const tests = fileTests(fs.readFileSync(path.join(caseDir, file), 'utf8'), file);
+    const fileName = path.join(caseDir, file);
+    const fileContents = fs.readFileSync(fileName, 'utf8');
+
+    const grammarMatch = /^([^#][^]*?)($|\n# )/.exec(fileContents);
+    const grammar = grammarMatch && grammarMatch[1];
+
+    const specs = grammar ? fileContents.substring(grammar.length) : fileContents;
+
+    const createParser = grammar ? () => buildParser(grammar, {
+      fileName,
+      warn(msg) { throw new Error(msg) }
+    }) : () => parser;
+
+    const tests = fileTests(specs, fileName);
 
     for (const {name, run} of tests) {
-      tester(name)(name, () => run(parser));
+
+      const {
+        test,
+        testName
+      } = parseTest(name);
+
+      test(testName, () => run(createParser()));
     }
   });
 

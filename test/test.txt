@@ -1,0 +1,14 @@
+@top A { "a" }
+
+@top B { "b" }
+
+@tokens {
+  "a" "b"
+}
+
+
+# - Recognize "a"
+
+a
+
+==> A
