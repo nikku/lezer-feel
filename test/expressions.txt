@@ -249,6 +249,21 @@ a.B
 Expressions(QualifiedName(Name,Name))
 
 
+# Special Names
+
+date and time
+date and other
+year
+
+==>
+
+Expressions(
+  Conjunction(QualifiedName(...),and,QualifiedName(...)),
+  Conjunction(QualifiedName(...),and,QualifiedName(...)),
+  QualifiedName(...)
+)
+
+
 # Quantified Expression
 
 every a in b satisfies c
@@ -418,8 +433,9 @@ Expressions(
 
 # Date Time Literals / Conjunction
 
-a > 5 and years and months duration();
+a > 5 and years and months duration()
 years and months duration() and a > 5
+date and  time("2018-12-08T10:30:01") and 20
 
 ==>
 
@@ -429,7 +445,8 @@ Expressions(
   ),
   Conjunction(
     FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),and,Comparison(...)
-  )
+  ),
+  Conjunction(DateTimeLiteral(...),and,NumericLiteral)
 )
 
 
@@ -545,11 +562,15 @@ Expressions(
 # Instance Of / Date Time Literals
 
 a instance of years and months duration
+a instance of days and time duration
+a instance of date and time
 
 ==>
 
 Expressions(
-  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(years,and,months,duration)))
+  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(years,and,months,duration))),
+  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(days,and,time,duration))),
+  InstanceOf(QualifiedName(Name),instance,of,Type(SpecialType(date,and,time)))
 )
 
 
