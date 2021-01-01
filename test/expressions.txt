@@ -124,13 +124,20 @@ Expressions(
 {}
 { a: a, b: b }
 {🐎: "😀"}
+{java:{class:"java.lang.Math",method signature:"cos(double)"}}
 
 ==>
 
 Expressions(
   Context("{","}"),
   Context("{",ContextEntry(Key(Name),QualifiedName(...)),ContextEntry(Key(Name),QualifiedName(...)),"}"),
-  Context("{",ContextEntry(Key(Name),StringLiteral),"}")
+  Context("{",ContextEntry(Key(Name),StringLiteral),"}"),
+  Context("{",
+    ContextEntry(Key(Name),Context("{",
+      ContextEntry(Key(Name),StringLiteral),
+      ContextEntry(Key(SpecialKey(method,signature)),StringLiteral),
+    "}")),
+  "}")
 )
 
 
