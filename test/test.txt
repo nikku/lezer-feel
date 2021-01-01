@@ -1,14 +1,99 @@
-@top A { "a" }
+@precedence {
+  and @left
+}
 
-@top B { "b" }
+@top T {
+  expression+
+}
+
+expression {
+  SpecialName |
+  Name |
+  Conjuction
+}
+
+SpecialName {
+  ckw<"foo"> ~foo kw<"and"> ckw<"bar"> |
+  ckw<"foo"> ~foo
+}
+
+Conjuction {
+  expression !and kw<"and"> expression
+}
+
+Name {
+  identifier
+}
+
+kw<term> {
+  @specialize[@name={term}]<identifier, term>
+}
+
+ckw<term> {
+  @extend[@name={term}]<identifier, term>
+}
+
+@skip { whitespace }
 
 @tokens {
-  "a" "b"
+
+  whitespace {
+    std.whitespace+
+  }
+
+  identifierChar { std.asciiLetter }
+
+  word { identifierChar (identifierChar | std.digit)* }
+
+  identifier { word }
+
 }
 
 
-# - Recognize "a"
+# - Recognize <a>
 
 a
 
-==> A
+==> T(Name)
+
+
+# - Recognize <foo>
+
+foo
+
+==> T(SpecialName(foo))
+
+
+# - Recognize <foo and bar>
+
+foo and bar
+
+==> T(SpecialName(foo,and,bar))
+
+
+# - Recognize <foo and blub>
+
+foo and blub
+
+==> T(Conjuction(SpecialName(foo),and,Name))
+
+
+# - Recognize <oop and bar>
+
+oop and bar
+
+==> T(Conjuction(Name,and,Name))
+
+
+# - Recognize <oop and foo and bar>
+
+oop and foo and bar
+
+==> T(Conjuction(Name,and,SpecialName(foo,and,bar)))
+
+
+# - Recognize <oop and foo>
+
+oop and foo
+
+==> T(Conjuction(Name,and,SpecialName(foo)))
