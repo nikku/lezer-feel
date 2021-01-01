@@ -229,6 +229,10 @@ QualifiedName {
   Name (!qnamePath "." Name)*
 }
 
+Name {
+  identifier
+}
+
 Interval {
   ( "]" | "(" | "[" ) ~interval endpoint ".." endpoint ( ")" | "[" | "]" )
 }
@@ -288,15 +292,15 @@ NumericLiteral {
 }
 
 BooleanLiteral {
-  @specialize<Name, "true" | "false">
+  @specialize<identifier, "true" | "false">
 }
 
 kw<Term> {
-  @specialize[name={Term}]<Name, Term>
+  @specialize[name={Term}]<identifier, Term>
 }
 
 ckw<Term> {
-  @extend[name={Term}]<Name, Term>
+  @extend[name={Term}]<identifier, Term>
 }
 
 commaSep1<Expr> {
@@ -372,7 +376,7 @@ commaSep<Expr> {
     namePartChar+
   }
 
-  Name {
+  identifier {
     nameStart (namePart)*
   }
 
