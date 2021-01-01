@@ -178,12 +178,10 @@ Key {
 }
 
 DateTimeConstructor {
-  (
-    ckw<"date"> |
-    ckw<"date"> kw<"and"> ckw<"time"> |
-    ckw<"time"> |
-    ckw<"duration">
-  ) parameters
+  ckw<"date"> |
+  ckw<"date"> kw<"and"> ckw<"time"> |
+  ckw<"time"> |
+  ckw<"duration">
 }
 
 FunctionInvocation[@dynamicPrecedence=-1] {
@@ -286,7 +284,7 @@ SpecialFunctionName {
 }
 
 DateTimeLiteral {
-  DateTimeConstructor
+  DateTimeConstructor parameters
 }
 
 NumericLiteral {

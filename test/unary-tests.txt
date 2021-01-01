@@ -30,14 +30,14 @@ duration("asddsa")
 ==>
 
 UnaryTests(PositiveUnaryTests(
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(date,and,time,"(",PositionalParameters(
+  PositiveUnaryTest(DateTimeLiteral(...)),
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(date,and,time),"(",PositionalParameters(
     DateTimeLiteral(...),
     DateTimeLiteral(...)
-  ),")"))),
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...))),
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...)))
+  ),")")),
+  PositiveUnaryTest(DateTimeLiteral(...)),
+  PositiveUnaryTest(DateTimeLiteral(...)),
+  PositiveUnaryTest(DateTimeLiteral(...))
 ))
 
 
