@@ -69,7 +69,7 @@ textualExpression {
   } |
   FunctionInvocation |
   literal |
-  Name |
+  VariableName |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression { "(" expression !paren ")" }
@@ -229,8 +229,12 @@ QualifiedName {
   Name (!qname "." Name)*
 }
 
+VariableName {
+  identifier ~name
+}
+
 Name {
-  identifier
+  identifier ~name
 }
 
 Interval {
