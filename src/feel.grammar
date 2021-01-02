@@ -29,7 +29,7 @@ expression0[@dynamicPrecedence=-1] {
   expression ";"?
 }
 
-expression {
+expression[@isGroup=Expression] {
   textualExpression |
   boxedExpression
 }
@@ -213,7 +213,7 @@ endpoint {
   simpleLiteral ~literal
 }
 
-literal {
+literal[@isGroup=Literal] {
   kw<"null"> |
   simpleLiteral ~literal
 }
