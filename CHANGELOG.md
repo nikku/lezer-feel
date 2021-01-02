@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.3.0
+
+* `FEAT`: distinguish static and dynamic names
+* `FEAT`: assign expression and literal groups
+
 ## 0.2.0
 
 * `FEAT`: simplify `DateTimeLiteral`
