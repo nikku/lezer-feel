@@ -665,3 +665,18 @@ Expressions(
   SimplePositiveUnaryTest(CompareOp,QualifiedName(...)),
   SimplePositiveUnaryTest(CompareOp,QualifiedName(...))
 )
+
+
+# Grouping
+
+1 + a
+
+==>
+
+Expressions(
+  ArithmeticExpression[group="Expression"](
+    NumericLiteral[group="Expression Literal"],
+    ArithOp,
+    VariableName[group="Expression"]
+  )
+)
