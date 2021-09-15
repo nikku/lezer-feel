@@ -31,5 +31,8 @@
     "pretest": "npm run build",
     "test": "mocha test/test-*.js",
     "all": "npm run build && npm test"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
