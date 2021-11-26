@@ -8,6 +8,7 @@
     "import": "./dist/index.es.js",
     "require": "./dist/index.cjs"
   },
+  "source": "src/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "author": "Nico Rehwaldt <https://github.com/nikku>",
