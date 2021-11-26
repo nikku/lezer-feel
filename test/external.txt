@@ -1,4 +1,4 @@
-# * Vars VS Expressions
+# Vars VS Expressions
 
 date and time;
 date and other;
