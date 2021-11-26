@@ -1,7 +1,9 @@
 import nodeResolve from "@rollup/plugin-node-resolve";
 
+import { lezer } from "@lezer/generator/rollup";
+
 export default {
-  input: "./src/parser.js",
+  input: "./src/index.js",
   output: [{
     format: "cjs",
     file: "./dist/index.cjs"
@@ -11,6 +13,7 @@ export default {
   }],
   external(id) { return !/^[\.\/]/.test(id) },
   plugins: [
-    nodeResolve()
+    nodeResolve(),
+    lezer()
   ]
 }

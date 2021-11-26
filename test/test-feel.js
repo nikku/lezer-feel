@@ -1,6 +1,6 @@
-import { parser } from '../dist/index.es.js';
-import { fileTests } from 'lezer-generator/dist/test';
-import { buildParser } from 'lezer-generator';
+import { parser } from 'lezer-feel';
+import { fileTests } from '@lezer/generator/dist/test';
+import { buildParser } from '@lezer/generator';
 
 import fs from 'fs';
 import path from 'path';

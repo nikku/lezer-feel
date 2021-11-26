@@ -13,21 +13,20 @@
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
   "devDependencies": {
+    "@lezer/generator": "^0.15.2",
     "@rollup/plugin-node-resolve": "^8.0.1",
-    "lezer-generator": "^0.13.1",
     "mocha": "^7.1.1",
     "rollup": "^2.15.0"
   },
   "dependencies": {
-    "lezer": "^0.13.1"
+    "@lezer/lr": "^0.15.4"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nikku/lezer-feel.git"
   },
   "scripts": {
-    "build": "lezer-generator src/feel.grammar -o src/parser && rollup -c",
-    "build-debug": "lezer-generator src/feel.grammar --names -o src/parser && rollup -c",
+    "build": "rollup -c",
     "pretest": "npm run build",
     "test": "mocha test/test-*.js",
     "all": "npm run build && npm test"
