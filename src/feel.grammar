@@ -177,11 +177,10 @@ Key {
   StringLiteral
 }
 
+@external tokens dateTime from "./tokens.js" { dateTime[@name=Name] }
+
 DateTimeConstructor {
-  ckw<"date"> |
-  ckw<"date"> kw<"and"> ckw<"time"> |
-  ckw<"time"> |
-  ckw<"duration">
+  dateTime
 }
 
 FunctionInvocation[@dynamicPrecedence=-1] {
@@ -249,42 +248,22 @@ SpecialKey {
   ckw<"method"> ckw<"signature">
 }
 
+@external tokens specialParameterName from "./tokens.js" { specialParameterName }
+
 SpecialParameterName {
-  ckw<"start"> ckw<"position"> |
-  ckw<"decimal"> (ckw<"sep"> | ckw<"separator">) |
-  ckw<"grouping"> (ckw<"sep"> | ckw<"separator">)
+  specialParameterName
 }
+
+@external tokens specialType from "./tokens.js" { specialType }
 
 SpecialType {
-  ckw<"days"> kw<"and"> ckw<"time"> ckw<"duration"> |
-  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
-  ckw<"date"> kw<"and"> ckw<"time">
+  specialType
 }
 
+@external tokens specialFunctionName from "./tokens.js" { specialFunctionName }
+
 SpecialFunctionName {
-  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
-  ckw<"string"> ckw<"length"> |
-  ckw<"upper"> ckw<"case"> |
-  ckw<"lower"> ckw<"case"> |
-  ckw<"substring"> ckw<"before"> |
-  ckw<"substring"> ckw<"after"> |
-  ckw<"starts"> ckw<"with"> |
-  ckw<"ends"> ckw<"with"> |
-  ckw<"list"> ckw<"contains"> |
-  ckw<"insert"> ckw<"before"> |
-  ckw<"index"> ckw<"of"> |
-  ckw<"distinct"> ckw<"values"> |
-  ckw<"met"> ckw<"by"> |
-  ckw<"overlaps"> ckw<"before"> |
-  ckw<"overlaps"> ckw<"after"> |
-  ckw<"finished"> ckw<"by"> |
-  ckw<"started"> ckw<"by"> |
-  ckw<"day"> ckw<"of"> ckw<"year"> |
-  ckw<"day"> ckw<"of"> ckw<"week"> |
-  ckw<"month"> ckw<"of"> ckw<"year"> |
-  ckw<"week"> ckw<"of"> ckw<"year"> |
-  ckw<"get"> ckw<"value"> |
-  ckw<"get"> ckw<"entries">
+  specialFunctionName
 }
 
 DateTimeLiteral {

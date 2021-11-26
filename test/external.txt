@@ -1,0 +1,66 @@
+# * Vars VS Expressions
+
+date and time;
+date and other;
+year
+
+==>
+
+Expressions(
+  Conjunction(VariableName,and,VariableName),
+  Conjunction(VariableName,and,VariableName),
+  VariableName, ⚠
+)
+
+
+# Date TEST
+
+date("foo");
+date and time("foo");
+
+==>
+
+Expressions(DateTimeLiteral(DateTimeConstructor,"(",PositionalParameters(StringLiteral),")"),DateTimeLiteral(DateTimeConstructor,"(",PositionalParameters(StringLiteral),")"))
+
+
+# Date Spacing
+
+date      and  time("foo")
+
+==>
+
+Expressions(DateTimeLiteral(DateTimeConstructor,"(",PositionalParameters(StringLiteral),")"))
+
+
+# SPECIAL FUNCTION NAMES
+
+string  length("foo")
+
+==>
+
+Expressions(FunctionInvocation(SpecialFunctionName,"(",PositionalParameters(StringLiteral),")"))
+
+
+# SPECIAL TYPE
+
+a instance of years and   months duration
+
+==>
+
+Expressions(InstanceOf(VariableName,instance,of,Type(SpecialType)))
+
+
+# SPECIAL PARAMETER NAME
+
+number(from: "1.000.000,01", decimal separator:",", grouping separator:".", grouping   sep: ",")
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName,"(", NamedParameters(
+    NamedParameter(ParameterName(Name),StringLiteral),
+    NamedParameter(ParameterName(SpecialParameterName),StringLiteral),
+    NamedParameter(ParameterName(SpecialParameterName),StringLiteral),
+    NamedParameter(ParameterName(SpecialParameterName),StringLiteral)
+  ),")")
+)
