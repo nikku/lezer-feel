@@ -14,7 +14,7 @@
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
   "devDependencies": {
-    "@lezer/generator": "^0.15.2",
+    "@lezer/generator": "^0.16.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
     "chokidar-cli": "^3.0.0",
     "mocha": "^7.1.1",
@@ -22,7 +22,7 @@
     "rollup": "^2.60.1"
   },
   "dependencies": {
-    "@lezer/lr": "^0.15.4"
+    "@lezer/lr": "^0.16.0"
   },
   "repository": {
     "type": "git",
