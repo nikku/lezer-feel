@@ -1,1 +1,3 @@
-export { parser } from './feel.grammar';
+export * from './feel.grammar';
+
+export * from './highlight.js';
