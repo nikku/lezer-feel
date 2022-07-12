@@ -35,7 +35,7 @@ for (const file of fs.readdirSync(caseDir)) {
     continue;
   }
 
-  const name = /^[^\.]*/.exec(file)[0];
+  const name = /^[^.]*/.exec(file)[0];
 
   describe(name, () => {
 
@@ -49,12 +49,12 @@ for (const file of fs.readdirSync(caseDir)) {
 
     const createParser = grammar ? () => buildParser(grammar, {
       fileName,
-      warn(msg) { throw new Error(msg) }
+      warn(msg) { throw new Error(msg); }
     }) : () => parser;
 
     const tests = fileTests(specs, fileName);
 
-    for (const {name, run} of tests) {
+    for (const { name, run } of tests) {
 
       const {
         test,
