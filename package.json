@@ -16,10 +16,12 @@
   "devDependencies": {
     "@lezer/generator": "^1.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/mocha": "^9.1.1",
     "chokidar-cli": "^3.0.0",
     "mocha": "^7.1.1",
     "npm-run-all": "^4.1.5",
-    "rollup": "^2.76.0"
+    "rollup": "^2.76.0",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@lezer/lr": "^1.2.0"
@@ -34,7 +36,9 @@
     "test": "mocha test/test-*.js",
     "test:watch": "chokidar '{dist,test}/**/*.{js,txt}' -c 'npm test'",
     "dev": "run-p *:watch",
-    "all": "run-s build test"
+    "all": "run-s build lint test",
+    "lint": "run-s lint:types",
+    "lint:types": "tsc --noEmit test/types.ts"
   },
   "files": [
     "dist"
