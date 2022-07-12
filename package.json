@@ -18,6 +18,8 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/mocha": "^9.1.1",
     "chokidar-cli": "^3.0.0",
+    "eslint": "^8.19.0",
+    "eslint-plugin-bpmn-io": "^0.14.0",
     "mocha": "^7.1.1",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.76.0",
@@ -37,9 +39,10 @@
     "test": "mocha test/test-*.js",
     "test:watch": "chokidar '{dist,test}/**/*.{js,txt}' -c 'npm test'",
     "dev": "run-p *:watch",
-    "all": "run-s build lint test",
-    "lint": "run-s lint:types",
-    "lint:types": "tsc --noEmit test/types.ts"
+    "all": "run-s lint build lint:types test",
+    "lint": "eslint .",
+    "lint:types": "tsc --noEmit test/types.ts",
+    "prepare": "run-s build"
   },
   "files": [
     "dist"
