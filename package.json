@@ -39,9 +39,9 @@
     "test": "mocha test/test-*.js",
     "test:watch": "chokidar '{dist,test}/**/*.{js,txt}' -c 'npm test'",
     "dev": "run-p *:watch",
-    "all": "run-s lint build lint:types test",
+    "all": "run-s lint build test:types test",
     "lint": "eslint .",
-    "lint:types": "tsc --noEmit test/types.ts",
+    "test:types": "tsc --noEmit test/types.ts",
     "prepare": "run-s build"
   },
   "files": [
