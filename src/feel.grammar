@@ -401,3 +401,4 @@ commaSep<Expr> {
   }
 
 }
+@external propSource feelHighlighting from "./highlight"

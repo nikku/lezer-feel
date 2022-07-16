@@ -1,8 +1,7 @@
-import nodeResolve from '@rollup/plugin-node-resolve';
-
-import { lezer } from '@lezer/generator/rollup';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 import pkg from './package.json';
+
 
 export default {
   input: pkg.source,
@@ -17,7 +16,6 @@ export default {
   ],
   external(id) { return !/^[./]/.test(id); },
   plugins: [
-    nodeResolve(),
-    lezer()
+    nodeResolve()
   ]
 };

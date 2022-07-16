@@ -34,8 +34,8 @@
     "url": "https://github.com/nikku/lezer-feel.git"
   },
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "npm run build -- --watch",
+    "build": "lezer-generator src/feel.grammar -o src/parser && rollup -c",
+    "build-debug": "lezer-generator src/feel.grammar --names -o src/parser && rollup -c",
     "test": "mocha test/test-*.js",
     "test:watch": "chokidar '{dist,test}/**/*.{js,txt}' -c 'npm test'",
     "dev": "run-p *:watch",
