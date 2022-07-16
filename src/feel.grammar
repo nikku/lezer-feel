@@ -34,45 +34,59 @@ expression[@isGroup=Expression] {
   boxedExpression
 }
 
-// TODO(nikku): drop, as it is not used anywhere
-//
-// textualExpressions {
-//  commaSep<textualExpression>
-// }
-
 textualExpression {
-  ForExpression {
-    kw<"for"> InExpressions<IterationContext> ckw<"return"> expression
-  } |
-  IfExpression {
-    kw<"if"> expression !then kw<"then"> expression (!else kw<"else"> expression)?
-  } |
-  QuantifiedExpression {
-    (kw<"some"> | kw<"every">) InExpressions<expression> ckw<"satisfies"> expression
-  } |
-  Disjunction {
-    expression !or kw<"or"> expression
-  } |
-  Conjunction[@dynamicPrecedence=-1] {
-    expression !and kw<"and"> expression
-  } |
+  ForExpression |
+  IfExpression |
+  QuantifiedExpression |
+  Disjunction |
+  Conjunction |
   Comparison |
   ArithmeticExpression |
-  InstanceOf {
-    expression !instanceOf kw<"instance"> ckw<"of"> Type
-  } |
-  PathExpression {
-    expression !path "." Name
-  } |
-  FilterExpression {
-    expression !filter "[" expression "]"
-  } |
+  InstanceOfExpression |
+  PathExpression |
+  FilterExpression |
   FunctionInvocation |
   literal |
   VariableName |
   kw<"?"> |
   SimplePositiveUnaryTest |
-  ParenthesizedExpression { "(" expression !paren ")" }
+  ParenthesizedExpression
+}
+
+ForExpression {
+  kw<"for"> InExpressions<IterationContext> ckw<"return"> expression
+}
+
+IfExpression {
+  kw<"if"> expression !then kw<"then"> expression (!else kw<"else"> expression)?
+}
+
+QuantifiedExpression {
+  (kw<"some"> | kw<"every">) InExpressions<expression> ckw<"satisfies"> expression
+}
+
+PathExpression {
+  expression !path "." Name
+}
+
+FilterExpression {
+  expression !filter "[" expression "]"
+}
+
+InstanceOfExpression {
+  expression !instanceOf kw<"instance"> ckw<"of"> Type
+}
+
+ParenthesizedExpression {
+  "(" expression !paren ")"
+}
+
+Disjunction {
+  expression !or kw<"or"> expression
+}
+
+Conjunction [@dynamicPrecedence=-1] {
+  expression !and kw<"and"> expression
 }
 
 boxedExpression {

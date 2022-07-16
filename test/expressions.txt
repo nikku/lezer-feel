@@ -541,7 +541,7 @@ a instance of list<boolean>;
 ==>
 
 Expressions(
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     ListType(list,"<",Type(
       ContextType(context,"<",ContextEntryTypes(
         ContextEntryType(Name,Type(
@@ -556,7 +556,7 @@ Expressions(
       ),">")
     ),">")
   )),
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     ListType(list,"<",Type(
       QualifiedName(Name)
     ),">")
@@ -573,14 +573,14 @@ a instance of function<> -> string;
 ==>
 
 Expressions(
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
         QualifiedName(Name)
       ))
     ),">",Type(QualifiedName(Name)))
   )),
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
         QualifiedName(Name)
@@ -592,7 +592,7 @@ Expressions(
       QualifiedName(Name)
     ))
   )),
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     FunctionType(function,"<",ArgumentTypes,">",Type(
       QualifiedName(Name)
     ))
@@ -606,7 +606,7 @@ a instance of context<foo: string>;
 ==>
 
 Expressions(
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     ContextType(context,"<",ContextEntryTypes(
       ContextEntryType(Name,Type(
         QualifiedName(Name)
@@ -625,13 +625,13 @@ a instance of b
 ==>
 
 Expressions(
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     QualifiedName(Name)
   )),
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     QualifiedName(Name,Name)
   )),
-  InstanceOf(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName,instance,of,Type(
     QualifiedName(Name)
   ))
 )
@@ -646,9 +646,9 @@ a instance of date and time
 ==>
 
 Expressions(
-  InstanceOf(VariableName,instance,of,Type(SpecialType(years,and,months,duration))),
-  InstanceOf(VariableName,instance,of,Type(SpecialType(days,and,time,duration))),
-  InstanceOf(VariableName,instance,of,Type(SpecialType(date,and,time)))
+  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(years,and,months,duration))),
+  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(days,and,time,duration))),
+  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(date,and,time)))
 )
 
 
