@@ -349,7 +349,7 @@ commaSep<Expr> {
   }
 
   whitespace {
-    VerticalSpace | std.whitespace+
+    VerticalSpace | @whitespace+
   }
 
   digit {
