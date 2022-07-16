@@ -19,7 +19,6 @@
   paren
 }
 
-@detectDelim
 
 @top Expressions {
   expression0+
@@ -415,4 +414,7 @@ commaSep<Expr> {
   }
 
 }
+
+@detectDelim
+
 @external propSource feelHighlighting from "./highlight"
