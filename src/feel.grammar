@@ -332,9 +332,14 @@ commaSep<Expr> {
   "" | Expr ("," Expr)*
 }
 
-@skip { whitespace | LineComment | BlockComment }
+
+@skip { spaces | newline | LineComment | BlockComment }
 
 @tokens {
+
+  spaces[@export] { $[\u0009 \u000b\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+ }
+
+  newline[@export] { $[\r\n\u2028\u2029] }
 
   LineComment { "//" ![\n]* }
 
@@ -343,14 +348,6 @@ commaSep<Expr> {
   blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
 
   blockCommentAfterStar { "/" | "*" blockCommentAfterStar | ![/*] blockCommentRest }
-
-  VerticalSpace {
-    $[\u000A-\u000D]
-  }
-
-  whitespace {
-    VerticalSpace | @whitespace+
-  }
 
   digit {
     $[0-9]
