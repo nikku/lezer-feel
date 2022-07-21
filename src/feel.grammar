@@ -19,13 +19,12 @@
   paren
 }
 
-
 @top Expressions {
   expression0+
 }
 
 expression0[@dynamicPrecedence=-1] {
-  expression ";"?
+  expression ~semi (";" | insertSemi)?
 }
 
 expression[@isGroup=Expression] {
@@ -46,7 +45,7 @@ textualExpression {
   FilterExpression |
   FunctionInvocation |
   literal |
-  VariableName |
+  VariableName ~semi insertSemi? |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression
@@ -186,7 +185,6 @@ ContextEntry {
 
 Key {
   Name |
-  SpecialKey |
   StringLiteral
 }
 
@@ -214,7 +212,7 @@ NamedParameter {
 }
 
 ParameterName {
-  Name | SpecialParameterName
+  Name
 }
 
 PositionalParameters {
@@ -242,12 +240,16 @@ QualifiedName {
   Name (!qname "." Name)*
 }
 
+additionalIdentifier[@export] {
+  !name identifier
+}
+
 VariableName {
-  identifier ~name
+  identifier additionalIdentifier* ~name
 }
 
 Name {
-  identifier ~name
+  identifier additionalIdentifier* ~name
 }
 
 Interval {
@@ -256,16 +258,6 @@ Interval {
 
 List {
   "[" ~interval commaSep<expression> "]"
-}
-
-SpecialKey {
-  ckw<"method"> ckw<"signature">
-}
-
-SpecialParameterName {
-  ckw<"start"> ckw<"position"> |
-  ckw<"decimal"> (ckw<"sep"> | ckw<"separator">) |
-  ckw<"grouping"> (ckw<"sep"> | ckw<"separator">)
 }
 
 SpecialType {
@@ -332,6 +324,9 @@ commaSep<Expr> {
   "" | Expr ("," Expr)*
 }
 
+@external tokens insertSemicolon from "./tokens" {
+  insertSemi
+}
 
 @skip { spaces | newline | LineComment | BlockComment }
 
@@ -361,7 +356,6 @@ commaSep<Expr> {
 
   minus[@name=ArithOp] { "-" }
 
-  /* 35. string literal = """, { character – (""" | vertical space) | string escape sequence}, """ ; */
   string {
     '"' (![\\\n"] | "\\" _)* '"'?
   }
@@ -394,8 +388,13 @@ commaSep<Expr> {
     namePartChar+
   }
 
-  identifier {
+  identifier[@name=Identifier] {
     nameStart (namePart)*
+  }
+
+  @precedence {
+    identifier,
+    spaces
   }
 
   ">" "<" ">=" "<="

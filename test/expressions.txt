@@ -4,8 +4,9 @@
 true
 false
 "FOO";
--1220.12;
-.12;
+-1220.12
+.12
+24 10
 
 ==>
 
@@ -15,6 +16,8 @@ Expressions(
   BooleanLiteral,
   StringLiteral,
   NumericLiteral(ArithOp),
+  NumericLiteral,
+  NumericLiteral,
   NumericLiteral
 )
 
@@ -80,23 +83,23 @@ a in (< 20, > 10)
 ==>
 
 Expressions(
-  Comparison(VariableName,CompareOp,VariableName),
-  Comparison(VariableName,CompareOp,VariableName),
-  Comparison(VariableName,CompareOp,VariableName),
-  Comparison(VariableName,CompareOp,VariableName),
+  Comparison(VariableName(...),CompareOp,VariableName(...)),
+  Comparison(VariableName(...),CompareOp,VariableName(...)),
+  Comparison(VariableName(...),CompareOp,VariableName(...)),
+  Comparison(VariableName(...),CompareOp,VariableName(...)),
 
-  Comparison(VariableName,between,VariableName,and,VariableName),
-  Comparison(VariableName,between, FunctionInvocation(...),and,ArithmeticExpression(...)),
+  Comparison(VariableName(...),between,VariableName(...),and,VariableName(...)),
+  Comparison(VariableName(...),between, FunctionInvocation(...),and,ArithmeticExpression(...)),
 
-  Comparison(VariableName,in,PositiveUnaryTest(NumericLiteral)),
+  Comparison(VariableName(...),in,PositiveUnaryTest(NumericLiteral)),
 
-  Comparison(VariableName,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(VariableName,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(VariableName,in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
-  Comparison(VariableName,in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(VariableName,in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
-  Comparison(VariableName,in,"(",PositiveUnaryTests(...),")"),
-  Comparison(VariableName,in,"(",PositiveUnaryTests(...),")")
+  Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
+  Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
+  Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
+  Comparison(VariableName(...),in,"(",PositiveUnaryTests(...),")"),
+  Comparison(VariableName(...),in,"(",PositiveUnaryTests(...),")")
 )
 
 
@@ -109,10 +112,10 @@ a and b or c and d
 ==>
 
 Expressions(
-  Conjunction(VariableName,and,VariableName),
-  Disjunction(VariableName,or,VariableName),
+  Conjunction(VariableName(...),and,VariableName(...)),
+  Disjunction(VariableName(...),or,VariableName(...)),
   Disjunction(
-    Conjunction(VariableName,and,VariableName),or,Conjunction(VariableName,and,VariableName)
+    Conjunction(VariableName(...),and,VariableName(...)),or,Conjunction(VariableName(...),and,VariableName(...))
   )
 )
 
@@ -141,13 +144,32 @@ Expressions(
 
 Expressions(
   Context("{","}"),
-  Context("{",ContextEntry(Key(Name),VariableName),ContextEntry(Key(Name),VariableName),"}"),
-  Context("{",ContextEntry(Key(Name),StringLiteral),"}"),
+  Context("{",ContextEntry(Key(Name(...)),VariableName(...)),ContextEntry(Key(Name(...)),VariableName(...)),"}"),
+  Context("{",ContextEntry(Key(Name(...)),StringLiteral),"}"),
   Context("{",
-    ContextEntry(Key(Name),Context("{",
-      ContextEntry(Key(Name),StringLiteral),
-      ContextEntry(Key(SpecialKey(method,signature)),StringLiteral),
+    ContextEntry(Key(Name(...)),Context("{",
+      ContextEntry(Key(Name(...)),StringLiteral),
+      ContextEntry(Key(Name(...)),StringLiteral),
     "}")),
+  "}")
+)
+
+
+# Context (multi-name)
+
+{
+  walts cat: "hoo",
+  add the dog: walts cat + "DOG"
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(...)),StringLiteral),
+    ContextEntry(Key(Name(...)),ArithmeticExpression(
+      VariableName(...),ArithOp,StringLiteral
+    ))
   "}")
 )
 
@@ -175,12 +197,25 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),QualifiedName(Name),"]")),
-  SimplePositiveUnaryTest(Interval("(",QualifiedName(Name),QualifiedName(Name),")")),
-  SimplePositiveUnaryTest(Interval("]",QualifiedName(Name),QualifiedName(Name),"[")),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),QualifiedName(Name(...)),"]")),
+  SimplePositiveUnaryTest(Interval("(",QualifiedName(Name(...)),QualifiedName(Name(...)),")")),
+  SimplePositiveUnaryTest(Interval("]",QualifiedName(Name(...)),QualifiedName(Name(...)),"[")),
   SimplePositiveUnaryTest(Interval("[",NumericLiteral,NumericLiteral,"]")),
   SimplePositiveUnaryTest(Interval("(",NumericLiteral,NumericLiteral,")")),
   SimplePositiveUnaryTest(Interval("]",NumericLiteral,NumericLiteral,"["))
+)
+
+
+# Interval (multi-name)
+
+[a.b..b c d]
+
+==>
+
+Expressions(
+  SimplePositiveUnaryTest(
+    Interval("[",QualifiedName(Name(...),Name(...)),QualifiedName(Name(...)),"]")
+  )
 )
 
 
@@ -192,8 +227,8 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),QualifiedName(Name),⚠)),
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name),⚠))
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),QualifiedName(Name(...)),⚠)),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),⚠))
 )
 
 
@@ -227,31 +262,35 @@ Expressions(
 )
 
 
-# VariableName
+# VariableName(...)
 
-a;
-a b
+a aa
+aas
+baa css asda sddd
+aaaa aaa
 
 ==>
 
 Expressions(
-  VariableName,
-  VariableName, VariableName
+  VariableName(Identifier, Identifier),
+  VariableName(Identifier),
+  VariableName(...),
+  VariableName(...)
 )
 
 
-# VariableName (error)
+# VariableName(...) (error)
 
 a**'s
 
 ==>
 
 Expressions(
-  ArithmeticExpression(VariableName,ArithOp,⚠,VariableName)
+  ArithmeticExpression(VariableName(...),ArithOp,⚠,VariableName(...))
 )
 
 
-# Special Names
+# Special Name(...)s
 
 date and time
 date and other
@@ -260,9 +299,9 @@ year
 ==>
 
 Expressions(
-  Conjunction(VariableName,and,VariableName),
-  Conjunction(VariableName,and,VariableName),
-  VariableName
+  Conjunction(VariableName(...),and,VariableName(...)),
+  Conjunction(VariableName(...),and,VariableName(...)),
+  VariableName(...)
 )
 
 
@@ -276,43 +315,43 @@ some a in b, c in d satisfies c
 ==>
 
 Expressions(
-  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,VariableName),
-  QuantifiedExpression(some,InExpressions(InExpression(...)),satisfies,VariableName),
-  QuantifiedExpression(every,InExpressions(InExpression(...),InExpression(...)),satisfies,VariableName),
-  QuantifiedExpression(some,InExpressions(InExpression(...),InExpression(...)),satisfies,VariableName)
+  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,VariableName(...)),
+  QuantifiedExpression(some,InExpressions(InExpression(...)),satisfies,VariableName(...)),
+  QuantifiedExpression(every,InExpressions(InExpression(...),InExpression(...)),satisfies,VariableName(...)),
+  QuantifiedExpression(some,InExpressions(InExpression(...),InExpression(...)),satisfies,VariableName(...))
 )
 
 
 # Filter Expression
 
-a[c];
-a[c].b;
+a[c]
+a[c].b
 ["a", "b"][ "b" ]
 
 
 ==>
 
 Expressions(
-  FilterExpression(VariableName,"[",VariableName,"]"),
-  PathExpression(FilterExpression(VariableName,"[",VariableName,"]"),Name),
+  FilterExpression(VariableName(...),"[",VariableName(...),"]"),
+  PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),Name(...)),
   FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]")
 )
 
 
 # Path Expression
 
-a.B;
-(a).b;
-(a).b.c;
+a.B
+(a).b
+(a).b.c
 a+b.c
 
 ==>
 
 Expressions(
-  PathExpression(VariableName,Name),
-  PathExpression(ParenthesizedExpression(...),Name),
-  PathExpression(PathExpression(ParenthesizedExpression(...),Name),Name),
-  ArithmeticExpression(VariableName,ArithOp,PathExpression(VariableName,Name))
+  PathExpression(VariableName(...),Name(...)),
+  PathExpression(ParenthesizedExpression(...),Name(...)),
+  PathExpression(PathExpression(ParenthesizedExpression(...),Name(...)),Name(...)),
+  ArithmeticExpression(VariableName(...),ArithOp,PathExpression(VariableName(...),Name(...)))
 )
 
 
@@ -328,10 +367,27 @@ for a in c, b in d return d
 Expressions(
   ForExpression(for,InExpressions(...),return,IfExpression(...)),
   ForExpression(for,InExpressions(...),return,FilterExpression(...)),
-  ForExpression(for,InExpressions(...),return,VariableName),
-  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,VariableName)
+  ForExpression(for,InExpressions(...),return,VariableName(...)),
+  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,VariableName(...))
 )
 
+
+# For Expression (multi-name)
+
+for
+  falk made in []
+return
+  falk made.foo bar
+
+==>
+
+Expressions(
+  ForExpression(
+    for,InExpressions(
+      InExpression(Name(...),in,IterationContext(...))
+    ),return,PathExpression(VariableName(...), Name(...))
+  )
+)
 
 # For Expression (error)
 
@@ -377,30 +433,43 @@ a(string: f, bar: b)
 ==>
 
 Expressions(
-  FunctionInvocation(VariableName,"(",PositionalParameters(), ")"),
-  FunctionInvocation(VariableName,"(",NamedParameters(
-    NamedParameter(ParameterName(Name),VariableName),
-    NamedParameter(ParameterName(Name),VariableName)
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")"),
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name(...)),VariableName(...)),
+    NamedParameter(ParameterName(Name(...)),VariableName(...))
   ),")"),
-  FunctionInvocation(VariableName,"(",PositionalParameters(
-    VariableName,
-    VariableName
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(
+    VariableName(...),
+    VariableName(...)
   ),")"),
-  FunctionInvocation(VariableName,"(",NamedParameters(
-    NamedParameter(ParameterName(Name),VariableName),
-    NamedParameter(ParameterName(Name),VariableName)
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name(...)),VariableName(...)),
+    NamedParameter(ParameterName(Name(...)),VariableName(...))
   ),")"),
-  FunctionInvocation(VariableName,"(",NamedParameters(
-    NamedParameter(ParameterName(Name),VariableName),
-    NamedParameter(ParameterName(Name),VariableName)
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
+    NamedParameter(ParameterName(Name(...)),VariableName(...)),
+    NamedParameter(ParameterName(Name(...)),VariableName(...))
   ),")")
+)
+
+
+# Function Invocation (multi-name)
+
+a b c d()
+with spaces()
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")")
 )
 
 
 # Date Time Literals
 
-date and time(date("2017-01-01"),time("23:59:01"));
-date and  time("2018-12-08T10:30:01");
+date and time(date("2017-01-01"),time("23:59:01"))
+date and  time("2018-12-08T10:30:01")
 time("23:59:01")
 date("2017-01-01")
 duration("P2M")
@@ -424,7 +493,7 @@ Expressions(
 time("10:30:05") in [time("10:30:02")..time("10:30:04")]
 duration("P11Y") in [[duration("P5Y") .. duration("P7Y")], [duration("P10Y") .. duration("P12Y")]]
 date and time("2018-12-08T10:30:01") in (date and time("2018-12-08T10:30:02")..date and time("2018-12-08T10:30:04")]
-date("2018-12-01") in (date("2018-12-02")..date("2018-12-04"));
+date("2018-12-01") in (date("2018-12-02")..date("2018-12-04"))
 
 ==>
 
@@ -449,13 +518,15 @@ Expressions(
     Comparison(...),and,FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")")
   ),
   Conjunction(
-    FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),and,Comparison(...)
+    FunctionInvocation(
+      SpecialFunctionName(...),"(",PositionalParameters,")"
+    ),and,Comparison(...)
   ),
   Conjunction(DateTimeLiteral(...),and,NumericLiteral)
 )
 
 
-# Special Function Name / Conjunction
+# Special Function Name(...) / Conjunction
 
 years and months duration() and a > 5
 
@@ -468,7 +539,7 @@ Expressions(
 )
 
 
-# Conjunction / Special Function Name
+# Conjunction / Special Function Name(...)
 
 a > 5 and years and months duration()
 
@@ -503,30 +574,30 @@ distinct values(1, 1, 4)
 ==>
 
 Expressions(
-  FunctionInvocation(VariableName,"(",PositionalParameters(BooleanLiteral),")"),
-  FunctionInvocation(VariableName,"(",PositionalParameters(List(...)),")"),
-  FunctionInvocation(VariableName,"(",PositionalParameters(List(...),List(...)),")"),
-  FunctionInvocation(VariableName,"(",PositionalParameters(NumericLiteral),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(BooleanLiteral),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(List(...)),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(List(...),List(...)),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(NumericLiteral),")"),
 
-  FunctionInvocation(VariableName,"(",NamedParameters(
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(SpecialParameterName(start,position)),NumericLiteral)
+    NamedParameter(ParameterName(Name(...)),NumericLiteral)
   ),")"),
-  FunctionInvocation(VariableName,"(",NamedParameters(
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(SpecialParameterName(decimal,sep)),StringLiteral),
+    NamedParameter(ParameterName(Name(...)),StringLiteral),
     NamedParameter(...)
   ),")"),
-  FunctionInvocation(VariableName,"(",NamedParameters(
+  FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(SpecialParameterName(decimal,separator)),StringLiteral),
-    NamedParameter(ParameterName(SpecialParameterName(grouping,separator)),StringLiteral)
+    NamedParameter(ParameterName(Name(...)),StringLiteral),
+    NamedParameter(ParameterName(Name(...)),StringLiteral)
   ),")"),
 
   DateTimeLiteral(...),
   FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),
 
-  PathExpression(FunctionInvocation(...),Name),
+  PathExpression(FunctionInvocation(...),Name(...)),
 
   FunctionInvocation(...),
   FunctionInvocation(...)
@@ -535,30 +606,30 @@ Expressions(
 
 # Instance Of / List
 
-a instance of list< context< foo: function<foo> -> bar > >;
-a instance of list<boolean>;
+a instance of list< context< foo: function<foo> -> bar > >
+a instance of list<boolean>
 
 ==>
 
 Expressions(
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     ListType(list,"<",Type(
       ContextType(context,"<",ContextEntryTypes(
-        ContextEntryType(Name,Type(
+        ContextEntryType(Name(...),Type(
           FunctionType(function,"<",ArgumentTypes(
             ArgumentType(Type(
-              QualifiedName(Name)
+              QualifiedName(Name(...))
             ))
           ),">",Type(
-            QualifiedName(Name)
+            QualifiedName(Name(...))
           ))
         ))
       ),">")
     ),">")
   )),
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     ListType(list,"<",Type(
-      QualifiedName(Name)
+      QualifiedName(Name(...))
     ),">")
   )),
 )
@@ -566,73 +637,73 @@ Expressions(
 
 # Instance Of / Function
 
-a instance of function<string> -> string;
-a instance of function<string, boolean> -> string;
-a instance of function<> -> string;
+a instance of function<string> -> string
+a instance of function<string, boolean> -> string
+a instance of function<> -> string
 
 ==>
 
 Expressions(
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
-        QualifiedName(Name)
+        QualifiedName(Name(...))
       ))
-    ),">",Type(QualifiedName(Name)))
+    ),">",Type(QualifiedName(Name(...))))
   )),
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
-        QualifiedName(Name)
+        QualifiedName(Name(...))
       )),
       ArgumentType(Type(
-        QualifiedName(Name)
+        QualifiedName(Name(...))
       ))
     ),">",Type(
-      QualifiedName(Name)
+      QualifiedName(Name(...))
     ))
   )),
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes,">",Type(
-      QualifiedName(Name)
+      QualifiedName(Name(...))
     ))
   ))
 )
 
 # Instance Of / Context
 
-a instance of context<foo: string>;
+a instance of context<foo: string>
 
 ==>
 
 Expressions(
-  InstanceOfExpression(VariableName,instance,of,Type(
+  InstanceOfExpression(VariableName(...),instance,of,Type(
     ContextType(context,"<",ContextEntryTypes(
-      ContextEntryType(Name,Type(
-        QualifiedName(Name)
+      ContextEntryType(Name(...),Type(
+        QualifiedName(Name(...))
       ))
     ),">")
   ))
 )
 
 
-# Instance Of / Qualified Name
+# Instance Of / Qualified Name(...)
 
-a instance of string;
-a instance of b.C;
+a instance of string
+a instance of b.C
 a instance of b
 
 ==>
 
 Expressions(
-  InstanceOfExpression(VariableName,instance,of,Type(
-    QualifiedName(Name)
+  InstanceOfExpression(VariableName(...),instance,of,Type(
+    QualifiedName(Name(...))
   )),
-  InstanceOfExpression(VariableName,instance,of,Type(
-    QualifiedName(Name,Name)
+  InstanceOfExpression(VariableName(...),instance,of,Type(
+    QualifiedName(Name(...),Name(...))
   )),
-  InstanceOfExpression(VariableName,instance,of,Type(
-    QualifiedName(Name)
+  InstanceOfExpression(VariableName(...),instance,of,Type(
+    QualifiedName(Name(...))
   ))
 )
 
@@ -646,16 +717,16 @@ a instance of date and time
 ==>
 
 Expressions(
-  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(years,and,months,duration))),
-  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(days,and,time,duration))),
-  InstanceOfExpression(VariableName,instance,of,Type(SpecialType(date,and,time)))
+  InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(years,and,months,duration))),
+  InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(days,and,time,duration))),
+  InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(date,and,time)))
 )
 
 
 # Simple Positive Unary Test
 
->= 10;
-> a;
+>= 10
+> a
 >= a.b
 
 ==>
@@ -677,6 +748,6 @@ Expressions(
   ArithmeticExpression[group="Expression"](
     NumericLiteral[group="Expression Literal"],
     ArithOp,
-    VariableName[group="Expression"]
+    VariableName(...)
   )
 )
