@@ -6,6 +6,19 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.7.0
+
+* `FEAT`: rename `InstanceOf` -> `InstanceOfExpression`
+* `FEAT`: support names with spaces
+* `FEAT`: insource highlighter props introduced with `v0.6.0`
+
+### Breaking Changes
+
+* `VariableName` and `Name` now expose identifier parts
+* `SpecialKey` and `SpecialParameterName` removed in favor of `Name`
+* `InstanceOf` renamed to `InstanceOfExpression`
+* Highlight props now directly injected into node tree
+
 ## 0.6.0
 
 * `FEAT`: add FEEL token highlighter
