@@ -1,5 +1,5 @@
-import { parser } from 'lezer-feel';
-import { fileTests } from '@lezer/generator/dist/test';
+import { parser, trackVariables } from 'lezer-feel';
+import { testTree } from '@lezer/generator/dist/test';
 import { buildParser } from '@lezer/generator';
 
 import fs from 'fs';
@@ -9,23 +9,115 @@ import { fileURLToPath } from 'url';
 
 const caseDir = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * @typedef { import('@lezer/common').SyntaxNodeRef } SyntaxNodeRef
+ * @typedef { import('@lezer/lr').LRParser } Parser
+ */
+
+/**
+ * Returns a line context for the given file.
+ *
+ * @param { string } file
+ * @param { number } index
+ *
+ * @return { string }
+ */
+function toLineContext(file, index) {
+  const endEol = file.indexOf('\n', index + 80);
+
+  const endIndex = endEol === -1 ? file.length : endEol;
+
+  return file.substring(index, endIndex).split(/\n/).map(str => '  | ' + str).join('\n');
+}
+
+/**
+ * @param { SyntaxNodeRef } type
+ * @return { boolean }
+ */
+function defaultIgnore(type) { return /\W/.test(type.name); }
+
+/**
+ * @typedef { { name: string, run(parser: Parser): void } } Test
+ *
+ * @param { string } file
+ * @param { string } fileName
+ * @param { (node: SyntaxNodeRef ) => boolean } mayIgnore
+ * @return { Test[] }
+ */
+export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
+  let caseExpr = /\s*#\s*(.*)(?:\r\n|\r|\n)([^]*?)==+>([^]*?)(?:$|(?:\r\n|\r|\n)+(?=#))/gy;
+
+  /**
+   * @type { Test[] }
+   */
+  let tests = [];
+  let lastIndex = 0;
+  for (;;) {
+    let m = caseExpr.exec(file);
+    if (!m) {
+      throw new Error(
+        `Unexpected file format in ${fileName} around\n\n${toLineContext(file, lastIndex)}`
+      );
+    }
+
+    let [ , name, configStr ] = /(.*?)(\{.*?\})?$/.exec(m[1]);
+    let config = configStr ? JSON.parse(configStr) : null;
+
+    let text = m[2].trim(), expected = m[3];
+    tests.push({
+      name,
+      run(parser) {
+        let strict = !/⚠|\.\.\./.test(expected);
+        let context = config && config.context;
+
+        if (context) {
+          config.contextTracker = trackVariables(context);
+        }
+
+        if (parser.configure && (strict || config)) {
+          parser = parser.configure({ strict, ...config });
+        }
+
+        testTree(parser.parse(text), expected, mayIgnore);
+      }
+    });
+
+    lastIndex = m.index + m[0].length;
+
+    if (lastIndex == file.length) break;
+  }
+
+  return tests;
+}
+
 function parseTest(name) {
 
-  let test = it;
+  let iit = it;
 
-  if (name.startsWith('-')) {
-    test = it.skip;
+  const match = /([*-]?)\s*([^{]+)?/.exec(name);
+
+  if (!match) {
+    throw new Error(
+      'illegal test spec, expected {*,-} TEST NAME'
+    );
   }
 
-  if (name.startsWith('*')) {
-    test = it.only;
+  const [
+    _match,
+    qualifier
+  ] = match;
+
+  if (qualifier === '-') {
+    iit = it.skip;
   }
 
-  const testName = name.replace(/^[-*]\s+/, '');
+  if (qualifier === '*') {
+    iit = it.only;
+  }
 
   return {
-    test,
-    testName
+    it: iit,
+    name
   };
 }
 
@@ -47,21 +139,25 @@ for (const file of fs.readdirSync(caseDir)) {
 
     const specs = grammar ? fileContents.substring(grammar.length) : fileContents;
 
-    const createParser = grammar ? () => buildParser(grammar, {
-      fileName,
-      warn(msg) { throw new Error(msg); }
-    }) : () => parser;
+    const createParser = (context) => {
+
+      return grammar ? buildParser(grammar, {
+        fileName,
+        warn(msg) { throw new Error(msg); }
+      }) : parser;
+    };
 
     const tests = fileTests(specs, fileName);
 
-    for (const { name, run } of tests) {
+    for (const { name: testName, run } of tests) {
 
       const {
-        test,
-        testName
-      } = parseTest(name);
+        it,
+        name,
+        context
+      } = parseTest(testName);
 
-      test(testName, () => run(createParser()));
+      it(name, () => run(createParser(context)));
     }
   });
 

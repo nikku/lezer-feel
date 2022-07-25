@@ -120,7 +120,7 @@ Expressions(
 )
 
 
-# Parenthesis
+# ParenthesizedExpression
 
 (a);
 (a + b) * c
@@ -130,6 +130,48 @@ Expressions(
 Expressions(
   ParenthesizedExpression(...),
   ArithmeticExpression(...)
+)
+
+
+# ParenthesizedExpression (special)
+
+(({ +: { -: 1 } }).+).-
+
+==>
+
+Expressions(
+  PathExpression(
+    ParenthesizedExpression("(",
+      PathExpression(
+        ParenthesizedExpression("(",
+          Context("{",
+            ContextEntry(Key(Name(Identifier)),Context("{",
+              ContextEntry(Key(Name(Identifier)),NumericLiteral),"}")
+            ),
+          "}"),
+        ")"),
+        VariableName(Identifier)
+      ),
+    ")"),
+    VariableName(Identifier)
+  )
+)
+
+
+# Context (simple)
+
+{
+  a: 1,
+  b: a
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier)),VariableName(Identifier)),
+  "}")
 )
 
 
@@ -158,8 +200,8 @@ Expressions(
 # Context (multi-name)
 
 {
-  walts cat: "hoo",
-  add the dog: walts cat + "DOG"
+  cats and dogs: "C_D",
+  add the horse: cats and dogs + "Horse"
 }
 
 ==>
@@ -170,6 +212,30 @@ Expressions(
     ContextEntry(Key(Name(...)),ArithmeticExpression(
       VariableName(...),ArithOp,StringLiteral
     ))
+  "}")
+)
+
+
+# Context (special name, nested)
+
+{
+  a vc: {
+    ++foo: 5
+  },
+  b: a vc.++foo
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier)),Context("{",
+      ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    "}")),
+    ContextEntry(Key(Name(Identifier)),PathExpression(
+      VariableName(Identifier,Identifier),
+      VariableName(Identifier,Identifier,Identifier))
+    ),
   "}")
 )
 
@@ -197,9 +263,9 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),QualifiedName(Name(...)),"]")),
-  SimplePositiveUnaryTest(Interval("(",QualifiedName(Name(...)),QualifiedName(Name(...)),")")),
-  SimplePositiveUnaryTest(Interval("]",QualifiedName(Name(...)),QualifiedName(Name(...)),"[")),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),"]")),
+  SimplePositiveUnaryTest(Interval("(",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),")")),
+  SimplePositiveUnaryTest(Interval("]",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),"[")),
   SimplePositiveUnaryTest(Interval("[",NumericLiteral,NumericLiteral,"]")),
   SimplePositiveUnaryTest(Interval("(",NumericLiteral,NumericLiteral,")")),
   SimplePositiveUnaryTest(Interval("]",NumericLiteral,NumericLiteral,"["))
@@ -214,7 +280,7 @@ Expressions(
 
 Expressions(
   SimplePositiveUnaryTest(
-    Interval("[",QualifiedName(Name(...),Name(...)),QualifiedName(Name(...)),"]")
+    Interval("[",QualifiedName(VariableName(...),VariableName(...)),QualifiedName(VariableName(...)),"]")
   )
 )
 
@@ -227,8 +293,8 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),QualifiedName(Name(...)),⚠)),
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(Name(...)),⚠))
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),⚠)),
+  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),⚠))
 )
 
 
@@ -262,24 +328,50 @@ Expressions(
 )
 
 
-# VariableName(...)
+# VariableName (simple)
 
-a aa
+a
 aas
-baa css asda sddd
-aaaa aaa
 
 ==>
 
 Expressions(
-  VariableName(Identifier, Identifier),
-  VariableName(Identifier),
   VariableName(...),
   VariableName(...)
 )
 
 
-# VariableName(...) (error)
+# VariableName (spaced)
+
+a b c
+aas asda
+
+==>
+
+Expressions(
+  VariableName(Identifier, Identifier, Identifier),
+  VariableName(Identifier, Identifier)
+)
+
+
+# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1 } }
+
+Foo +  Bar
+Foo + Bar
+Foo+Bar
+if foo then
+
+==>
+
+Expressions(
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier)
+)
+
+
+# VariableName (error)
 
 a**'s
 
@@ -287,6 +379,18 @@ a**'s
 
 Expressions(
   ArithmeticExpression(VariableName(...),ArithOp,⚠,VariableName(...))
+)
+
+
+# VariableName (spaced, keyword error)
+
+a if
+
+==>
+
+Expressions(
+  VariableName(Identifier),
+  IfExpression(if,⚠)
 )
 
 
@@ -305,7 +409,7 @@ Expressions(
 )
 
 
-# Quantified Expression
+# QuantifiedExpression
 
 every a in b satisfies c
 some a in b satisfies c
@@ -322,19 +426,83 @@ Expressions(
 )
 
 
-# Filter Expression
+# QuantifiedExpression (multi-name)
+
+every
+  falk made in []
+satisfies
+  falk made.foo bar
+
+==>
+
+Expressions(
+  QuantifiedExpression(
+    every,InExpressions(
+      InExpression(Name(...),in,List("[","]"))
+    ), satisfies, PathExpression(
+      VariableName(...),
+      VariableName(...)
+    )
+  )
+)
+
+
+# QuantifiedExpression (special)
+
+every
+  + in [ { -: 1 }]
+satisfies
+  +.-
+
+==>
+
+Expressions(
+  QuantifiedExpression(
+    every,InExpressions(
+      InExpression(Name(...),in,List("[",
+        Context("{",ContextEntry(Key(Name(...)),NumericLiteral),"}"),
+      "]"))
+    ),satisfies,
+    PathExpression(
+      VariableName(...),
+      VariableName(...)
+    )
+  )
+)
+
+
+# FilterExpression
 
 a[c]
 a[c].b
 ["a", "b"][ "b" ]
 
-
 ==>
 
 Expressions(
   FilterExpression(VariableName(...),"[",VariableName(...),"]"),
-  PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),Name(...)),
+  PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),VariableName(...)),
   FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]")
+)
+
+
+# FilterExpression (special)
+
+[ { +: 1 } ][ + > 2]
+
+==>
+
+Expressions(
+  FilterExpression(
+    List("[",
+      Context("{",
+        ContextEntry(Key(Name(Identifier)),NumericLiteral),
+      "}"),
+    "]"),
+    "[",
+      Comparison(VariableName(Identifier),CompareOp,NumericLiteral),
+    "]"
+  )
 )
 
 
@@ -348,14 +516,14 @@ a+b.c
 ==>
 
 Expressions(
-  PathExpression(VariableName(...),Name(...)),
-  PathExpression(ParenthesizedExpression(...),Name(...)),
-  PathExpression(PathExpression(ParenthesizedExpression(...),Name(...)),Name(...)),
-  ArithmeticExpression(VariableName(...),ArithOp,PathExpression(VariableName(...),Name(...)))
+  PathExpression(VariableName(...),VariableName(...)),
+  PathExpression(ParenthesizedExpression(...),VariableName(...)),
+  PathExpression(PathExpression(ParenthesizedExpression(...),VariableName(...)),VariableName(...)),
+  ArithmeticExpression(VariableName(...),ArithOp,PathExpression(VariableName(...),VariableName(...)))
 )
 
 
-# For Expression
+# ForExpression
 
 for i in 0..4 return if i = 0 then 1 else i * partial[-1]
 for a in c..e return partial[-1]
@@ -372,7 +540,7 @@ Expressions(
 )
 
 
-# For Expression (multi-name)
+# ForExpression (multi-name)
 
 for
   falk made in []
@@ -385,11 +553,30 @@ Expressions(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(...))
-    ),return,PathExpression(VariableName(...), Name(...))
+    ),return,PathExpression(VariableName(...), VariableName(...))
   )
 )
 
-# For Expression (error)
+
+# ForExpression (special)
+
+for
+  + in [ { -: 1 }]
+return
+  +.-
+
+==>
+
+Expressions(
+  ForExpression(
+    for,InExpressions(
+      InExpression(Name(...),in,IterationContext(...))
+    ),return,PathExpression(VariableName(...), VariableName(...))
+  )
+)
+
+
+# ForExpression (error)
 
 for fruit in [ ." ]
 
@@ -401,7 +588,31 @@ Expressions(
 )
 
 
-# Function Definition
+# IfExpression (special)
+
+(if foo then { +: 1 } else { -: 1 }).+
+
+==>
+
+Expressions(
+  PathExpression(
+    ParenthesizedExpression("(",
+      IfExpression(
+        if,VariableName(Identifier),
+        then,Context("{",
+          ContextEntry(Key(Name(Identifier)),NumericLiteral),
+        "}"),
+        else,Context("{",
+          ContextEntry(Key(Name(Identifier)),NumericLiteral),
+        "}")
+      ),
+    ")"),
+    VariableName(Identifier)
+  )
+)
+
+
+# FunctionDefinition
 
 function() a
 function(a, b) a
@@ -421,39 +632,110 @@ Expressions(
 )
 
 
-# Function Invocation
+# FunctionDefinition (special)
+
+function(+a) +a - 1
+
+==>
+
+Expressions(
+  FunctionDefinition(function,"(",
+    FormalParameters(
+      FormalParameter(ParameterName(Name(...)))
+    ),")",
+    FunctionBody(
+      ArithmeticExpression(
+        VariableName(...),ArithOp,NumericLiteral
+      )
+    )
+  )
+)
+
+
+# FunctionDefinition (special, return type)
+
+{
+  a: function() { +: { -: 1 } },
+  b: a().+.-
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(
+      Key(Name(...)),
+      FunctionDefinition(function,"(",FormalParameters,")",
+        FunctionBody(
+          Context("{",
+            ContextEntry(Key(Name(...)),
+              Context("{",
+                ContextEntry(Key(Name(...)),NumericLiteral),
+              "}")
+            ),
+          "}")
+        )
+      )
+    ),
+    ContextEntry(
+      Key(Name(...)),
+      PathExpression(
+        PathExpression(
+          FunctionInvocation(
+            VariableName(...),"(",PositionalParameters,")"
+          ),
+          VariableName(...)
+        ),
+        VariableName(...)
+      )
+    ),
+  "}")
+)
+
+
+# FunctionInvocation (positional)
 
 a()
-a(foo: f, bar: b)
-a(foo, bar)
+a(foo, bar, other)
 
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(
+    VariableName(...),
+    VariableName(...),
+    VariableName(...)
+  ),")")
+)
+
+
+# FunctionInvocation (named)
+
+a(foo: f, bar: b, other: o)
 a(stringa: f, bar: b)
 a(string: f, bar: b)
 
 ==>
 
 Expressions(
-  FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")"),
   FunctionInvocation(VariableName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name(...)),VariableName(...)),
-    NamedParameter(ParameterName(Name(...)),VariableName(...))
-  ),")"),
-  FunctionInvocation(VariableName(...),"(",PositionalParameters(
-    VariableName(...),
-    VariableName(...)
+    NamedParameter(ParameterName(...),VariableName(...)),
+    NamedParameter(ParameterName(...),VariableName(...)),
+    NamedParameter(ParameterName(...),VariableName(...))
   ),")"),
   FunctionInvocation(VariableName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name(...)),VariableName(...)),
-    NamedParameter(ParameterName(Name(...)),VariableName(...))
+    NamedParameter(ParameterName(...),VariableName(...)),
+    NamedParameter(ParameterName(...),VariableName(...))
   ),")"),
   FunctionInvocation(VariableName(...),"(",NamedParameters(
-    NamedParameter(ParameterName(Name(...)),VariableName(...)),
-    NamedParameter(ParameterName(Name(...)),VariableName(...))
+    NamedParameter(ParameterName(...),VariableName(...)),
+    NamedParameter(ParameterName(...),VariableName(...))
   ),")")
 )
 
 
-# Function Invocation (multi-name)
+# FunctionInvocation (multi-name)
 
 a b c d()
 with spaces()
@@ -552,6 +834,116 @@ Expressions(
 )
 
 
+# Context (variable scopes)
+
+{
+  foo: function(a) a + 1,
+  bar: foo(a),
+  other: foo.bar[woop=1]
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(...)),FunctionDefinition(function,"(",FormalParameters(FormalParameter(ParameterName(...))),")",FunctionBody(ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)))),
+    ContextEntry(Key(Name(...)),FunctionInvocation(VariableName(...),"(",PositionalParameters(VariableName(...)),")")),
+    ContextEntry(Key(Name(...)),FilterExpression(PathExpression(VariableName(...),VariableName(...)),"[",Comparison(VariableName(...),CompareOp,NumericLiteral),"]")),"}")
+)
+
+
+# FunctionDefinition (variable scopes)
+
+function(a) a + 1
+function(b: foo, c) b.today() + c
+
+==>
+
+Expressions(
+  FunctionDefinition(function,"(",
+    FormalParameters(
+      FormalParameter(ParameterName(Name(Identifier)))
+    ),
+  ")",FunctionBody(
+    ArithmeticExpression(VariableName(Identifier),ArithOp,NumericLiteral)
+  )),
+  FunctionDefinition(function,"(",
+    FormalParameters(
+      FormalParameter(ParameterName(Name(Identifier)),Type(QualifiedName(VariableName(...)))),
+      FormalParameter(ParameterName(Name(Identifier)))
+    ),
+  ")",FunctionBody(
+    ArithmeticExpression(FunctionInvocation(PathExpression(VariableName(Identifier),VariableName(Identifier)),"(",PositionalParameters,")"),ArithOp,VariableName(Identifier))
+  ))
+)
+
+
+# QuantifiedExpression (variable scopes)
+
+every a a in b, dd in [] satisfies a a < dd - c
+
+===>
+
+Expressions(
+  QuantifiedExpression(
+    every,InExpressions(
+      InExpression(Name(...),in,VariableName(...)),
+      InExpression(Name(...),in,List("[","]"))
+    ),satisfies,Comparison(
+      VariableName(...),CompareOp,ArithmeticExpression(
+        VariableName(...),ArithOp,VariableName(...)
+      )
+    )
+  )
+)
+
+
+# ForExpression (variable scopes)
+
+for a a in b, dd in [] return [ a a, dd, c ]
+
+===>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(...),in,IterationContext(VariableName(...))),
+    InExpression(Name(...),in,IterationContext(List("[","]")))
+  ),return,List("[",
+    VariableName(...),VariableName(...),VariableName(...),
+  "]"))
+)
+
+
+# FunctionInvocation (variable scopes)
+
+foo(bar)
+
+===>
+
+Expressions(
+  FunctionInvocation(
+    VariableName(...),"(",PositionalParameters(VariableName(Identifier)),")"
+  )
+)
+
+
+# Expression (variable scopes)
+
+a + foo.bar[foo=1]
+
+===>
+
+Expressions(
+  ArithmeticExpression(
+    VariableName(...),ArithOp,FilterExpression(
+      PathExpression(VariableName(...),VariableName(...)),"[",Comparison(
+        VariableName(...),CompareOp,NumericLiteral
+      ),"]"
+    )
+  )
+)
+
+
 # Built-in Functions
 
 not(false)
@@ -581,23 +973,23 @@ Expressions(
 
   FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(Name(...)),NumericLiteral)
+    NamedParameter(ParameterName(...),NumericLiteral)
   ),")"),
   FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(Name(...)),StringLiteral),
+    NamedParameter(ParameterName(...),StringLiteral),
     NamedParameter(...)
   ),")"),
   FunctionInvocation(VariableName(...),"(",NamedParameters(
     NamedParameter(...),
-    NamedParameter(ParameterName(Name(...)),StringLiteral),
-    NamedParameter(ParameterName(Name(...)),StringLiteral)
+    NamedParameter(ParameterName(...),StringLiteral),
+    NamedParameter(ParameterName(...),StringLiteral)
   ),")"),
 
   DateTimeLiteral(...),
   FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),
 
-  PathExpression(FunctionInvocation(...),Name(...)),
+  PathExpression(FunctionInvocation(...),VariableName(...)),
 
   FunctionInvocation(...),
   FunctionInvocation(...)
@@ -618,10 +1010,10 @@ Expressions(
         ContextEntryType(Name(...),Type(
           FunctionType(function,"<",ArgumentTypes(
             ArgumentType(Type(
-              QualifiedName(Name(...))
+              QualifiedName(VariableName(...))
             ))
           ),">",Type(
-            QualifiedName(Name(...))
+            QualifiedName(VariableName(...))
           ))
         ))
       ),">")
@@ -629,7 +1021,7 @@ Expressions(
   )),
   InstanceOfExpression(VariableName(...),instance,of,Type(
     ListType(list,"<",Type(
-      QualifiedName(Name(...))
+      QualifiedName(VariableName(...))
     ),">")
   )),
 )
@@ -647,41 +1039,40 @@ Expressions(
   InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
-        QualifiedName(Name(...))
+        QualifiedName(VariableName(...))
       ))
-    ),">",Type(QualifiedName(Name(...))))
+    ),">",Type(QualifiedName(VariableName(...))))
   )),
   InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes(
       ArgumentType(Type(
-        QualifiedName(Name(...))
+        QualifiedName(VariableName(...))
       )),
       ArgumentType(Type(
-        QualifiedName(Name(...))
+        QualifiedName(VariableName(...))
       ))
     ),">",Type(
-      QualifiedName(Name(...))
+      QualifiedName(VariableName(...))
     ))
   )),
   InstanceOfExpression(VariableName(...),instance,of,Type(
     FunctionType(function,"<",ArgumentTypes,">",Type(
-      QualifiedName(Name(...))
+      QualifiedName(VariableName(...))
     ))
   ))
 )
 
 # Instance Of / Context
 
-a instance of context<foo: string>
+a instance of context<foo: string, bar: string>
 
 ==>
 
 Expressions(
   InstanceOfExpression(VariableName(...),instance,of,Type(
     ContextType(context,"<",ContextEntryTypes(
-      ContextEntryType(Name(...),Type(
-        QualifiedName(Name(...))
-      ))
+      ContextEntryType(Name(...),Type(QualifiedName(VariableName(...)))),
+      ContextEntryType(Name(...),Type(QualifiedName(VariableName(...))))
     ),">")
   ))
 )
@@ -697,13 +1088,13 @@ a instance of b
 
 Expressions(
   InstanceOfExpression(VariableName(...),instance,of,Type(
-    QualifiedName(Name(...))
+    QualifiedName(VariableName(...))
   )),
   InstanceOfExpression(VariableName(...),instance,of,Type(
-    QualifiedName(Name(...),Name(...))
+    QualifiedName(VariableName(...),VariableName(...))
   )),
   InstanceOfExpression(VariableName(...),instance,of,Type(
-    QualifiedName(Name(...))
+    QualifiedName(VariableName(...))
   ))
 )
 
@@ -727,7 +1118,7 @@ Expressions(
 
 >= 10
 > a
->= a.b
+>= a.b.c
 
 ==>
 
@@ -749,5 +1140,125 @@ Expressions(
     NumericLiteral[group="Expression Literal"],
     ArithOp,
     VariableName(...)
+  )
+)
+
+
+# VariableName (contextual) { "context": { "foo'a **": 1, "aa**": 1, "a - b": 1, "a * b": 1, "what if?": 1, "Profit and loss": 1 } }
+
+foo'a  **
+aa**
+a-b
+a * b
+what if?
+Profit and loss
+
+==>
+
+Expressions(
+  VariableName(Identifier,Identifier,Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier)
+)
+
+
+# VariableName (incomplete, error) { "context": { "foo'a aa**": 1 } }
+
+foo'a
+
+==>
+
+Expressions(VariableName(Identifier,⚠,Identifier))
+
+
+# VariableName (Mike's age) { "context": { "Mike's age": 35 } }
+
+for
+  person in [ ]
+return
+  Mike's age
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(
+      Name(Identifier),in,IterationContext(...))
+    ),return,
+    VariableName(Identifier,Identifier,Identifier,Identifier)
+  )
+)
+
+
+# Name (special, context key)
+
+{
+  Mike's: 23,
+  A+B    : 100,
+  if   foo: true
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
+  "}")
+)
+
+
+# Context (special, binding)
+
+{
+  A+B    : 100,
+  c: A + B - 1
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
+      VariableName(Identifier, Identifier, Identifier),
+      ArithOp,
+      NumericLiteral
+    )),
+  "}")
+)
+
+
+# -Name (special, nested) { "context": { "Foo + Bar": { "o++": { } } } }
+
+Foo + Bar.o++.blub
+
+==>
+
+Expressions(
+  PathExpression(
+    PathExpression(
+      VariableName(Identifier,Identifier,Identifier),
+      VariableName(Identifier)
+    ),
+    VariableName(Identifier)
+  )
+)
+
+
+# Name (special, control char break) { "context": { "Foo + Bar": 1 } }
+
+Foo + Bar.a
+
+==>
+
+Expressions(
+  PathExpression(
+    VariableName(Identifier,Identifier,Identifier),
+    VariableName(Identifier)
   )
 )

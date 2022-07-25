@@ -3,8 +3,8 @@
   type,
   call,
   filter @left,
-  qname @left,
   path @left,
+  qname @left,
   instanceOf,
   prefix,
   exp @left,
@@ -16,14 +16,15 @@
   unaryTest @cut,
   then @left,
   else @left,
-  paren
+  paren,
+  pname
 }
 
 @top Expressions {
   expression0+
 }
 
-expression0[@dynamicPrecedence=-1] {
+expression0[@dynamicPrecedence=-1, @export] {
   expression ~semi (";" | insertSemi)?
 }
 
@@ -45,30 +46,66 @@ textualExpression {
   FilterExpression |
   FunctionInvocation |
   literal |
-  VariableName ~semi insertSemi? |
+  VariableName ~semi insertSemi? ~varOrQname |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression
 }
 
+forExpressionStart[@export] {
+  kw<"for">
+}
+
+ForInExpressions[@name=InExpressions] {
+  commaSep1<ForInExpression>
+}
+
+ForInExpression[@name=InExpression] {
+  inExpression<IterationContext>
+}
+
 ForExpression {
-  kw<"for"> InExpressions<IterationContext> ckw<"return"> expression
+  forExpressionStart ForInExpressions ckw<"return"> expression
+}
+
+ifExpressionStart[@export] {
+  kw<"if">
 }
 
 IfExpression {
-  kw<"if"> expression !then kw<"then"> expression (!else kw<"else"> expression)?
+  ifExpressionStart expression !then kw<"then"> expression (!else kw<"else"> expression)?
+}
+
+quantifiedExpressionStart[@export] {
+  (kw<"some"> | kw<"every">)
+}
+
+QuantifiedInExpressions[@name=InExpressions] {
+  commaSep1<QuantifiedInExpression>
+}
+
+QuantifiedInExpression[@name=InExpression] {
+  inExpression<expression>
 }
 
 QuantifiedExpression {
-  (kw<"some"> | kw<"every">) InExpressions<expression> ckw<"satisfies"> expression
+  quantifiedExpressionStart QuantifiedInExpressions ckw<"satisfies"> expression
+}
+
+pathExpressionStart[@export] {
+  "."
 }
 
 PathExpression {
-  expression !path "." Name
+  expression !path pathExpressionStart VariableName
+}
+
+filterExpressionStart[@export] {
+  "["
 }
 
 FilterExpression {
-  expression !filter "[" expression "]"
+  expression !filter filterExpressionStart expression "]"
 }
 
 InstanceOfExpression {
@@ -93,12 +130,12 @@ boxedExpression {
   Context
 }
 
-InExpressions<Expr> {
-  commaSep1<InExpression<Expr>>
+inExpressionSep[@export] {
+  kw<"in">
 }
 
-InExpression<Expr> {
-  Name kw<"in"> Expr
+inExpression<Expr> {
+  Name inExpressionSep Expr
 }
 
 IterationContext {
@@ -140,7 +177,12 @@ PositiveUnaryTest {
 }
 
 FunctionDefinition {
-  kw<"function"> "(" FormalParameters ")" kw<"external">? FunctionBody { expression }
+  functionDefinitionStart "(" FormalParameters ")" kw<"external">?
+  FunctionBody { expression }
+}
+
+functionDefinitionStart[@export] {
+  kw<"function">
 }
 
 FormalParameters {
@@ -176,15 +218,23 @@ ContextEntryType {
 }
 
 Context {
-  "{" commaSep<ContextEntry> "}"
+  contextStart commaSep<ContextEntry> "}"
+}
+
+contextStart[@export] {
+  "{"
 }
 
 ContextEntry {
-  Key ":" expression
+  Key ":" contextValue
+}
+
+contextValue[@export] {
+  expression
 }
 
 Key {
-  Name |
+  PropertyName |
   StringLiteral
 }
 
@@ -195,15 +245,19 @@ DateTimeConstructor {
   ckw<"duration">
 }
 
+functionInvocationStart[@export] {
+  (SpecialFunctionName | expression) !call
+}
+
 FunctionInvocation[@dynamicPrecedence=-1] {
-  (SpecialFunctionName | expression) !call parameters
+  functionInvocationStart functionInvocationParameters
 }
 
-parameters {
-  "(" (NamedParameters | PositionalParameters) ")"
+functionInvocationParameters[@export] {
+  "(" (PositionalParameters | NamedParameters) ")"
 }
 
-NamedParameters {
+NamedParameters[@dynamicPrecedence=-1] {
   commaSep1<NamedParameter>
 }
 
@@ -224,7 +278,7 @@ endpoint {
   simpleLiteral ~literal
 }
 
-literal[@isGroup=Literal] {
+literal[@isGroup=Literal, @export] {
   kw<"null"> |
   simpleLiteral ~literal
 }
@@ -237,19 +291,31 @@ simpleLiteral {
 }
 
 QualifiedName {
-  Name (!qname "." Name)*
+  VariableName (!qname "." VariableName)* ~varOrQname
 }
 
-additionalIdentifier[@export] {
-  !name identifier
+Identifier {
+  identifier ~ident | nameIdentifier ~ident
 }
 
 VariableName {
-  identifier additionalIdentifier* ~name
+  Identifier (!name Identifier)*
+}
+
+NameIdentifier[@name=Identifier] {
+  identifier ~ident | nameIdentifier ~ident | additionalNameSymbol
 }
 
 Name {
-  identifier additionalIdentifier* ~name
+  NameIdentifier (!name NameIdentifier)*
+}
+
+PropertyIdentifier[@name=Identifier] {
+  propertyIdentifier | additionalNameSymbol
+}
+
+PropertyName[@name=Name] {
+  PropertyIdentifier (!name PropertyIdentifier)*
 }
 
 Interval {
@@ -293,7 +359,7 @@ SpecialFunctionName {
 }
 
 DateTimeLiteral {
-  DateTimeConstructor parameters
+  DateTimeConstructor functionInvocationParameters
 }
 
 NumericLiteral {
@@ -324,6 +390,21 @@ commaSep<Expr> {
   "" | Expr ("," Expr)*
 }
 
+@context variableTracker from "./tokens"
+
+@external tokens propertyIdentifiers from "./tokens" {
+  propertyIdentifier[@export]
+}
+
+@external tokens identifiers from "./tokens" {
+  identifier[@export],
+  nameIdentifier[@export]
+}
+
+@external tokens additionalNameSymbols from "./tokens" {
+  additionalNameSymbol[@export]
+}
+
 @external tokens insertSemicolon from "./tokens" {
   insertSemi
 }
@@ -332,9 +413,9 @@ commaSep<Expr> {
 
 @tokens {
 
-  spaces[@export] { $[\u0009 \u000b\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+ }
+  spaces { $[\u0009 \u000b\u00a0\u1680\u2000-\u200a\u202f\u205f\u3000\ufeff]+ }
 
-  newline[@export] { $[\r\n\u2028\u2029] }
+  newline { $[\r\n\u2028\u2029] }
 
   LineComment { "//" ![\n]* }
 
@@ -369,32 +450,6 @@ commaSep<Expr> {
   @precedence {
     number,
     "."
-  }
-
-  nameStart {
-    nameStartChar namePartChar*
-  }
-
-  nameStartChar {
-    "?" | $[A-Z] | "_" | $[a-z] |
-    $[\u{200C}-\u{200D}] | $[$\u{2070}-\u{218F}] | $[\u{2C00}-\u{2FEF}] | $[\u{3001}-\u{D7FF}] | $[\u{F900}-\u{FDCF}] | $[\u{FDF0}-\u{FFFD}] | $[\u{10000}-\u{EFFFF}]
-  }
-
-  namePartChar {
-    nameStartChar | digit | $[\u0300-\u036F] | $[\u203F-\u2040]
-  }
-
-  namePart {
-    namePartChar+
-  }
-
-  identifier[@name=Identifier] {
-    nameStart (namePart)*
-  }
-
-  @precedence {
-    identifier,
-    spaces
   }
 
   ">" "<" ">=" "<="

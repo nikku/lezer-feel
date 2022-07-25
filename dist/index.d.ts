@@ -1,3 +1,7 @@
-import { LRParser } from '@lezer/lr';
+import { LRParser, ContextTracker } from '@lezer/lr';
 
 export const parser: LRParser;
+
+export function trackVariables(
+  context: Record<string, any>
+) : ContextTracker<any>;
