@@ -506,7 +506,7 @@ Expressions(
 )
 
 
-# Path Expression
+# PathExpression
 
 a.B
 (a).b
@@ -520,6 +520,23 @@ Expressions(
   PathExpression(ParenthesizedExpression(...),VariableName(...)),
   PathExpression(PathExpression(ParenthesizedExpression(...),VariableName(...)),VariableName(...)),
   ArithmeticExpression(VariableName(...),ArithOp,PathExpression(VariableName(...),VariableName(...)))
+)
+
+
+# PathExpression (special) { "context": { "Foo + Bar": { "o++": { } } } }
+
+Foo + Bar.o++.blub
+
+==>
+
+Expressions(
+  PathExpression(
+    PathExpression(
+      VariableName(...),
+      VariableName(...)
+    ),
+    VariableName(...)
+  )
 )
 
 
@@ -1348,23 +1365,6 @@ Expressions(
       VariableName(Identifier,Identifier,Identifier),ArithOp,NumericLiteral
     )),
   "}")
-)
-
-
-# -Name (special, nested) { "context": { "Foo + Bar": { "o++": { } } } }
-
-Foo + Bar.o++.blub
-
-==>
-
-Expressions(
-  PathExpression(
-    PathExpression(
-      VariableName(Identifier,Identifier,Identifier),
-      VariableName(Identifier)
-    ),
-    VariableName(Identifier)
-  )
 )
 
 
