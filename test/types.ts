@@ -5,21 +5,27 @@ import {
 
 describe('types', () => {
 
-  it('should expose parser', () => {
+  it('should parse', () => {
 
     // then
     parser.parse('foo');
   });
 
 
-  it('should expose trackVariables', () => {
+  it('should configure with context', () => {
 
-    // then
+    // given
     const tracker = trackVariables({
-      foo: 'bar',
-      other: 'woop'
+      '+': 1
     });
 
+    // when
+    const configuredParser = parser.configure({
+      contextTracker: tracker
+    });
+
+    // then
+    configuredParser.parse('+');
   });
 
 });
