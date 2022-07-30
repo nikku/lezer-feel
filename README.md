@@ -10,7 +10,7 @@ Supports context sensitive language parsing.
 
 ## Usage
 
-Parse FEEL to a [Lezer Tree](https://lezer.codemirror.net/docs/ref/#common.Tree):
+Parse FEEL to a [`Tree`](https://lezer.codemirror.net/docs/ref/#common.Tree):
 
 ```javascript
 import {
