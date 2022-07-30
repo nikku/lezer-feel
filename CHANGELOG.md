@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.8.1
+
+* `CHORE`: expose `normalizeContext`
+* `FIX`: correctly normalize multiple spaces in contextual names
+
 ## 0.8.0
 
 * `FEAT`: support context sensitive parsing ([#3](https://github.com/nikku/lezer-feel/issues/3))
