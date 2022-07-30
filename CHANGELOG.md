@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.8.0
+
+* `FEAT`: support context sensitive parsing ([#3](https://github.com/nikku/lezer-feel/issues/3))
+
 ## 0.7.0
 
 * `FEAT`: rename `InstanceOf` -> `InstanceOfExpression`
