@@ -6,6 +6,7 @@ import {
   contextStart,
   Context,
   forExpressionStart,
+  forExpressionBodyStart,
   ForExpression,
   quantifiedExpressionStart,
   QuantifiedExpression,
@@ -341,6 +342,30 @@ const contextEnds = {
   [ ArithmeticExpression ]: 'ArithmeticExpression'
 };
 
+class ValueProducer {
+
+  /**
+   * @param { Function } fn
+   */
+  constructor(fn) {
+    this.fn = fn;
+  }
+
+  get(variables) {
+    return this.fn(variables);
+  }
+
+  /**
+   * @param { Function }
+   *
+   * @return { ValueProducer }
+   */
+  static of(fn) {
+    return new ValueProducer(fn);
+  }
+
+}
+
 
 class Variables {
 
@@ -430,6 +455,22 @@ class Variables {
     return this.parent?.path?.concat(' > ', this.name) || this.name;
   }
 
+  /**
+   * Return value of variable.
+   *
+   * @param { string } variable
+   * @return { any } value
+   */
+  get(variable) {
+    const val = this.context[String(variable)];
+
+    if (val instanceof ValueProducer) {
+      return val.get(this);
+    } else {
+      return val;
+    }
+  }
+
   resolveName() {
 
     const variable = this.tokens.join(' ');
@@ -442,10 +483,10 @@ class Variables {
     const variableScope = this.of({
       name: 'VariableName',
       parent: parentScope,
-      value: this.context[variable]
+      value: this.get(variable)
     });
 
-    LOG_VARS && console.log('[%s] resolve name <%s=%s>', variableScope.path, variable, this.context[variable]);
+    LOG_VARS && console.log('[%s] resolve name <%s=%s>', variableScope.path, variable, this.get(variable));
 
     return parentScope.pushChild(variableScope);
   }
@@ -457,6 +498,17 @@ class Variables {
     });
 
     child.parent = parent;
+
+    return parent;
+  }
+
+  pushChildren(children) {
+
+    let parent = this;
+
+    for (const child of children) {
+      parent = parent.pushChild(child);
+    }
 
     return parent;
   }
@@ -583,6 +635,34 @@ export function normalizeContext(context) {
   return normalizedContext;
 }
 
+/**
+ * Wrap children of variables under the given named child.
+ *
+ * @param { Variables } variables
+ * @param { string } name
+ * @param { string } code
+ * @return { Variables }
+ */
+function wrap(variables, scopeName, code) {
+
+  const parts = variables.children.filter(c => c.name !== scopeName);
+  const children = variables.children.filter(c => c.name === scopeName);
+
+  const namePart = parts[0];
+  const valuePart = parts[Math.max(1, parts.length - 1)];
+
+  const name = namePart.computedValue();
+  const value = valuePart?.computedValue() || null;
+
+  return variables
+    .assign({
+      children
+    })
+    .enterScope(scopeName)
+    .pushChildren(parts)
+    .exitScope(code)
+    .define(name, value);
+}
 
 /**
  * @param { any } context
@@ -616,6 +696,14 @@ export function trackVariables(context = {}) {
         });
       }
 
+      if (term === FilterExpression) {
+        const [ sourcePart, _ ] = variables.children.slice(-2);
+
+        variables = variables.assign({
+          value: sourcePart?.computedValue()
+        });
+      }
+
       const start = contextStarts[term];
 
       if (start) {
@@ -630,17 +718,26 @@ export function trackVariables(context = {}) {
         return variables.exitScope(code);
       }
 
+      if (term === ContextEntry) {
+        return wrap(variables, 'ContextEntry', code);
+      }
+
       if (
-        term === ContextEntry ||
         term === ForInExpression ||
         term === QuantifiedInExpression
       ) {
-        const [ left, right ] = variables.children.slice(-2);
+        return wrap(variables, 'InExpression', code);
+      }
 
-        const name = left.computedValue();
-        const value = right?.computedValue() || null;
+      // define <partial> within ForExpression body
+      if (term === forExpressionBodyStart) {
 
-        return variables.define(name, value);
+        return variables.define(
+          'partial',
+          ValueProducer.of(variables => {
+            return variables.children[variables.children.length - 1]?.computedValue();
+          })
+        );
       }
 
       if (
@@ -654,9 +751,9 @@ export function trackVariables(context = {}) {
         return variables.define(name, 1);
       }
 
+      // pull <expression> into PathExpression child
       if (term === pathExpressionStart) {
 
-        // pull <expression> into PathExpression child
         const children = variables.children.slice(0, -1);
         const lastChild = variables.children.slice(-1)[0];
 
@@ -670,15 +767,13 @@ export function trackVariables(context = {}) {
         });
       }
 
+      // pull <expression> into ArithmeticExpression child
       if (
         term === arithmeticPlusStart ||
         term === arithmeticTimesStart ||
         term === arithmeticExpStart
       ) {
-
-        // pull <expression> into ArithmeticExpression child
         const children = variables.children.slice(0, -1);
-
         const lastChild = variables.children.slice(-1)[0];
 
         return variables.assign({
@@ -690,9 +785,8 @@ export function trackVariables(context = {}) {
         return variables.enterScope('ArithmeticExpression');
       }
 
+      // pull <expression> into FilterExpression child
       if (term === filterExpressionStart) {
-
-        // pull <expression> into FilterExpression child
         const children = variables.children.slice(0, -1);
         const lastChild = variables.children.slice(-1)[0];
 

@@ -65,8 +65,12 @@ ForInExpression[@name=InExpression] {
   inExpression<IterationContext>
 }
 
+forExpressionBodyStart[@export] {
+  kw<"return">
+}
+
 ForExpression {
-  forExpressionStart ForInExpressions kw<"return"> expression
+  forExpressionStart ForInExpressions forExpressionBodyStart expression
 }
 
 ifExpressionStart[@export] {

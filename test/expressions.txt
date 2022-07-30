@@ -572,6 +572,54 @@ Expressions(
 )
 
 
+# ForExpression (iteration range) { "context": { "c": { "+": 1 } } }
+
+for i in 1..c return i.+
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(
+      NumericLiteral,VariableName(Identifier)
+    ))
+  ),return,PathExpression(
+    VariableName(Identifier),
+    VariableName(Identifier)
+  ))
+)
+
+
+# ForExpression (special, partial)
+
+for i in [1] return if i = 1 then { +: 1 } else partial[-1].+
+
+==>
+
+Expressions(
+  ForExpression(
+    for,InExpressions(
+      InExpression(Name(Identifier),in,IterationContext(
+        List("[",NumericLiteral,"]")
+      ))
+    ),
+    return,IfExpression(
+      if,Comparison(
+        VariableName(Identifier),CompareOp,NumericLiteral
+      ),
+      then, Context("{",
+        ContextEntry(Key(Name(Identifier)),NumericLiteral),
+      "}"),
+      else,PathExpression(
+        FilterExpression(VariableName(Identifier),"[",NumericLiteral(ArithOp),"]"),
+        VariableName(Identifier)
+      )
+    )
+  )
+)
+
+
+
 # ForExpression (multi-name)
 
 for
