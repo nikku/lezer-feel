@@ -1366,17 +1366,3 @@ Expressions(
     )),
   "}")
 )
-
-
-# Name (special, control char break) { "context": { "Foo + Bar": 1 } }
-
-Foo + Bar.a
-
-==>
-
-Expressions(
-  PathExpression(
-    VariableName(Identifier,Identifier,Identifier),
-    VariableName(Identifier)
-  )
-)
