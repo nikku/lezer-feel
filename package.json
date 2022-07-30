@@ -16,7 +16,9 @@
   "devDependencies": {
     "@lezer/generator": "^1.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
+    "chai": "^4.3.6",
     "chokidar-cli": "^3.0.0",
     "eslint": "^8.19.0",
     "eslint-plugin-bpmn-io": "^0.14.0",
@@ -42,7 +44,7 @@
     "dev:test": "chokidar '{dist,test}/**/*.{js,cjs,txt}' -c 'npm test'",
     "all": "run-s lint build test:types test",
     "lint": "eslint .",
-    "test:types": "tsc --noEmit test/types.ts",
+    "test:types": "tsc --noEmit test/test-types.ts",
     "prepare": "run-s build"
   },
   "files": [

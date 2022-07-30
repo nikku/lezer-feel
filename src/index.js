@@ -1,3 +1,6 @@
 export * from './parser';
 
-export { trackVariables } from './tokens';
+export {
+  trackVariables,
+  normalizeContext
+} from './tokens';

@@ -1,9 +1,15 @@
 import {
+  normalizeContext,
   parser,
   trackVariables
-} from '..';
+} from 'lezer-feel';
 
-describe('types', () => {
+import {
+  expect
+} from 'chai';
+
+
+describe('lezer-feel', () => {
 
   it('should parse', () => {
 
@@ -26,6 +32,21 @@ describe('types', () => {
 
     // then
     configuredParser.parse('+');
+  });
+
+
+  it('should normalize context', () => {
+
+    // given
+    const context = {
+      '+++': 1
+    };
+
+    // when
+    const normalizedContext = normalizeContext(context);
+
+    // then
+    expect(normalizedContext).to.have.property('+ + +', 1);
   });
 
 });

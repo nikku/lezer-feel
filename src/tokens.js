@@ -611,7 +611,7 @@ class Variables {
 }
 
 export function normalizeContextKey(name) {
-  return name.replace(/\s*([./\-'+*])\s*/g, ' $1 ').replace(/\s{2,}/, ' ').trim();
+  return name.replace(/\s*([./\-'+*])\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
 }
 
 /**
