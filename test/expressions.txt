@@ -394,7 +394,7 @@ Expressions(
 )
 
 
-# Special Name(...)s
+# Special Names
 
 date and time
 date and other
@@ -905,7 +905,7 @@ Expressions(
 )
 
 
-# Special Function Name(...) / Conjunction
+# Special Function Name / Conjunction
 
 years and months duration() and a > 5
 
