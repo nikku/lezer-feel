@@ -10,6 +10,10 @@ ___Note:__ Yet to be released changes appear here._
 
 * `FEAT`: support context sensitive parsing ([#3](https://github.com/nikku/lezer-feel/issues/3))
 
+### Breaking Changes
+
+* Reworked `Name` vs. `VariableName` handling: `VariableName` now strictly refers to existing name access, while `Name` strictly refers to name definition
+
 ## 0.7.0
 
 * `FEAT`: rename `InstanceOf` -> `InstanceOfExpression`
