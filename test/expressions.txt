@@ -22,7 +22,7 @@ Expressions(
 )
 
 
-# Arithmetic Expression
+# ArithmeticExpression
 
 1+2
 1-2
@@ -49,7 +49,7 @@ Expressions(
 )
 
 
-# Arithmetic Expression (error)
+# ArithmeticExpression (error)
 
 1 * #3
 
@@ -525,18 +525,50 @@ Expressions(
 
 # ForExpression
 
-for i in 0..4 return if i = 0 then 1 else i * partial[-1]
-for a in c..e return partial[-1]
 for a in c return d
 for a in c, b in d return d
 
 ==>
 
 Expressions(
-  ForExpression(for,InExpressions(...),return,IfExpression(...)),
-  ForExpression(for,InExpressions(...),return,FilterExpression(...)),
   ForExpression(for,InExpressions(...),return,VariableName(...)),
-  ForExpression(for,InExpressions(InExpression(...), InExpression(...)),return,VariableName(...))
+  ForExpression(for,InExpressions(
+    InExpression(...),
+    InExpression(...)
+  ),return,VariableName(...))
+)
+
+
+# ForExpression (iteration range)
+
+for i in 0..4 return i
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(
+      NumericLiteral,
+      NumericLiteral
+    ))
+  ),return,VariableName(Identifier))
+)
+
+
+# ForExpression (partial)
+
+for i in [ 0, 1, 2 ] return partial[-1]
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(
+      List("[",NumericLiteral,NumericLiteral,NumericLiteral,"]"))
+    )
+  ),return,FilterExpression(
+    VariableName(Identifier),"[",NumericLiteral(ArithOp),"]")
+  )
 )
 
 
@@ -1228,6 +1260,44 @@ Expressions(
       VariableName(Identifier, Identifier, Identifier),
       ArithOp,
       NumericLiteral
+    )),
+  "}")
+)
+
+
+# Context (literal)
+
+{
+  "A -  c": 100,
+  c: A-c
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(StringLiteral),NumericLiteral),
+    ContextEntry(Key(Name(...)),VariableName(...)),
+  "}")
+)
+
+
+# Context (special, artithmetic)
+
+{
+  a+b: 10 + 10,
+  c: a+b - 10
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),ArithmeticExpression(
+      NumericLiteral,ArithOp,NumericLiteral
+    )),
+    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
+      VariableName(Identifier,Identifier,Identifier),ArithOp,NumericLiteral
     )),
   "}")
 )

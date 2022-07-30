@@ -32,7 +32,12 @@ import {
   IfExpression,
   ifExpressionStart,
   filterExpressionStart,
-  FilterExpression
+  FilterExpression,
+  ArithmeticExpression,
+  arithmeticPlusStart,
+  arithmeticTimesStart,
+  arithmeticExpStart,
+  arithmeticUnaryStart
 } from './parser.terms.js';
 
 import {
@@ -330,7 +335,10 @@ const contextEnds = {
   [ FunctionDefinition ]: 'FunctionDefinition',
   [ ForExpression ]: 'ForExpression',
   [ IfExpression ]: 'IfExpression',
-  [ QuantifiedExpression ]: 'QuantifiedExpression'
+  [ QuantifiedExpression ]: 'QuantifiedExpression',
+  [ PathExpression ]: 'PathExpression',
+  [ FilterExpression ]: 'FilterExpression',
+  [ ArithmeticExpression ]: 'ArithmeticExpression'
 };
 
 
@@ -359,7 +367,7 @@ class Variables {
       parent: this
     });
 
-    LOG_VARS && console.log('[%s] enter', childScope.path, this.nameParts);
+    LOG_VARS && console.log('[%s] enter', childScope.path, childScope.context);
 
     return childScope;
   }
@@ -474,6 +482,14 @@ class Variables {
   }
 
   define(name, value) {
+
+    if (typeof name !== 'string') {
+      LOG_VARS && console.log('[%s] no define <%s=%s>', this.path, name, value);
+
+      return this;
+    }
+
+    name = normalizeContextKey(name);
 
     LOG_VARS && console.log('[%s] define <%s=%s>', this.path, name, value);
 
@@ -610,7 +626,7 @@ export function trackVariables(context = {}) {
 
       const end = contextEnds[term];
 
-      if (end || term === PathExpression || term === FilterExpression) {
+      if (end) {
         return variables.exitScope(code);
       }
 
@@ -654,6 +670,25 @@ export function trackVariables(context = {}) {
         });
       }
 
+      if (
+        term === arithmeticPlusStart ||
+        term === arithmeticTimesStart ||
+        term === arithmeticExpStart
+      ) {
+
+        // pull <expression> into ArithmeticExpression child
+        const children = variables.children.slice(0, -1);
+
+        const lastChild = variables.children.slice(-1)[0];
+
+        return variables.assign({
+          children
+        }).enterScope('ArithmeticExpression').pushChild(lastChild);
+      }
+
+      if (term === arithmeticUnaryStart) {
+        return variables.enterScope('ArithmeticExpression');
+      }
 
       if (term === filterExpressionStart) {
 

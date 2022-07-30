@@ -6,6 +6,7 @@
   path @left,
   qname @left,
   instanceOf,
+  unary,
   prefix,
   exp @left,
   times @left,
@@ -65,7 +66,7 @@ ForInExpression[@name=InExpression] {
 }
 
 ForExpression {
-  forExpressionStart ForInExpressions ckw<"return"> expression
+  forExpressionStart ForInExpressions kw<"return"> expression
 }
 
 ifExpressionStart[@export] {
@@ -142,11 +143,27 @@ IterationContext {
   expression (".." expression)?
 }
 
+arithmeticPlusStart[@export] {
+  (ArithOp<"+"> | minus)
+}
+
+arithmeticTimesStart[@export] {
+  (ArithOp<"*"> | divide)
+}
+
+arithmeticExpStart[@export] {
+  ArithOp<"^" | "**">
+}
+
+arithmeticUnaryStart[@export] {
+  (ArithOp<"+"> | minus ~maybeNum)
+}
+
 ArithmeticExpression {
-  expression !add (ArithOp<"+"> | minus) expression |
-  expression !times (ArithOp<"*"> | divide) expression |
-  expression !exp ArithOp<"^" | "**"> expression |
-  !prefix (ArithOp<"+"> | minus) expression
+  expression !add arithmeticPlusStart expression |
+  expression !times arithmeticTimesStart expression |
+  expression !exp arithmeticExpStart expression |
+  !prefix arithmeticUnaryStart expression
 }
 
 Comparison {
@@ -363,7 +380,7 @@ DateTimeLiteral {
 }
 
 NumericLiteral {
-  minus? ~maybeNum number
+  (!unary minus ~maybeNum)? number
 }
 
 StringLiteral {
