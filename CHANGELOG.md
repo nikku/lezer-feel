@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.8.8
+
+* `FIX`: parse unicode surrogate pairs (again)
+
 ## 0.8.7
 
 * `FIX`: recognize all chars defined by FEEL
