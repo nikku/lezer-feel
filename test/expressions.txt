@@ -135,7 +135,7 @@ Expressions(
 
 # ParenthesizedExpression (special)
 
-(({ +: { -: 1 } }).+).-
+(({ a+: { b-: 1 } }).a+).b-
 
 ==>
 
@@ -145,15 +145,15 @@ Expressions(
       PathExpression(
         ParenthesizedExpression("(",
           Context("{",
-            ContextEntry(Key(Name(Identifier)),Context("{",
-              ContextEntry(Key(Name(Identifier)),NumericLiteral),"}")
+            ContextEntry(Key(Name(...)),Context("{",
+              ContextEntry(Key(Name(...)),NumericLiteral),"}")
             ),
           "}"),
         ")"),
-        VariableName(Identifier)
+        VariableName(...)
       ),
     ")"),
-    VariableName(Identifier)
+    VariableName(...)
   )
 )
 
@@ -248,22 +248,22 @@ Expressions(
 
 {
   a vc: {
-    ++foo: 5
+    foo++: 5
   },
-  b: a vc.++foo
+  b: a vc.foo++
 }
 
 ==>
 
 Expressions(
   Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier)),Context("{",
-      ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(...)),Context("{",
+      ContextEntry(Key(Name(...)),NumericLiteral),
     "}")),
-    ContextEntry(Key(Name(Identifier)),PathExpression(
-      VariableName(Identifier,Identifier),
-      VariableName(Identifier,Identifier,Identifier))
-    ),
+    ContextEntry(Key(Name(...)),PathExpression(
+      VariableName(...),
+      VariableName(...)
+    )),
   "}")
 )
 
@@ -478,9 +478,9 @@ Expressions(
 # QuantifiedExpression (special)
 
 every
-  + in [ { -: 1 }]
+  a+ in [ { b-: 1 }]
 satisfies
-  +.-
+  a+.b-
 
 ==>
 
@@ -516,7 +516,7 @@ Expressions(
 
 # FilterExpression (special)
 
-[ { +: 1 } ][ + > 2]
+[ { a+: 1 } ][ a+ > 2]
 
 ==>
 
@@ -524,11 +524,11 @@ Expressions(
   FilterExpression(
     List("[",
       Context("{",
-        ContextEntry(Key(Name(Identifier)),NumericLiteral),
+        ContextEntry(Key(Name(...)),NumericLiteral),
       "}"),
     "]"),
     "[",
-      Comparison(VariableName(Identifier),CompareOp,NumericLiteral),
+      Comparison(VariableName(...),CompareOp,NumericLiteral),
     "]"
   )
 )
@@ -536,7 +536,7 @@ Expressions(
 
 # FilterExpression (special, item)
 
-[{+: { --: 2 }}][item.+.-- > 2]
+[{a+: { b-: 2 }}][item.a+.b- > 2]
 
 ==>
 
@@ -627,6 +627,24 @@ Expressions(
 )
 
 
+# ForExpression (iteration range, dynamic) { "context": { "c": { "b+": 1 } } }
+
+for i in 1..c return i.b+
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(...),in,IterationContext(
+      NumericLiteral,VariableName(...)
+    ))
+  ),return,PathExpression(
+    VariableName(...),
+    VariableName(...)
+  ))
+)
+
+
 # ForExpression (partial)
 
 for i in [ 0, 1, 2 ] return partial[-1]
@@ -644,47 +662,29 @@ Expressions(
 )
 
 
-# ForExpression (iteration range) { "context": { "c": { "+": 1 } } }
-
-for i in 1..c return i.+
-
-==>
-
-Expressions(
-  ForExpression(for,InExpressions(
-    InExpression(Name(Identifier),in,IterationContext(
-      NumericLiteral,VariableName(Identifier)
-    ))
-  ),return,PathExpression(
-    VariableName(Identifier),
-    VariableName(Identifier)
-  ))
-)
-
-
 # ForExpression (special, partial)
 
-for i in [1] return if i = 1 then { +: 1 } else partial[-1].+
+for i in [1] return if i = 1 then { a+: 1 } else partial[-1].a+
 
 ==>
 
 Expressions(
   ForExpression(
     for,InExpressions(
-      InExpression(Name(Identifier),in,IterationContext(
+      InExpression(Name(...),in,IterationContext(
         List("[",NumericLiteral,"]")
       ))
     ),
     return,IfExpression(
       if,Comparison(
-        VariableName(Identifier),CompareOp,NumericLiteral
+        VariableName(...),CompareOp,NumericLiteral
       ),
       then, Context("{",
-        ContextEntry(Key(Name(Identifier)),NumericLiteral),
+        ContextEntry(Key(Name(...)),NumericLiteral),
       "}"),
       else,PathExpression(
-        FilterExpression(VariableName(Identifier),"[",NumericLiteral(ArithOp),"]"),
-        VariableName(Identifier)
+        FilterExpression(VariableName(...),"[",NumericLiteral(ArithOp),"]"),
+        VariableName(...)
       )
     )
   )
@@ -713,9 +713,9 @@ Expressions(
 # ForExpression (special)
 
 for
-  + in [ { -: 1 }]
+  a+ in [ { b-: 1 }]
 return
-  +.-
+  a+.b-
 
 ==>
 
@@ -742,7 +742,7 @@ Expressions(
 
 # IfExpression (special)
 
-(if foo then { +: 1 } else { -: 1 }).+
+(if foo then { a+: 1 } else { b-: 1 }).a+
 
 ==>
 
@@ -750,16 +750,16 @@ Expressions(
   PathExpression(
     ParenthesizedExpression("(",
       IfExpression(
-        if,VariableName(Identifier),
+        if,VariableName(...),
         then,Context("{",
-          ContextEntry(Key(Name(Identifier)),NumericLiteral),
+          ContextEntry(Key(Name(...)),NumericLiteral),
         "}"),
         else,Context("{",
-          ContextEntry(Key(Name(Identifier)),NumericLiteral),
+          ContextEntry(Key(Name(...)),NumericLiteral),
         "}")
       ),
     ")"),
-    VariableName(Identifier)
+    VariableName(...)
   )
 )
 
@@ -786,7 +786,7 @@ Expressions(
 
 # FunctionDefinition (special)
 
-function(+a) +a - 1
+function(a+b) a+b - 1
 
 ==>
 
@@ -807,8 +807,8 @@ Expressions(
 # FunctionDefinition (special, return type)
 
 {
-  a: function() { +: { -: 1 } },
-  b: a().+.-
+  a: function() { a+: { b-: 1 } },
+  b: a().a+.b-
 }
 
 ==>
@@ -897,6 +897,25 @@ with spaces()
 Expressions(
   FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")"),
   FunctionInvocation(VariableName(...),"(",PositionalParameters(), ")")
+)
+
+
+# FunctionInvocation (literal args)
+
+abs( -10 )
+append("foo", "bar")
+contains(["foo"], "bar")
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(...),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(
+    StringLiteral, StringLiteral
+  ),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(
+    List("[",StringLiteral,"]"),StringLiteral
+  ),")")
 )
 
 
@@ -1345,7 +1364,7 @@ Expressions(
 )
 
 
-# Name (special, context key)
+# Context (special key)
 
 {
   Mike's: 23,

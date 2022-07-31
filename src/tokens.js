@@ -39,7 +39,8 @@ import {
   arithmeticTimesStart,
   arithmeticExpStart,
   arithmeticUnaryStart,
-  nil
+  nil,
+  AdditionalIdentifier
 } from './parser.terms.js';
 
 import {
@@ -215,7 +216,7 @@ function parseName(input, variables) {
 
     let match = (
       parseIdentifier(input, i) ||
-      parseAdditionalSymbol(input, i) ||
+      (start.length + tokens.length) && parseAdditionalSymbol(input, i) ||
       tokens.length && parseSpaces(input, i)
     );
 
@@ -804,6 +805,7 @@ export function trackVariables(context = {}) {
       if (
         term === Identifier ||
         term === NameIdentifier ||
+        term === AdditionalIdentifier ||
         term === PropertyIdentifier
       ) {
         return variables.token(code);

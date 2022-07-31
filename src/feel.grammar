@@ -327,20 +327,24 @@ VariableName {
   Identifier (!name Identifier)*
 }
 
+AdditionalIdentifier[@name=Identifier] {
+  additionalNameSymbol
+}
+
 NameIdentifier[@name=Identifier] {
-  identifier ~ident | nameIdentifier ~ident | additionalNameSymbol
+  identifier ~ident | nameIdentifier ~ident
 }
 
 Name {
-  NameIdentifier (!name NameIdentifier)*
+  NameIdentifier (!name (NameIdentifier | AdditionalIdentifier))*
 }
 
 PropertyIdentifier[@name=Identifier] {
-  propertyIdentifier | additionalNameSymbol
+  propertyIdentifier
 }
 
 PropertyName[@name=Name] {
-  PropertyIdentifier (!name PropertyIdentifier)*
+  PropertyIdentifier (!name (PropertyIdentifier | AdditionalIdentifier))*
 }
 
 Interval {
