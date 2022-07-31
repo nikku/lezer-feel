@@ -1442,3 +1442,37 @@ Expressions(
     )),
   "}")
 )
+
+
+# Context / FunctionDefinition / FunctionInvocation
+
+({
+  foo: function(a + b) a +b + 5,
+  b++: foo(5)
+}).b++
+
+==>
+
+Expressions(
+  PathExpression(
+    ParenthesizedExpression("(",
+      Context("{",
+        ContextEntry(
+          Key(Name(Identifier)),
+          FunctionDefinition(function,"(",FormalParameters(
+            FormalParameter(ParameterName(Name(...)))
+          ),")",FunctionBody(
+            ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)
+          ))
+        ),
+        ContextEntry(
+          Key(Name(...)),FunctionInvocation(
+            VariableName(Identifier),
+            "(",PositionalParameters(NumericLiteral),")"
+          )
+        ),
+      "}"),
+    ")"),
+    VariableName(...)
+  )
+)
