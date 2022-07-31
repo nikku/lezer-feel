@@ -627,7 +627,7 @@ export function normalizeContext(context) {
     return context;
   }
 
-  if (typeof context !== 'object' || Array.isArray(context)) {
+  if (Object.getPrototypeOf(context) !== Object.prototype) {
     return context;
   }
 

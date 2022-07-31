@@ -137,6 +137,23 @@ describe('lezer-feel', () => {
       expect(normalizedContext).to.eql(context);
     });
 
+
+    it('should handle instances', () => {
+
+      // given
+      class Foo { }
+
+      const context = {
+        foo: new Foo()
+      };
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(context);
+    });
+
   });
 
 });
