@@ -70,6 +70,21 @@ describe('lezer-feel', () => {
       expect(normalizedContext).to.eql(null);
     });
 
+
+    it('should normalize array', () => {
+
+      // given
+      const context = {
+        foo: [ { a: [ 1, 2, 3 ] } ]
+      };
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(context);
+    });
+
   });
 
 });
