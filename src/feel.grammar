@@ -299,8 +299,12 @@ endpoint {
   simpleLiteral ~literal
 }
 
+nil[@export] {
+  kw<"null">
+}
+
 literal[@isGroup=Literal, @export] {
-  kw<"null"> |
+  nil |
   simpleLiteral ~literal
 }
 

@@ -38,7 +38,8 @@ import {
   arithmeticPlusStart,
   arithmeticTimesStart,
   arithmeticExpStart,
-  arithmeticUnaryStart
+  arithmeticUnaryStart,
+  nil
 } from './parser.terms.js';
 
 import {
@@ -820,6 +821,10 @@ export function trackVariables(context = {}) {
 
       if (term === NumericLiteral) {
         return variables.literal(parseFloat(code));
+      }
+
+      if (term === nil) {
+        return variables.literal(null);
       }
 
       if (

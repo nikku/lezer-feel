@@ -158,6 +158,34 @@ Expressions(
 )
 
 
+# null
+
+null[1]
+null.foo
+{ a: null }.a.b
+null and true
+1 - null
+
+==>
+
+Expressions(
+  FilterExpression(null,"[",NumericLiteral,"]"),
+  PathExpression(null,VariableName(...)),
+  PathExpression(
+    PathExpression(
+      Context("{",
+        ContextEntry(Key(Name(...)),null),
+      "}"),
+      VariableName(...)
+    ),
+    VariableName(...)
+  ),
+  Conjunction(null,and,BooleanLiteral),
+  ArithmeticExpression(NumericLiteral,ArithOp,null)
+)
+
+
+
 # Context (simple)
 
 {
