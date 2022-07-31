@@ -85,6 +85,25 @@ describe('lezer-feel', () => {
       expect(normalizedContext).to.eql(context);
     });
 
+
+    it('should normalize literals', () => {
+
+      // given
+      const context = {
+        foo: true,
+        bar: 1,
+        other: 1.10,
+        str: 'foo boo',
+        woop: null
+      };
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(context);
+    });
+
   });
 
 });
