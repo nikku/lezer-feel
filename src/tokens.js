@@ -20,7 +20,6 @@ import {
   PositiveUnaryTest,
   nameIdentifier,
   additionalNameSymbol,
-  NameIdentifier,
   propertyIdentifier,
   PropertyIdentifier,
   PropertyName,
@@ -804,7 +803,6 @@ export function trackVariables(context = {}) {
 
       if (
         term === Identifier ||
-        term === NameIdentifier ||
         term === AdditionalIdentifier ||
         term === PropertyIdentifier
       ) {

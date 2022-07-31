@@ -320,23 +320,19 @@ QualifiedName {
 }
 
 Identifier {
-  identifier ~ident | nameIdentifier ~ident
+  identifier | nameIdentifier
 }
 
 VariableName {
-  Identifier (!name Identifier)*
+  Identifier ~ident (!name Identifier ~ident)*
 }
 
 AdditionalIdentifier[@name=Identifier] {
   additionalNameSymbol
 }
 
-NameIdentifier[@name=Identifier] {
-  identifier ~ident | nameIdentifier ~ident
-}
-
 Name {
-  NameIdentifier (!name (NameIdentifier | AdditionalIdentifier))*
+  Identifier ~ident (!name (Identifier ~ident | AdditionalIdentifier))*
 }
 
 PropertyIdentifier[@name=Identifier] {
