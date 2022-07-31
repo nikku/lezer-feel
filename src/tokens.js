@@ -623,6 +623,10 @@ export function normalizeContextKey(name) {
  */
 export function normalizeContext(context) {
 
+  if (typeof context === 'undefined' || context === null) {
+    return context;
+  }
+
   if (typeof context !== 'object') {
     return context;
   }

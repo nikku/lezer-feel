@@ -35,18 +35,41 @@ describe('lezer-feel', () => {
   });
 
 
-  it('should normalize context', () => {
+  describe('normalizeContext', () => {
 
-    // given
-    const context = {
-      '+++': 1
-    };
+    it('should normalize spaces', () => {
 
-    // when
-    const normalizedContext = normalizeContext(context);
+      // given
+      const context = {
+        'A+B  C': {
+          'e -- f': 1
+        }
+      };
 
-    // then
-    expect(normalizedContext).to.have.property('+ + +', 1);
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql({
+        'A + B C': {
+          'e - - f': 1
+        }
+      });
+    });
+
+
+    it('should normalize null', () => {
+
+      // given
+      const context = null;
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(null);
+    });
+
   });
 
 });
