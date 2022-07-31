@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.8.6
+
+* `FIX`: don't normalize instances
+
 ## 0.8.5
 
 * `FIX`: correctly normalize arrays
