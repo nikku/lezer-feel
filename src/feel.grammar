@@ -271,7 +271,7 @@ FunctionInvocation[@dynamicPrecedence=-1] {
 }
 
 functionInvocationParameters[@export] {
-  "(" (PositionalParameters | NamedParameters) ")"
+  "(" (NamedParameters | PositionalParameters) ")"
 }
 
 NamedParameters[@dynamicPrecedence=-1] {
