@@ -384,12 +384,13 @@ Expressions(
 )
 
 
-# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1 } }
+# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1, "true": 1 } }
 
 Foo +  Bar
 Foo + Bar
 Foo+Bar
 if foo then
+true
 
 ==>
 
@@ -397,7 +398,8 @@ Expressions(
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
-  VariableName(Identifier,Identifier,Identifier)
+  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier)
 )
 
 
