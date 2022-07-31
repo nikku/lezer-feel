@@ -82,29 +82,7 @@ function isStartChar(ch) {
   ) || (
     ch >= 97 && ch <= 122 // a-z
   ) || (
-    ch >= 0xC0 && ch <= 0xD6
-  ) || (
-    ch >= 0xD8 && ch <= 0xF6
-  ) || (
-    ch >= 0xF8 && ch <= 0x2FF
-  ) || (
-    ch >= 0x370 && ch <= 0x37D
-  ) || (
-    ch >= 0x37F && ch <= 0x1FFF
-  ) || (
-    ch >= 0x200C && ch <= 0x200D
-  ) || (
-    ch >= 0x2070 && ch <= 0x218F
-  ) || (
-    ch >= 0x2C00 && ch <= 0x2FEF
-  ) || (
-    ch >= 0x3001 && ch <= 0xD7FF
-  ) || (
-    ch >= 0xF900 && ch <= 0xFDCF
-  ) || (
-    ch >= 0xFDF0 && ch <= 0xFFFD
-  ) || (
-    ch >= 0x10000 && ch <= 0xEFFFF
+    ch >= 161 && !isPartChar(ch) && !isSpace(ch)
   );
 }
 
@@ -175,7 +153,7 @@ function parseAdditionalSymbol(input, offset = 0) {
  * @return { { token: string, offset: number } | null }
  */
 function parseIdentifier(input, offset = 0, namePart = false) {
-  for (let inside = false, token = '', i = 0;; i++) {
+  for (let inside = false, chars = [], i = 0;; i++) {
     const next = input.peek(offset + i);
 
     if (isStartChar(next) || ((inside || namePart) && isPartChar(next))) {
@@ -183,12 +161,12 @@ function parseIdentifier(input, offset = 0, namePart = false) {
         inside = true;
       }
 
-      token += String.fromCharCode(next);
+      chars.push(next);
     } else {
 
-      if (inside) {
+      if (chars.length) {
         return {
-          token,
+          token: String.fromCharCode(...chars),
           offset: i
         };
       }

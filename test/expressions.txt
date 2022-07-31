@@ -215,7 +215,7 @@ Expressions(
 Expressions(
   Context("{","}"),
   Context("{",ContextEntry(Key(Name(...)),VariableName(...)),ContextEntry(Key(Name(...)),VariableName(...)),"}"),
-  Context("{",ContextEntry(Key(Name(...)),StringLiteral),"}"),
+  Context("{",ContextEntry(Key(Name(Identifier)),StringLiteral),"}"),
   Context("{",
     ContextEntry(Key(Name(...)),Context("{",
       ContextEntry(Key(Name(...)),StringLiteral),
@@ -368,6 +368,17 @@ Expressions(
   VariableName(...),
   VariableName(...),
   VariableName(...)
+)
+
+
+# VariableName (unicode)
+
+🐎
+
+==>
+
+Expressions(
+  VariableName(Identifier)
 )
 
 
