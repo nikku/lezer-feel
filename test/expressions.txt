@@ -534,6 +534,33 @@ Expressions(
 )
 
 
+# FilterExpression (special, item)
+
+[{+: { --: 2 }}][item.+.-- > 2]
+
+==>
+
+Expressions(
+  FilterExpression(
+    List("[",Context("{",
+      ContextEntry(Key(Name(...)),Context("{",
+        ContextEntry(Key(Name(...)),NumericLiteral),
+      "}")),
+    "}"),"]"),
+    "[",
+      Comparison(
+        PathExpression(
+          PathExpression(
+            VariableName(...),VariableName(...)
+          ),
+          VariableName(...)
+        ),CompareOp,NumericLiteral
+      ),
+    "]"
+  )
+)
+
+
 # PathExpression
 
 a.B
