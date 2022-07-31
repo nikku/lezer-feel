@@ -360,10 +360,12 @@ Expressions(
 
 a
 aas
+ﷰͿ
 
 ==>
 
 Expressions(
+  VariableName(...),
   VariableName(...),
   VariableName(...)
 )

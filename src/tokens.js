@@ -72,17 +72,39 @@ function chars(str) {
  * @param { number } ch
  * @return { boolean }
  */
-function isAlpha(ch) {
+function isStartChar(ch) {
   return (
     ch === 63 // ?
   ) || (
     ch === 95 // _
   ) || (
-    ch >= 65 && ch <= 90
+    ch >= 65 && ch <= 90 // A-Z
   ) || (
-    ch >= 97 && ch <= 122
+    ch >= 97 && ch <= 122 // a-z
   ) || (
-    ch >= 161
+    ch >= 0xC0 && ch <= 0xD6
+  ) || (
+    ch >= 0xD8 && ch <= 0xF6
+  ) || (
+    ch >= 0xF8 && ch <= 0x2FF
+  ) || (
+    ch >= 0x370 && ch <= 0x37D
+  ) || (
+    ch >= 0x37F && ch <= 0x1FFF
+  ) || (
+    ch >= 0x200C && ch <= 0x200D
+  ) || (
+    ch >= 0x2070 && ch <= 0x218F
+  ) || (
+    ch >= 0x2C00 && ch <= 0x2FEF
+  ) || (
+    ch >= 0x3001 && ch <= 0xD7FF
+  ) || (
+    ch >= 0xF900 && ch <= 0xFDCF
+  ) || (
+    ch >= 0xFDF0 && ch <= 0xFFFD
+  ) || (
+    ch >= 0x10000 && ch <= 0xEFFFF
   );
 }
 
@@ -98,10 +120,15 @@ function isAdditional(ch) {
  * @param { number } ch
  * @return { boolean }
  */
-function isDigit(ch) {
+function isPartChar(ch) {
   return (
-    ch >= 48 &&
-    ch <= 57
+    ch >= 48 && ch <= 57 // 0-9
+  ) || (
+    ch === 0xB7
+  ) || (
+    ch >= 0x0300 && ch <= 0x036F
+  ) || (
+    ch >= 0x203F && ch <= 0x2040
   );
 }
 
@@ -150,7 +177,7 @@ function parseIdentifier(input, offset = 0) {
   for (let inside = false, token = '', i = 0;; i++) {
     const next = input.peek(offset + i);
 
-    if (isAlpha(next) || (inside && isDigit(next))) {
+    if (isStartChar(next) || (inside && isPartChar(next))) {
       if (!inside) {
         inside = true;
       }
