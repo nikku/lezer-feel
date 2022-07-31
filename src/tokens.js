@@ -169,15 +169,16 @@ function parseAdditionalSymbol(input, offset = 0) {
 
 /**
  * @param { import('@lezer/lr').InputStream } input
- * @param  { number } [offset]
+ * @param { number } [offset]
+ * @param { boolean } [namePart]
  *
  * @return { { token: string, offset: number } | null }
  */
-function parseIdentifier(input, offset = 0) {
+function parseIdentifier(input, offset = 0, namePart = false) {
   for (let inside = false, token = '', i = 0;; i++) {
     const next = input.peek(offset + i);
 
-    if (isStartChar(next) || (inside && isPartChar(next))) {
+    if (isStartChar(next) || ((inside || namePart) && isPartChar(next))) {
       if (!inside) {
         inside = true;
       }
@@ -240,10 +241,13 @@ function parseName(input, variables) {
 
   for (let i = 0, tokens = [], nextMatch = null;;) {
 
-    let match = (
-      parseIdentifier(input, i) ||
-      (start.length + tokens.length) && parseAdditionalSymbol(input, i) ||
-      tokens.length && parseSpaces(input, i)
+    const namePart = (start.length + tokens.length) > 0;
+    const maybeSpace = tokens.length > 0;
+
+    const match = (
+      parseIdentifier(input, i, namePart) ||
+      namePart && parseAdditionalSymbol(input, i) ||
+      maybeSpace && parseSpaces(input, i)
     );
 
     // match is required
@@ -317,7 +321,9 @@ export const propertyIdentifiers = new ExternalTokenizer((input, stack) => {
 
   LOG_PARSE && console.log('%s: T <propertyIdentifier>', input.pos);
 
-  const match = parseIdentifier(input);
+  const start = stack.context.tokens;
+
+  const match = parseIdentifier(input, 0, start.length > 0);
 
   if (match) {
     input.advance(match.offset);

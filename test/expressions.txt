@@ -384,13 +384,14 @@ Expressions(
 )
 
 
-# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1, "true": 1 } }
+# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1, "true": 1, "f + 10": 1 } }
 
 Foo +  Bar
 Foo + Bar
 Foo+Bar
 if foo then
 true
+f + 10
 
 ==>
 
@@ -399,7 +400,8 @@ Expressions(
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
-  VariableName(Identifier)
+  VariableName(Identifier),
+  VariableName(Identifier,Identifier,Identifier)
 )
 
 
@@ -1373,7 +1375,9 @@ Expressions(
 {
   Mike's: 23,
   A+B    : 100,
-  if   foo: true
+  if   foo: true,
+  f + 10: 1,
+  true: false
 }
 
 ==>
@@ -1383,6 +1387,8 @@ Expressions(
     ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier)),BooleanLiteral),
   "}")
 )
 
