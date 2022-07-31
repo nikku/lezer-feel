@@ -37,7 +37,7 @@ describe('lezer-feel', () => {
 
   describe('normalizeContext', () => {
 
-    it('should normalize spaces', () => {
+    it('should handle objects', () => {
 
       // given
       const context = {
@@ -58,7 +58,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('should normalize null', () => {
+    it('should handle null', () => {
 
       // given
       const context = null;
@@ -71,7 +71,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('should normalize array', () => {
+    it('should handle arrays', () => {
 
       // given
       const context = {
@@ -86,7 +86,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('should normalize literals', () => {
+    it('should handle literals', () => {
 
       // given
       const context = {
@@ -95,6 +95,39 @@ describe('lezer-feel', () => {
         other: 1.10,
         str: 'foo boo',
         woop: null
+      };
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(context);
+    });
+
+
+    it('should handle functions', () => {
+
+      // given
+      const context = {
+        foo: function() { },
+        bar: () => { }
+      };
+
+      // when
+      const normalizedContext = normalizeContext(context);
+
+      // then
+      expect(normalizedContext).to.eql(context);
+    });
+
+
+    it('should handle classes', () => {
+
+      // given
+      class Foo { }
+
+      const context = {
+        Foo
       };
 
       // when
