@@ -244,6 +244,23 @@ Expressions(
 )
 
 
+# Context (name parts)
+
+{
+  a + b: 1,
+  a + 00: 1
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(...)),NumericLiteral),
+    ContextEntry(Key(Name(...)),NumericLiteral),
+  "}")
+)
+
+
 # Context (special name, nested)
 
 {
