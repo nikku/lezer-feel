@@ -261,29 +261,6 @@ Expressions(
 )
 
 
-# Context (special name, nested)
-
-{
-  a vc: {
-    foo++: 5
-  },
-  b: a vc.foo++
-}
-
-==>
-
-Expressions(
-  Context("{",
-    ContextEntry(Key(Name(...)),Context("{",
-      ContextEntry(Key(Name(...)),NumericLiteral),
-    "}")),
-    ContextEntry(Key(Name(...)),PathExpression(
-      VariableName(...),
-      VariableName(...)
-    )),
-  "}")
-)
-
 
 # Context (error)
 
@@ -293,6 +270,122 @@ Expressions(
 
 Expressions(
   Context(⚠)
+)
+
+
+# Context (special key)
+
+{
+  Mike's: 23,
+  A+B    : 100,
+  if   foo: true,
+  f + 10: 1,
+  true: false
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier)),BooleanLiteral),
+  "}")
+)
+
+
+# Context (special key, binding)
+
+{
+  A+B    : 100,
+  c: A + B - 1
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
+      VariableName(Identifier, Identifier, Identifier),
+      ArithOp,
+      NumericLiteral
+    )),
+  "}")
+)
+
+
+# Context (literal key)
+
+{
+  "A -  c": 100,
+  c: A-c
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(StringLiteral),NumericLiteral),
+    ContextEntry(Key(Name(...)),VariableName(...)),
+  "}")
+)
+
+
+# Context / ArithmeticExpression
+
+{
+  a+b: 10 + 10,
+  c: a+b - 10
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),ArithmeticExpression(
+      NumericLiteral,ArithOp,NumericLiteral
+    )),
+    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
+      VariableName(Identifier,Identifier,Identifier),ArithOp,NumericLiteral
+    )),
+  "}")
+)
+
+
+# Context / FunctionDefinition / FunctionInvocation
+
+({
+  foo: function(a + b) a +b + 5,
+  b++: foo(5)
+}).b++
+
+==>
+
+Expressions(
+  PathExpression(
+    ParenthesizedExpression("(",
+      Context("{",
+        ContextEntry(
+          Key(Name(Identifier)),
+          FunctionDefinition(function,"(",FormalParameters(
+            FormalParameter(ParameterName(Name(...)))
+          ),")",FunctionBody(
+            ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)
+          ))
+        ),
+        ContextEntry(
+          Key(Name(...)),FunctionInvocation(
+            VariableName(Identifier),
+            "(",PositionalParameters(NumericLiteral),")"
+          )
+        ),
+      "}"),
+    ")"),
+    VariableName(...)
+  )
 )
 
 
@@ -1073,6 +1166,30 @@ Expressions(
 )
 
 
+# Context (variable scopes, nested)
+
+{
+  a vc: {
+    foo++: 5
+  },
+  b: a vc.foo++
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(Name(...)),Context("{",
+      ContextEntry(Key(Name(...)),NumericLiteral),
+    "}")),
+    ContextEntry(Key(Name(...)),PathExpression(
+      VariableName(...),
+      VariableName(...)
+    )),
+  "}")
+)
+
+
 # FunctionDefinition (variable scopes)
 
 function(a) a + 1
@@ -1410,121 +1527,5 @@ Expressions(
       Name(Identifier),in,IterationContext(...))
     ),return,
     VariableName(Identifier,Identifier,Identifier,Identifier)
-  )
-)
-
-
-# Context (special key)
-
-{
-  Mike's: 23,
-  A+B    : 100,
-  if   foo: true,
-  f + 10: 1,
-  true: false
-}
-
-==>
-
-Expressions(
-  Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier)),BooleanLiteral),
-  "}")
-)
-
-
-# Context (special, binding)
-
-{
-  A+B    : 100,
-  c: A + B - 1
-}
-
-==>
-
-Expressions(
-  Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
-      VariableName(Identifier, Identifier, Identifier),
-      ArithOp,
-      NumericLiteral
-    )),
-  "}")
-)
-
-
-# Context (literal)
-
-{
-  "A -  c": 100,
-  c: A-c
-}
-
-==>
-
-Expressions(
-  Context("{",
-    ContextEntry(Key(StringLiteral),NumericLiteral),
-    ContextEntry(Key(Name(...)),VariableName(...)),
-  "}")
-)
-
-
-# Context (special, artithmetic)
-
-{
-  a+b: 10 + 10,
-  c: a+b - 10
-}
-
-==>
-
-Expressions(
-  Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),ArithmeticExpression(
-      NumericLiteral,ArithOp,NumericLiteral
-    )),
-    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
-      VariableName(Identifier,Identifier,Identifier),ArithOp,NumericLiteral
-    )),
-  "}")
-)
-
-
-# Context / FunctionDefinition / FunctionInvocation
-
-({
-  foo: function(a + b) a +b + 5,
-  b++: foo(5)
-}).b++
-
-==>
-
-Expressions(
-  PathExpression(
-    ParenthesizedExpression("(",
-      Context("{",
-        ContextEntry(
-          Key(Name(Identifier)),
-          FunctionDefinition(function,"(",FormalParameters(
-            FormalParameter(ParameterName(Name(...)))
-          ),")",FunctionBody(
-            ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)
-          ))
-        ),
-        ContextEntry(
-          Key(Name(...)),FunctionInvocation(
-            VariableName(Identifier),
-            "(",PositionalParameters(NumericLiteral),")"
-          )
-        ),
-      "}"),
-    ")"),
-    VariableName(...)
   )
 )
