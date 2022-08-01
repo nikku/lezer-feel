@@ -1062,7 +1062,7 @@ Expressions(
 )
 
 
-# Date Time Literals
+# DateTimeLiteral / DateTimeConstructor
 
 date and time(date("2017-01-01"),time("23:59:01"))
 date and  time("2018-12-08T10:30:01")
@@ -1084,7 +1084,31 @@ Expressions(
 )
 
 
-# Date Time Literals / Comparison
+# DateTimeLiteral / AtLiteral
+
+@"2019-03-31"
+@"PT01H"
+
+==>
+
+Expressions(
+  DateTimeLiteral(AtLiteral(StringLiteral)),
+  DateTimeLiteral(AtLiteral(StringLiteral))
+)
+
+
+# DateTimeLiteral / AtLiteral (error)
+
+@ "2019-03-31"
+
+==>
+
+Expressions(
+  DateTimeLiteral(AtLiteral(⚠)), StringLiteral
+)
+
+
+# DateTimeLiteral / Comparison
 
 time("10:30:05") in [time("10:30:02")..time("10:30:04")]
 duration("P11Y") in [[duration("P5Y") .. duration("P7Y")], [duration("P10Y") .. duration("P12Y")]]
@@ -1101,7 +1125,7 @@ Expressions(
 )
 
 
-# Date Time Literals / Conjunction
+# DateTimeLiteral / Conjunction
 
 a > 5 and years and months duration()
 years and months duration() and a > 5
@@ -1437,7 +1461,7 @@ Expressions(
 )
 
 
-# Instance Of / Date Time Literals
+# Instance Of / DateTimeLiteral
 
 a instance of years and months duration
 a instance of days and time duration

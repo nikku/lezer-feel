@@ -380,11 +380,18 @@ SpecialFunctionName {
 }
 
 DateTimeLiteral {
-  DateTimeConstructor functionInvocationParameters
+  DateTimeConstructor functionInvocationParameters |
+  AtLiteral
 }
 
 NumericLiteral {
   (!unary minus ~maybeNum)? number
+}
+
+@skip {} {
+  AtLiteral {
+    "@" StringLiteral
+  }
 }
 
 StringLiteral {

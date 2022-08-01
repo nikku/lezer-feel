@@ -19,7 +19,7 @@ UnaryTests(PositiveUnaryTests(
 ))
 
 
-# Date Time Literals { "top": "UnaryTests" }
+# DateTimeLiteral { "top": "UnaryTests" }
 
 date and  time("2018-12-08T10:30:01"),
 date and time(date("2017-01-01"),time("23:59:01")),
@@ -37,6 +37,19 @@ UnaryTests(PositiveUnaryTests(
   ),")")),
   PositiveUnaryTest(DateTimeLiteral(...)),
   PositiveUnaryTest(DateTimeLiteral(...)),
+  PositiveUnaryTest(DateTimeLiteral(...))
+))
+
+
+# DateTimeLiteral / AtLiteral { "top": "UnaryTests" }
+
+@"2018-12-08T10:30:01",
+@"23:59:01"
+
+==>
+
+UnaryTests(PositiveUnaryTests(
+  PositiveUnaryTest(DateTimeLiteral(AtLiteral(StringLiteral))),
   PositiveUnaryTest(DateTimeLiteral(...))
 ))
 
