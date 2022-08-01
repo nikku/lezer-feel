@@ -284,7 +284,9 @@ export const identifiers = new ExternalTokenizer((input, stack) => {
 
   const nameMatch = parseName(input, stack.context);
 
-  const match = nameMatch || parseIdentifier(input);
+  const start = stack.context.tokens;
+
+  const match = nameMatch || parseIdentifier(input, 0, start.length > 0);
 
   if (match) {
     input.advance(match.offset);

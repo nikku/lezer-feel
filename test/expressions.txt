@@ -803,7 +803,9 @@ Expressions(
 
 # FunctionDefinition (special)
 
-function(a+b) a+b - 1
+function(a+b) a+b
+function(a+1) a+1
+function(a ++) a + +
 
 ==>
 
@@ -813,9 +815,23 @@ Expressions(
       FormalParameter(ParameterName(Name(...)))
     ),")",
     FunctionBody(
-      ArithmeticExpression(
-        VariableName(...),ArithOp,NumericLiteral
-      )
+      VariableName(...)
+    )
+  ),
+  FunctionDefinition(function,"(",
+    FormalParameters(
+      FormalParameter(ParameterName(Name(...)))
+    ),")",
+    FunctionBody(
+      VariableName(...)
+    )
+  ),
+  FunctionDefinition(function,"(",
+    FormalParameters(
+      FormalParameter(ParameterName(Name(...)))
+    ),")",
+    FunctionBody(
+      VariableName(...)
     )
   )
 )
