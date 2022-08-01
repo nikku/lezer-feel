@@ -2,10 +2,8 @@
 
 [![CI](https://github.com/nikku/lezer-feel/actions/workflows/CI.yml/badge.svg)](https://github.com/nikku/lezer-feel/actions/workflows/CI.yml)
 
-This is a [DMN 1.3](https://www.omg.org/spec/DMN/1.3/) FEEL grammar for the
+This is a [DMN](https://www.omg.org/spec/DMN/) FEEL grammar for the
 [Lezer](https://lezer.codemirror.net/) parser system.
-
-Supports context sensitive language parsing.
 
 
 ## Usage
@@ -19,14 +17,30 @@ import {
 
 // parse <Expressions>
 parser.parse('foo > 1');
-
-// parse <UnaryTests>
-parser.configure({
-  top: 'UnaryTests'
-}).parse('> 100');
 ```
 
-To enable context sensitive parsing based on inputs, configure the parser accordingly:
+
+#### Choose Dialect
+
+Use `Expressions` or `UnaryTests` as a [top node](https://lezer.codemirror.net/docs/ref/#lr.LRParser.topNode) depending on which FEEL dialect you intend to parse:
+
+```javascript
+import {
+  parser
+} from 'lezer-feel';
+
+const unaryParser = parser.configure({
+  top: 'UnaryTests'
+})
+
+// parse <UnaryTests>
+unaryParser.parse('> 100');
+```
+
+
+#### Provide Context
+
+Override the default [context tracker](https://lezer.codemirror.net/docs/ref/#lr.ParserConfig.contextTracker) to enable context sensitive parsing based on inputs:
 
 ```javascript
 import {
