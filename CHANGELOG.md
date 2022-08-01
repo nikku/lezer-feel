@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.9.0
+
+* `FEAT`: support `AtLiteral` to define dates
+
 ## 0.8.9
 
 * `FIX`: correct `namePart` parsing in `Name`
