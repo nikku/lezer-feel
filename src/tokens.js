@@ -210,7 +210,7 @@ function parseSpaces(input, offset) {
  * @param { import('@lezer/lr').InputStream } input
  * @param { Variables } variables
  *
- * @return { { token: string, offset: number } | null }
+ * @return { { token: string, offset: number, term: number } | null }
  */
 function parseName(input, variables) {
   const contextKeys = variables.contextKeys();
@@ -253,11 +253,29 @@ function parseName(input, variables) {
 
       nextMatch = {
         token,
-        offset: token.length
+        offset: token.length,
+        term: nameIdentifier
       };
     }
 
-    if (!contextKeys.some(el => el.startsWith(name))) {
+    if (dateTimeIdentifiers.some(el => el === name)) {
+      const token = tokens[0];
+
+      // parse date time identifiers as normal
+      // identifiers to allow specialization to kick in
+      //
+      // cf. https://github.com/nikku/lezer-feel/issues/8
+      nextMatch = {
+        token,
+        offset: token.length,
+        term: identifier
+      };
+    }
+
+    if (
+      !contextKeys.some(el => el.startsWith(name)) &&
+      !dateTimeIdentifiers.some(el => el.startsWith(name))
+    ) {
       return nextMatch;
     }
   }
@@ -278,6 +296,11 @@ export const additionalNameSymbols = new ExternalTokenizer((input, stack) => {
   }
 });
 
+const termMap = {
+  [ identifier ]: 'identifier',
+  [ nameIdentifier ]: 'nameIdentifier'
+};
+
 export const identifiers = new ExternalTokenizer((input, stack) => {
 
   LOG_PARSE && console.log('%s: T <identifier | nameIdentifier>', input.pos);
@@ -290,9 +313,9 @@ export const identifiers = new ExternalTokenizer((input, stack) => {
 
   if (match) {
     input.advance(match.offset);
-    input.acceptToken(nameMatch ? nameIdentifier : identifier);
+    input.acceptToken(nameMatch ? nameMatch.term : identifier);
 
-    LOG_PARSE && console.log('--> match <%s> <%s>', nameMatch ? 'nameIdentifier' : 'identifier', match.token);
+    LOG_PARSE && console.log('--> match <%s> <%s>', nameMatch ? termMap[nameMatch.term] : 'identifier', match.token);
   }
 }, { contextual: true });
 
@@ -380,6 +403,14 @@ class ValueProducer {
 
 }
 
+const dateTimeLiterals = {
+  'date and time': 1,
+  'date': 1,
+  'time': 1,
+  'duration': 1
+};
+
+const dateTimeIdentifiers = Object.keys(dateTimeLiterals);
 
 class Variables {
 

@@ -1062,8 +1062,20 @@ Expressions(
 )
 
 
+# -DateTimeLiteral / DateTimeConstructor
+
+date and time()
+
+==>
+
+Expressions(
+  DateTimeLiteral(...)
+)
+
+
 # DateTimeLiteral / DateTimeConstructor
 
+date and time()
 date and time(date("2017-01-01"),time("23:59:01"))
 date and  time("2018-12-08T10:30:01")
 time("23:59:01")
@@ -1073,7 +1085,8 @@ duration("P2M")
 ==>
 
 Expressions(
-  DateTimeLiteral(DateTimeConstructor(date,and,time),"(",PositionalParameters(
+  DateTimeLiteral(...),
+  DateTimeLiteral(DateTimeConstructor(...),"(",PositionalParameters(
     DateTimeLiteral(...),
     DateTimeLiteral(...)
   ),")"),
@@ -1081,6 +1094,23 @@ Expressions(
   DateTimeLiteral(...),
   DateTimeLiteral(...),
   DateTimeLiteral(...)
+)
+
+
+# DateTimeLiteral / Properties
+
+@"2018-12-08T10:30:01".time offset.days
+
+==>
+
+Expressions(
+  PathExpression(
+    PathExpression(
+      DateTimeLiteral(...),
+      VariableName(...)
+    ),
+    VariableName(...)
+  )
 )
 
 
@@ -1355,6 +1385,28 @@ Expressions(
 
   FunctionInvocation(...),
   FunctionInvocation(...)
+)
+
+
+# Built-in Functions / DateAndTime
+
+date and time(
+  date:date and time("2017-01-01T00:00:00")
+)
+
+==>
+
+Expressions(
+  DateTimeLiteral(
+    DateTimeConstructor(...),"(",
+      NamedParameters(
+        NamedParameter(
+          ParameterName(Name(...)),
+          DateTimeLiteral(DateTimeConstructor(...),"(",PositionalParameters(StringLiteral),")")
+        )
+      ),
+    ")"
+  )
 )
 
 

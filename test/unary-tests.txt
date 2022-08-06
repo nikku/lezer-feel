@@ -31,7 +31,7 @@ duration("asddsa")
 
 UnaryTests(PositiveUnaryTests(
   PositiveUnaryTest(DateTimeLiteral(...)),
-  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(date,and,time),"(",PositionalParameters(
+  PositiveUnaryTest(DateTimeLiteral(DateTimeConstructor(...),"(",PositionalParameters(
     DateTimeLiteral(...),
     DateTimeLiteral(...)
   ),")")),
