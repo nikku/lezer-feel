@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.9.1
+
+* `FIX`: correctly parse nested `date and time` ([#8](https://github.com/nikku/lezer-feel/issues/8))
+
 ## 0.9.0
 
 * `FEAT`: support `AtLiteral` to define dates
