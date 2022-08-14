@@ -457,7 +457,7 @@ class Variables {
 
   token(part) {
 
-    // console.log('[%s] token <%s>', this.path, part);
+    LOG_VARS && console.log('[%s] token <%s> + <%s>', this.path, this.tokens.join(' '), part);
 
     return this.assign({
       tokens: [ ...this.tokens, part ]
