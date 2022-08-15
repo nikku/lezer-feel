@@ -3,7 +3,7 @@
 1
 true
 false
-"FOO";
+"FOO"
 -1220.12
 .12
 24 10
@@ -1061,18 +1061,6 @@ Expressions(
   ),")")
 )
 
-
-# -DateTimeLiteral / DateTimeConstructor
-
-date and time()
-
-==>
-
-Expressions(
-  DateTimeLiteral(...)
-)
-
-
 # DateTimeLiteral / DateTimeConstructor
 
 date and time()
@@ -1094,6 +1082,21 @@ Expressions(
   DateTimeLiteral(...),
   DateTimeLiteral(...),
   DateTimeLiteral(...)
+)
+
+
+# DateTimeLiteral / NamedParameters
+
+time(from: "12:45:00")
+
+==>
+
+Expressions(
+  DateTimeLiteral(
+    DateTimeConstructor(time),"(",NamedParameters(
+      NamedParameter(ParameterName(...),StringLiteral)
+    ),")"
+  )
 )
 
 
@@ -1135,6 +1138,21 @@ Expressions(
 
 Expressions(
   DateTimeLiteral(AtLiteral(⚠)), StringLiteral
+)
+
+
+# DateTimeLiteral / AtLiteral / Arithmetics
+
+date_input_001+@"P11M"
+
+==>
+
+Expressions(
+  ArithmeticExpression(
+    VariableName(Identifier),
+    ArithOp,
+    DateTimeLiteral(AtLiteral(StringLiteral))
+  )
 )
 
 
@@ -1410,6 +1428,19 @@ Expressions(
 )
 
 
+# Built-in Functions / month of year
+
+month of year(@"2022-09-15")
+day of week(@"2022-09-15")
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(DateTimeLiteral(...)),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(DateTimeLiteral(...)),")")
+)
+
+
 # Instance Of / List
 
 a instance of list< context< foo: function<foo> -> bar > >
@@ -1476,6 +1507,7 @@ Expressions(
   ))
 )
 
+
 # Instance Of / Context
 
 a instance of context<foo: string, bar: string>
@@ -1525,6 +1557,21 @@ Expressions(
   InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(years,and,months,duration))),
   InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(days,and,time,duration))),
   InstanceOfExpression(VariableName(...),instance,of,Type(SpecialType(date,and,time)))
+)
+
+
+# Instance Of / AtLiteral
+
+@"P10D" instance of days and time duration
+
+==>
+
+Expressions(
+  InstanceOfExpression(
+    DateTimeLiteral(AtLiteral(StringLiteral)),instance,of,Type(
+      SpecialType(days,and,time,duration)
+    )
+  )
 )
 
 
