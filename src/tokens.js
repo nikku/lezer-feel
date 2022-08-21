@@ -47,8 +47,9 @@ import {
   ExternalTokenizer
 } from '@lezer/lr';
 
-const LOG_PARSE = false;
-const LOG_VARS = false;
+const LOG_PARSE = typeof process != 'undefined' && process.env && /\bfparse(:dbg)?\b/.test(process.env.LOG);
+const LOG_PARSE_DEBUG = typeof process != 'undefined' && process.env && /\fparse:dbg\b/.test(process.env.LOG);
+const LOG_VARS = typeof process != 'undefined' && process.env && /\bcontext?\b/.test(process.env.LOG);
 
 const space = [
   9, 11, 12, 32, 133, 160,
@@ -284,7 +285,7 @@ function parseName(input, variables) {
 
 export const additionalNameSymbols = new ExternalTokenizer((input, stack) => {
 
-  LOG_PARSE && console.log('%s: T <additionalNameSymbol>', input.pos);
+  LOG_PARSE_DEBUG && console.log('%s: T <additionalNameSymbol>', input.pos);
 
   const match = parseAdditionalSymbol(input);
 
@@ -292,7 +293,7 @@ export const additionalNameSymbols = new ExternalTokenizer((input, stack) => {
     input.advance(match.offset);
     input.acceptToken(additionalNameSymbol);
 
-    LOG_PARSE && console.log('--> match <additionalNameSymbol> <%s>', match.token);
+    LOG_PARSE && console.log('%s: MATCH <additionalNameSymbol> <%s>', input.pos, match.token);
   }
 });
 
@@ -303,7 +304,7 @@ const termMap = {
 
 export const identifiers = new ExternalTokenizer((input, stack) => {
 
-  LOG_PARSE && console.log('%s: T <identifier | nameIdentifier>', input.pos);
+  LOG_PARSE_DEBUG && console.log('%s: T <identifier | nameIdentifier>', input.pos);
 
   const nameMatch = parseName(input, stack.context);
 
@@ -315,14 +316,14 @@ export const identifiers = new ExternalTokenizer((input, stack) => {
     input.advance(match.offset);
     input.acceptToken(nameMatch ? nameMatch.term : identifier);
 
-    LOG_PARSE && console.log('--> match <%s> <%s>', nameMatch ? termMap[nameMatch.term] : 'identifier', match.token);
+    LOG_PARSE && console.log('%s: MATCH <%s> <%s>', input.pos, nameMatch ? termMap[nameMatch.term] : 'identifier', match.token);
   }
 }, { contextual: true });
 
 
 export const propertyIdentifiers = new ExternalTokenizer((input, stack) => {
 
-  LOG_PARSE && console.log('%s: T <propertyIdentifier>', input.pos);
+  LOG_PARSE_DEBUG && console.log('%s: T <propertyIdentifier>', input.pos);
 
   const start = stack.context.tokens;
 
@@ -332,7 +333,7 @@ export const propertyIdentifiers = new ExternalTokenizer((input, stack) => {
     input.advance(match.offset);
     input.acceptToken(propertyIdentifier);
 
-    LOG_PARSE && console.log('--> match <propertyIdentifier> <%s>', match.token);
+    LOG_PARSE && console.log('%s: MATCH <propertyIdentifier> <%s>', input.pos, match.token);
   }
 });
 
