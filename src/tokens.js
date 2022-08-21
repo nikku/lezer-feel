@@ -51,13 +51,13 @@ const LOG_PARSE = typeof process != 'undefined' && process.env && /\bfparse(:dbg
 const LOG_PARSE_DEBUG = typeof process != 'undefined' && process.env && /\fparse:dbg\b/.test(process.env.LOG);
 const LOG_VARS = typeof process != 'undefined' && process.env && /\bcontext?\b/.test(process.env.LOG);
 
-const space = [
+const spaceChars = [
   9, 11, 12, 32, 133, 160,
   5760, 8192, 8193, 8194, 8195, 8196, 8197, 8198,
   8199, 8200, 8201, 8202, 8232, 8233, 8239, 8287, 12288
 ];
 
-const newline = chars('\n\r');
+const newlineChars = chars('\n\r');
 
 const additionalNameChars = chars(".'");
 const additionalNameOperatorChars = chars('/-+*');
@@ -125,7 +125,7 @@ function isPartChar(ch) {
  * @return { boolean }
  */
 function isSpace(ch) {
-  return space.includes(ch);
+  return spaceChars.includes(ch);
 }
 
 // eslint-disable-next-line
@@ -307,7 +307,7 @@ export const additionalNameSymbols = new ExternalTokenizer((input, stack) => {
   }
 });
 
-const termMap = {
+const identifiersMap = {
   [ identifier ]: 'identifier',
   [ nameIdentifier ]: 'nameIdentifier'
 };
@@ -326,7 +326,7 @@ export const identifiers = new ExternalTokenizer((input, stack) => {
     input.advance(match.offset);
     input.acceptToken(nameMatch ? nameMatch.term : identifier);
 
-    LOG_PARSE && console.log('%s: MATCH <%s> <%s>', input.pos, nameMatch ? termMap[nameMatch.term] : 'identifier', match.token);
+    LOG_PARSE && console.log('%s: MATCH <%s> <%s>', input.pos, nameMatch ? identifiersMap[nameMatch.term] : 'identifier', match.token);
   }
 }, { contextual: true });
 
@@ -355,11 +355,11 @@ export const insertSemicolon = new ExternalTokenizer((input, stack) => {
   for (let i = 0;; i++) {
     const char = input.peek(i);
 
-    if (space.includes(char)) {
+    if (spaceChars.includes(char)) {
       continue;
     }
 
-    if (newline.includes(char)) {
+    if (newlineChars.includes(char)) {
       insert = true;
     }
 
