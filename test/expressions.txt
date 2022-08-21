@@ -1030,6 +1030,41 @@ Expressions(
 )
 
 
+# FunctionInvocation (arithmetics)
+
+a(x-y)
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(
+    ArithmeticExpression(
+      VariableName(...),
+      ArithOp,
+      VariableName(...)
+    )
+  ), ")")
+)
+
+
+# FunctionInvocation (arithmetics, named)
+
+a(x: x-y)
+
+==>
+
+Expressions(
+  FunctionInvocation(
+    VariableName(...),"(",NamedParameters(
+      NamedParameter(
+        ParameterName(...),
+        ArithmeticExpression(VariableName(...),ArithOp,VariableName(...))
+      )
+    ),")"
+  )
+)
+
+
 # FunctionInvocation (multi-name)
 
 a b c d()

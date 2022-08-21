@@ -320,7 +320,7 @@ Identifier {
 }
 
 VariableName {
-  Identifier ~ident (!name Identifier ~ident)*
+  (!name Identifier ~ident)+
 }
 
 AdditionalIdentifier[@name=Identifier] {
