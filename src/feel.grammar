@@ -148,11 +148,11 @@ IterationContext {
 }
 
 arithmeticPlusStart[@export] {
-  (ArithOp<"+"> | minus)
+  minus | plus
 }
 
 arithmeticTimesStart[@export] {
-  (ArithOp<"*"> | divide)
+  multi | divide
 }
 
 arithmeticExpStart[@export] {
@@ -160,7 +160,7 @@ arithmeticExpStart[@export] {
 }
 
 arithmeticUnaryStart[@export] {
-  (ArithOp<"+"> | minus)
+  (plus | minus)
 }
 
 ArithmeticExpression {
@@ -324,7 +324,9 @@ VariableName {
 }
 
 AdditionalIdentifier[@name=Identifier] {
-  additionalNameSymbol
+  additionalNameSymbol |
+  minus | plus |
+  divide | multi
 }
 
 Name {
@@ -461,10 +463,6 @@ commaSep<Expr> {
     digit+
   }
 
-  divide[@name=ArithOp] { "/" }
-
-  minus[@name=ArithOp] { "-" }
-
   string {
     '"' (![\\\n"] | "\\" _)* '"'?
   }
@@ -483,6 +481,22 @@ commaSep<Expr> {
   ">" "<" ">=" "<="
 
   "(" ")" "[" "]" "{" "}"
+
+  minus[@name=ArithOp] {
+    "-"
+  }
+
+  plus[@name=ArithOp] {
+    "+"
+  }
+
+  divide[@name=ArithOp] {
+    "/"
+  }
+
+  multi[@name=ArithOp] {
+    "*"
+  }
 
   ArithOp<Expr> {
     Expr

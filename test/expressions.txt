@@ -288,9 +288,9 @@ Expressions(
 Expressions(
   Context("{",
     ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier)),BooleanLiteral),
   "}")
 )
@@ -307,7 +307,7 @@ Expressions(
 
 Expressions(
   Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
       VariableName(Identifier, Identifier, Identifier),
       ArithOp,
@@ -345,7 +345,7 @@ Expressions(
 
 Expressions(
   Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier,Identifier)),ArithmeticExpression(
+    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),ArithmeticExpression(
       NumericLiteral,ArithOp,NumericLiteral
     )),
     ContextEntry(Key(Name(Identifier)),ArithmeticExpression(

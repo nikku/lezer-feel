@@ -59,7 +59,8 @@ const space = [
 
 const newline = chars('\n\r');
 
-const additionalNameChars = chars("./-'+*");
+const additionalNameChars = chars(".'");
+const additionalNameOperatorChars = chars('/-+*');
 
 /**
  * @param { string } str
@@ -99,6 +100,14 @@ function isAdditional(ch) {
  * @param { number } ch
  * @return { boolean }
  */
+function isAdditionalNameOperator(ch) {
+  return additionalNameOperatorChars.includes(ch);
+}
+
+/**
+ * @param { number } ch
+ * @return { boolean }
+ */
 function isPartChar(ch) {
   return (
     ch >= 48 && ch <= 57 // 0-9
@@ -129,14 +138,15 @@ function indent(str, spaces) {
 /**
  * @param { import('@lezer/lr').InputStream } input
  * @param  { number } [offset]
+ * @param { boolean } [includeOperators]
  *
  * @return { { token: string, offset: number } | null }
  */
-function parseAdditionalSymbol(input, offset = 0) {
+function parseAdditionalSymbol(input, offset = 0, includeOperators = false) {
 
   const next = input.peek(offset);
 
-  if (isAdditional(next)) {
+  if (isAdditional(next) || includeOperators && isAdditionalNameOperator(next)) {
     return {
       offset: 1,
       token: String.fromCharCode(next)
@@ -225,7 +235,7 @@ function parseName(input, variables) {
 
     const match = (
       parseIdentifier(input, i, namePart) ||
-      namePart && parseAdditionalSymbol(input, i) ||
+      namePart && parseAdditionalSymbol(input, i, true) ||
       maybeSpace && parseSpaces(input, i)
     );
 
