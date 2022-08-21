@@ -67,6 +67,26 @@ UnaryTests(PositiveUnaryTests(
 ))
 
 
+# QualifiedName { "top": "UnaryTests" }
+
+[ a.b.c .. e f.g ]
+
+==>
+
+UnaryTests(
+  PositiveUnaryTests(
+    PositiveUnaryTest(
+      SimplePositiveUnaryTest(
+        Interval("[",
+          QualifiedName(...),
+          QualifiedName(...),
+        "]")
+      )
+    )
+  )
+)
+
+
 # Negation { "top": "UnaryTests" }
 
 not(a)
@@ -82,4 +102,4 @@ UnaryTests(not,"(",PositiveUnaryTests(...),")")
 
 ==>
 
-UnaryTests(Wildcard(ArithOp))
+UnaryTests(Wildcard(...))
