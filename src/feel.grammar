@@ -47,7 +47,7 @@ textualExpression {
   FilterExpression |
   FunctionInvocation |
   literal |
-  VariableName ~semi insertSemi? ~varOrQname |
+  VariableName ~semi insertSemi? |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression
@@ -160,7 +160,7 @@ arithmeticExpStart[@export] {
 }
 
 arithmeticUnaryStart[@export] {
-  (ArithOp<"+"> | minus ~maybeNum)
+  (ArithOp<"+"> | minus)
 }
 
 ArithmeticExpression {
@@ -184,7 +184,7 @@ SimplePositiveUnaryTest {
 }
 
 @top UnaryTests {
-  Wildcard { minus ~maybeNum } |
+  Wildcard { minus } |
   PositiveUnaryTests |
   ckw<"not"> "(" PositiveUnaryTests ")"
 }
@@ -292,7 +292,7 @@ PositionalParameters {
 
 endpoint {
   QualifiedName |
-  simpleLiteral ~literal
+  simpleLiteral
 }
 
 nil[@export] {
@@ -301,7 +301,7 @@ nil[@export] {
 
 literal[@isGroup=Literal, @export] {
   nil |
-  simpleLiteral ~literal
+  simpleLiteral
 }
 
 simpleLiteral {
@@ -312,7 +312,7 @@ simpleLiteral {
 }
 
 QualifiedName {
-  VariableName (!qname "." VariableName)* ~varOrQname
+  VariableName (!qname "." VariableName)*
 }
 
 Identifier {
@@ -385,7 +385,7 @@ DateTimeLiteral {
 }
 
 NumericLiteral {
-  (!unary minus ~maybeNum)? number
+  (!unary minus)? number
 }
 
 @skip {} {
