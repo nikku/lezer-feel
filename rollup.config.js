@@ -8,10 +8,12 @@ export default {
   output: [
     {
       format: 'cjs',
-      file: pkg.main
+      file: pkg.main,
+      sourcemap: true
     }, {
       format: 'es',
-      file: pkg.module
+      file: pkg.module,
+      sourcemap: true
     }
   ],
   external(id) { return !/^[./]/.test(id); },
