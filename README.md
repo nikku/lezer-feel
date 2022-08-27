@@ -64,7 +64,6 @@ contextualParser.parse('if foo then bar');
 ## Related
 
 * [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
-* [feel-playground](https://github.com/nikku/feel-playground) - Playground to tryout and learn the FEEL language
 
 
 ## License
