@@ -631,13 +631,32 @@ Expressions(
 a[c]
 a[c].b
 ["a", "b"][ "b" ]
+[][1]
+null[1]
 
 ==>
 
 Expressions(
   FilterExpression(VariableName(...),"[",VariableName(...),"]"),
   PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),VariableName(...)),
-  FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]")
+  FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]"),
+  FilterExpression(List("[","]"),"[",NumericLiteral,"]"),
+  FilterExpression(null,"[",NumericLiteral,"]")
+)
+
+
+# FilterExpression / null { "context": { "a": null } }
+
+[][1]
+null[1]
+a[1]
+
+==>
+
+Expressions(
+  FilterExpression(List("[","]"),"[",NumericLiteral,"]"),
+  FilterExpression(null,"[",NumericLiteral,"]"),
+  FilterExpression(VariableName(...),"[",NumericLiteral,"]")
 )
 
 

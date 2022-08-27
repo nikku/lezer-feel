@@ -549,6 +549,10 @@ class Variables {
 
   pushChild(child) {
 
+    if (!child) {
+      return this;
+    }
+
     const parent = this.assign({
       children: [ ...this.children, child ]
     });
@@ -855,7 +859,7 @@ export function trackVariables(context = {}) {
         }).enterScope('FilterExpression').pushChild(lastChild).assign({
           context: {
             ...variables.context,
-            ...lastChild.computedValue()
+            ...lastChild?.computedValue()
           }
         });
       }
