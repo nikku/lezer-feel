@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.11.0
+
+* `FEAT`: generate source maps
+* `FIX`: correct type inference on empty lists
+
 ## 0.10.0
 
 * `FIX`: correct handling of operator ambiguity
