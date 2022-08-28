@@ -350,10 +350,13 @@ export const propertyIdentifiers = new ExternalTokenizer((input, stack) => {
 
 export const insertSemicolon = new ExternalTokenizer((input, stack) => {
 
+  LOG_PARSE_DEBUG && console.log('%s: T <insertSemi>', input.pos);
+
+  let offset;
   let insert = false;
 
-  for (let i = 0;; i++) {
-    const char = input.peek(i);
+  for (offset = 0;; offset++) {
+    const char = input.peek(offset);
 
     if (spaceChars.includes(char)) {
       continue;
@@ -367,6 +370,14 @@ export const insertSemicolon = new ExternalTokenizer((input, stack) => {
   }
 
   if (insert) {
+
+    const identifier = parseIdentifier(input, offset + 1);
+
+    if (identifier && /^(then|else|return|satisfies)$/.test(identifier.token)) {
+      return;
+    }
+
+    LOG_PARSE && console.log('%s: MATCH <insertSemi>', input.pos);
     input.acceptToken(insertSemi);
   }
 });

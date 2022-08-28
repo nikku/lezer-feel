@@ -581,6 +581,20 @@ Expressions(
 )
 
 
+# QuantifiedExpression (multi-line)
+
+every
+  a in 1
+satisfies
+  3
+
+==>
+
+Expressions(
+  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,NumericLiteral)
+)
+
+
 # QuantifiedExpression (multi-name)
 
 every
@@ -757,6 +771,22 @@ Expressions(
 )
 
 
+# ForExpression (multi-line)
+
+for
+  a in 1
+return
+  2
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(NumericLiteral))
+  ),return,NumericLiteral)
+)
+
+
 # ForExpression (iteration range)
 
 for i in 0..4 return i
@@ -770,6 +800,25 @@ Expressions(
       NumericLiteral
     ))
   ),return,VariableName(Identifier))
+)
+
+
+# ForExpression (iteration range, multi-line)
+
+for
+  a in 0..4
+return
+  2
+
+==>
+
+Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(
+      NumericLiteral,
+      NumericLiteral
+    ))
+  ),return,NumericLiteral)
 )
 
 
@@ -883,6 +932,63 @@ for fruit in [ ." ]
 Expressions(
   ForExpression(for,InExpressions(...),⚠),
   StringLiteral
+)
+
+
+# IfExpression
+
+if true then 1
+if a then 1 else 2
+
+==>
+
+Expressions(
+  IfExpression(
+    if,BooleanLiteral(...),
+    then,NumericLiteral
+  ),
+  IfExpression(
+    if,VariableName(...),
+    then,NumericLiteral,
+    else,NumericLiteral
+  )
+)
+
+
+# IfExpression (multi-line)
+
+if
+  a
+then
+  1
+else
+  2
+
+==>
+
+Expressions(
+  IfExpression(
+    if,VariableName(...),
+    then,NumericLiteral,
+    else,NumericLiteral
+  )
+)
+
+
+# IfExpression (multi-line)
+
+if
+  1
+then
+  1
+
+==>
+
+Expressions(
+  IfExpression(
+    if,NumericLiteral,
+    then,NumericLiteral
+  )
 )
 
 
