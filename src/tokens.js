@@ -372,8 +372,9 @@ export const insertSemicolon = new ExternalTokenizer((input, stack) => {
   if (insert) {
 
     const identifier = parseIdentifier(input, offset + 1);
+    const spaces = parseSpaces(input, offset + 1);
 
-    if (identifier && /^(then|else|return|satisfies)$/.test(identifier.token)) {
+    if (spaces || identifier && /^(then|else|return|satisfies)$/.test(identifier.token)) {
       return;
     }
 

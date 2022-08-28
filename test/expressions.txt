@@ -588,9 +588,15 @@ every
 satisfies
   3
 
+  every
+    a in 1
+  satisfies
+    3
+
 ==>
 
 Expressions(
+  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,NumericLiteral),
   QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,NumericLiteral)
 )
 
@@ -778,9 +784,17 @@ for
 return
   2
 
+  for
+    a in 1
+  return
+    2
+
 ==>
 
 Expressions(
+  ForExpression(for,InExpressions(
+    InExpression(Name(Identifier),in,IterationContext(NumericLiteral))
+  ),return,NumericLiteral),
   ForExpression(for,InExpressions(
     InExpression(Name(Identifier),in,IterationContext(NumericLiteral))
   ),return,NumericLiteral)
@@ -964,9 +978,21 @@ then
 else
   2
 
+  if
+    a
+  then
+    1
+  else
+    2
+
 ==>
 
 Expressions(
+  IfExpression(
+    if,VariableName(...),
+    then,NumericLiteral,
+    else,NumericLiteral
+  ),
   IfExpression(
     if,VariableName(...),
     then,NumericLiteral,
