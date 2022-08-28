@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.11.1
+
+* `FIX`: correct multi-line parsing of keywords
+
 ## 0.11.0
 
 * `FEAT`: generate source maps
