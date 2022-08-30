@@ -324,7 +324,7 @@ VariableName {
 }
 
 AdditionalIdentifier[@name=Identifier] {
-  additionalNameSymbol |
+  "." | "'" |
   minus | plus |
   divide | multi
 }
@@ -429,10 +429,6 @@ commaSep<Expr> {
 @external tokens identifiers from "./tokens" {
   identifier[@export],
   nameIdentifier[@export]
-}
-
-@external tokens additionalNameSymbols from "./tokens" {
-  additionalNameSymbol[@export]
 }
 
 @external tokens insertSemicolon from "./tokens" {

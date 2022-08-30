@@ -19,7 +19,6 @@ import {
   QuantifiedInExpression,
   PositiveUnaryTest,
   nameIdentifier,
-  additionalNameSymbol,
   propertyIdentifier,
   PropertyIdentifier,
   PropertyName,
@@ -59,8 +58,7 @@ const spaceChars = [
 
 const newlineChars = chars('\n\r');
 
-const additionalNameChars = chars(".'");
-const additionalNameOperatorChars = chars('/-+*');
+const additionalNameChars = chars("'./-+*");
 
 /**
  * @param { string } str
@@ -96,13 +94,6 @@ function isAdditional(ch) {
   return additionalNameChars.includes(ch);
 }
 
-/**
- * @param { number } ch
- * @return { boolean }
- */
-function isAdditionalNameOperator(ch) {
-  return additionalNameOperatorChars.includes(ch);
-}
 
 /**
  * @param { number } ch
@@ -142,11 +133,11 @@ function indent(str, spaces) {
  *
  * @return { { token: string, offset: number } | null }
  */
-function parseAdditionalSymbol(input, offset = 0, includeOperators = false) {
+function parseAdditionalSymbol(input, offset = 0) {
 
   const next = input.peek(offset);
 
-  if (isAdditional(next) || includeOperators && isAdditionalNameOperator(next)) {
+  if (isAdditional(next)) {
     return {
       offset: 1,
       token: String.fromCharCode(next)
@@ -292,20 +283,6 @@ function parseName(input, variables) {
   }
 
 }
-
-export const additionalNameSymbols = new ExternalTokenizer((input, stack) => {
-
-  LOG_PARSE_DEBUG && console.log('%s: T <additionalNameSymbol>', input.pos);
-
-  const match = parseAdditionalSymbol(input);
-
-  if (match) {
-    input.advance(match.offset);
-    input.acceptToken(additionalNameSymbol);
-
-    LOG_PARSE && console.log('%s: MATCH <additionalNameSymbol> <%s>', input.pos, match.token);
-  }
-});
 
 const identifiersMap = {
   [ identifier ]: 'identifier',
