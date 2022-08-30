@@ -13,6 +13,7 @@
   "types": "dist/index.d.ts",
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
+  "sideEffects": false,
   "devDependencies": {
     "@lezer/generator": "^1.1.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
