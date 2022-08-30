@@ -1,6 +1,6 @@
 {
   "name": "lezer-feel",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "Lezer-based FEEL grammar",
   "main": "dist/index.cjs",
   "type": "module",
