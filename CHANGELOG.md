@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.11.3
+
+* `FIX`: correctly parse `PathExpression` inside `FunctionInvocation`
+
 ## 0.11.2
 
 * `FIX`: correct nested multi-line parsing of keywords
