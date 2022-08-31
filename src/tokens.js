@@ -659,6 +659,11 @@ class Variables {
 
 }
 
+/**
+ * @param { string } name
+ *
+ * @return { string } normalizedName
+ */
 export function normalizeContextKey(name) {
   return name.replace(/\s*([./\-'+*])\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
 }
