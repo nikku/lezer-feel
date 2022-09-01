@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.12.1
+
+* `FIX`: restore `normalizeContextKey` export
+
 ## 0.12.0
 
 * `FEAT`: simplify context normalizatin
