@@ -280,7 +280,8 @@ Expressions(
   A+B    : 100,
   if   foo: true,
   f + 10: 1,
-  true: false
+  true: false,
+  A++  : 100
 }
 
 ==>
@@ -292,6 +293,7 @@ Expressions(
     ContextEntry(Key(Name(Identifier,Identifier)),BooleanLiteral),
     ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier)),BooleanLiteral),
+    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier(ArithOp))),NumericLiteral),
   "}")
 )
 
@@ -299,25 +301,41 @@ Expressions(
 # Context (special key, binding)
 
 {
-  A+B    : 100,
-  c: A + B - 1
+  A+B    : {
+    d++: 100
+  },
+  c: A +   B.d+  + - 1
 }
 
 ==>
 
 Expressions(
   Context("{",
-    ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
-    ContextEntry(Key(Name(Identifier)),ArithmeticExpression(
-      VariableName(Identifier, Identifier, Identifier),
-      ArithOp,
-      NumericLiteral
-    )),
+    ContextEntry(
+      Key(Name(...)),
+      Context("{",
+        ContextEntry(
+          Key(Name(...)),
+          NumericLiteral
+        ),
+      "}")
+    ),
+    ContextEntry(
+      Key(Name(...)),
+      ArithmeticExpression(
+        PathExpression(
+          VariableName(...),
+          VariableName(...)
+        ),
+        ArithOp,
+        NumericLiteral
+      )
+    ),
   "}")
 )
 
 
-# Context (literal key)
+# Context (literal key, special)
 
 {
   "A -  c": 100,

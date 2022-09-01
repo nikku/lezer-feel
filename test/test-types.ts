@@ -1,5 +1,4 @@
 import {
-  normalizeContext,
   parser,
   trackVariables
 } from '..';
@@ -32,21 +31,6 @@ describe('types', () => {
 
     // then
     configuredParser.parse('+');
-  });
-
-
-  it('should normalize context', () => {
-
-    // given
-    const context = {
-      '+++': 1
-    };
-
-    // when
-    const normalizedContext = normalizeContext(context);
-
-    // then
-    expect(normalizedContext).to.have.property('+ + +', 1);
   });
 
 });

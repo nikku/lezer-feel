@@ -493,7 +493,7 @@ class Variables {
   }
 
   contextKeys() {
-    return Object.keys(this.context);
+    return Object.keys(this.context).map(normalizeContextKey);
   }
 
   get path() {
@@ -590,8 +590,6 @@ class Variables {
       return this;
     }
 
-    name = normalizeContextKey(name);
-
     LOG_VARS && console.log('[%s] define <%s=%s>', this.path, name, value);
 
     const context = {
@@ -669,31 +667,6 @@ export function normalizeContextKey(name) {
 }
 
 /**
- * @template T
- *
- * @param {T} context
- * @return {T}
- */
-export function normalizeContext(context) {
-
-  if (typeof context === 'undefined' || context === null) {
-    return context;
-  }
-
-  if (Object.getPrototypeOf(context) !== Object.prototype) {
-    return context;
-  }
-
-  const normalizedContext = {};
-
-  for (const [ key, value ] of Object.entries(context)) {
-    normalizedContext[normalizeContextKey(key)] = normalizeContext(value);
-  }
-
-  return normalizedContext;
-}
-
-/**
  * Wrap children of variables under the given named child.
  *
  * @param { Variables } variables
@@ -730,7 +703,7 @@ function wrap(variables, scopeName, code) {
 export function trackVariables(context = {}) {
 
   const start = Variables.of({
-    context: normalizeContext(context)
+    context
   });
 
   return new ContextTracker({
