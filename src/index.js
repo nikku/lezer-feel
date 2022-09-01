@@ -1,5 +1,6 @@
 export * from './parser';
 
 export {
-  trackVariables
+  trackVariables,
+  normalizeContextKey
 } from './tokens';

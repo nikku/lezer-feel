@@ -1,7 +1,12 @@
 import {
   parser,
-  trackVariables
+  trackVariables,
+  normalizeContextKey
 } from 'lezer-feel';
+
+import {
+  expect
+} from 'chai';
 
 
 describe('lezer-feel', () => {
@@ -27,6 +32,19 @@ describe('lezer-feel', () => {
 
     // then
     configuredParser.parse('+');
+  });
+
+
+  describe('normalizeContextKey', () => {
+
+    it('should normalize string', () => {
+
+      expect(normalizeContextKey('A+B  C')).to.eql('A + B C');
+
+      expect(normalizeContextKey('A\'111+B  C')).to.eql('A \' 111 + B C');
+
+    });
+
   });
 
 });

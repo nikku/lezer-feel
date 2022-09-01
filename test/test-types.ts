@@ -1,6 +1,7 @@
 import {
   parser,
-  trackVariables
+  trackVariables,
+  normalizeContextKey
 } from '..';
 
 import {
@@ -31,6 +32,17 @@ describe('types', () => {
 
     // then
     configuredParser.parse('+');
+  });
+
+
+  describe('normalizeContextKey', () => {
+
+    it('should normalize string', () => {
+
+      expect(normalizeContextKey('A+B  C')).to.eql('A + B C');
+
+    });
+
   });
 
 });
