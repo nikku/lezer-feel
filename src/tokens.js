@@ -94,7 +94,6 @@ function isAdditional(ch) {
   return additionalNameChars.includes(ch);
 }
 
-
 /**
  * @param { number } ch
  * @return { boolean }
@@ -420,7 +419,8 @@ class Variables {
     children = [],
     parent = null,
     context = { },
-    value
+    value,
+    raw
   } = {}) {
     this.name = name;
     this.tokens = tokens;
@@ -428,6 +428,7 @@ class Variables {
     this.parent = parent;
     this.context = context;
     this.value = value;
+    this.raw = raw;
   }
 
   enterScope(name) {
@@ -528,7 +529,8 @@ class Variables {
     const variableScope = this.of({
       name: 'VariableName',
       parent: parentScope,
-      value: this.get(variable)
+      value: this.get(variable),
+      raw: variable
     });
 
     LOG_VARS && console.log('[%s] resolve name <%s=%s>', variableScope.path, variable, this.get(variable));
@@ -640,7 +642,8 @@ class Variables {
       children = [],
       parent = null,
       context = {},
-      value
+      value,
+      raw
     } = options;
 
     return new Variables({
@@ -651,7 +654,8 @@ class Variables {
         ...context
       },
       parent,
-      value
+      value,
+      raw
     });
   }
 
