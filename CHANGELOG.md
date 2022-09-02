@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.13.0
+
+* `FEAT`: track context across `get value` calls ([#9](https://github.com/nikku/lezer-feel/issues/9))
+
 ## 0.12.1
 
 * `FIX`: restore `normalizeContextKey` export
