@@ -38,7 +38,9 @@ import {
   arithmeticExpStart,
   arithmeticUnaryStart,
   nil,
-  AdditionalIdentifier
+  AdditionalIdentifier,
+  FunctionInvocation,
+  functionInvocationStart
 } from './parser.terms.js';
 
 import {
@@ -359,6 +361,12 @@ export const insertSemicolon = new ExternalTokenizer((input, stack) => {
   }
 });
 
+const prefixedContextStarts = {
+  [ functionInvocationStart ]: 'FunctionInvocation',
+  [ filterExpressionStart ]: 'FilterExpression',
+  [ pathExpressionStart ]: 'PathExpression'
+};
+
 const contextStarts = {
   [ contextStart ]: 'Context',
   [ functionDefinitionStart ]: 'FunctionDefinition',
@@ -374,6 +382,7 @@ const contextEnds = {
   [ IfExpression ]: 'IfExpression',
   [ QuantifiedExpression ]: 'QuantifiedExpression',
   [ PathExpression ]: 'PathExpression',
+  [ FunctionInvocation ]: 'FunctionInvocation',
   [ FilterExpression ]: 'FilterExpression',
   [ ArithmeticExpression ]: 'ArithmeticExpression'
 };
@@ -745,6 +754,24 @@ export function trackVariables(context = {}) {
         return variables.enterScope(start);
       }
 
+      const prefixedStart = prefixedContextStarts[term];
+
+      // pull <expression> into new <prefixedStart> context
+      if (prefixedStart) {
+
+        const children = variables.children.slice(0, -1);
+        const lastChild = variables.children.slice(-1)[0];
+
+        return variables.assign({
+          children
+        }).enterScope(prefixedStart).pushChild(lastChild).assign({
+          context: {
+            ...variables.context,
+            ...lastChild?.computedValue()
+          }
+        });
+      }
+
       const code = input.read(input.pos, stack.pos);
 
       const end = contextEnds[term];
@@ -786,22 +813,6 @@ export function trackVariables(context = {}) {
         return variables.define(name, 1);
       }
 
-      // pull <expression> into PathExpression child
-      if (term === pathExpressionStart) {
-
-        const children = variables.children.slice(0, -1);
-        const lastChild = variables.children.slice(-1)[0];
-
-        return variables.assign({
-          children
-        }).enterScope('PathExpression').pushChild(lastChild).assign({
-          context: {
-            ...variables.context,
-            ...lastChild.computedValue()
-          }
-        });
-      }
-
       // pull <expression> into ArithmeticExpression child
       if (
         term === arithmeticPlusStart ||
@@ -818,21 +829,6 @@ export function trackVariables(context = {}) {
 
       if (term === arithmeticUnaryStart) {
         return variables.enterScope('ArithmeticExpression');
-      }
-
-      // pull <expression> into FilterExpression child
-      if (term === filterExpressionStart) {
-        const children = variables.children.slice(0, -1);
-        const lastChild = variables.children.slice(-1)[0];
-
-        return variables.assign({
-          children
-        }).enterScope('FilterExpression').pushChild(lastChild).assign({
-          context: {
-            ...variables.context,
-            ...lastChild?.computedValue()
-          }
-        });
       }
 
       if (
