@@ -517,7 +517,18 @@ class Variables {
    * @return { any } value
    */
   get(variable) {
-    const val = this.context[String(variable)];
+
+    const names = [ variable, variable && normalizeContextKey(variable) ];
+
+    const contextKey = Object.keys(this.context).find(
+      key => names.includes(normalizeContextKey(key))
+    );
+
+    if (typeof contextKey === 'undefined') {
+      return undefined;
+    }
+
+    const val = this.context[contextKey];
 
     if (val instanceof ValueProducer) {
       return val.get(this);

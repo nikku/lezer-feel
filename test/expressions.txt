@@ -896,7 +896,7 @@ Expressions(
 
 # PathExpression (special) { "context": { "Foo + Bar": { "o++": { } } } }
 
-Foo + Bar.o++.blub
+Foo + Bar.o + +.blub
 
 ==>
 
