@@ -748,6 +748,19 @@ export function trackVariables(context = {}) {
         });
       }
 
+      if (term === FunctionInvocation) {
+
+        const [
+          name,
+          ...args
+        ] = variables.children;
+
+        // preserve type information through `get value(context, key)` utility
+        if (name?.raw === 'get value') {
+          variables = getContextValue(variables, args);
+        }
+      }
+
       const start = contextStarts[term];
 
       if (start) {
@@ -896,3 +909,64 @@ export function trackVariables(context = {}) {
 }
 
 export const variableTracker = trackVariables({});
+
+
+// helpers //////////////
+
+function getContextValue(variables, args) {
+
+  if (!args.length) {
+    return variables.assign({
+      value: null
+    });
+  }
+
+  if (args[0].name === 'Name') {
+    args = extractNamedArgs(args, [ 'm', 'key' ]);
+  }
+
+  if (args.length !== 2) {
+    return variables.assign({
+      value: null
+    });
+  }
+
+  const [
+    context,
+    key
+  ] = args;
+
+  const keyValue = key?.computedValue();
+  const contextValue = context?.computedValue();
+
+  if (
+    (!contextValue || typeof contextValue !== 'object') || typeof keyValue !== 'string'
+  ) {
+    return variables.assign({
+      value: null
+    });
+  }
+
+  return variables.assign({
+    value: [ normalizeContextKey(keyValue), keyValue ].reduce((value, keyValue) => {
+      if (keyValue in contextValue) {
+        return contextValue[keyValue];
+      }
+
+      return value;
+    }, null)
+  });
+}
+
+function extractNamedArgs(args, argNames) {
+
+  const context = {};
+
+  for (let i = 0; i < args.length; i += 2) {
+    const [ name, value ] = args.slice(i, i + 2);
+
+    context[name.value] = value;
+  }
+
+  return argNames.map(name => context[name]);
+}

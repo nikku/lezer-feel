@@ -158,6 +158,138 @@ Expressions(
 )
 
 
+# Built in (get value)
+
+get value()
+get value(null, 1)
+get value(null, "a")
+get value(1, "x")
+get value({ x: 10 }, a)
+get value(m: { x: 10 })
+get value(key: "AAA")
+get value(key: "AAA", m: { "AAA" : 1 })
+
+==>
+
+Expressions(
+  FunctionInvocation(VariableName(...),"(",PositionalParameters,")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(null,NumericLiteral),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(null,StringLiteral),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(NumericLiteral, StringLiteral),")"),
+  FunctionInvocation(VariableName(...),"(",PositionalParameters(Context("{",ContextEntry(Key(Name(...)),NumericLiteral),"}"),VariableName(...)),")"),
+  FunctionInvocation(VariableName(...),"(",NamedParameters(NamedParameter(ParameterName(Name(Identifier)),Context("{",ContextEntry(Key(Name(Identifier)),NumericLiteral),"}"))),")"),
+  FunctionInvocation(VariableName(...),"(",NamedParameters(NamedParameter(ParameterName(Name(Identifier)),StringLiteral)),")"),
+  FunctionInvocation(VariableName(...),"(",NamedParameters(NamedParameter(ParameterName(Name(...)),StringLiteral),NamedParameter(ParameterName(Name(...)),Context("{",ContextEntry(Key(StringLiteral),NumericLiteral),"}"))),")")
+)
+
+
+# Built in (get value, literal key) { "context": { "x": { "a+b": { "c+": 1 } } } }
+
+get value(x, "a+b").c+
+
+==>
+
+Expressions(
+  PathExpression(
+    FunctionInvocation(
+      VariableName(...),"(",
+        PositionalParameters(
+          VariableName(...),StringLiteral
+        ),
+      ")"
+    ),
+    VariableName(...)
+  )
+)
+
+
+# Built in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
+
+get value(key: "a+b", m: x).c+
+
+==>
+
+Expressions(
+  PathExpression(
+    FunctionInvocation(
+      VariableName(...),"(",NamedParameters(
+        NamedParameter(ParameterName(...),StringLiteral),
+        NamedParameter(ParameterName(...),VariableName(...))
+      ),")"
+    ),VariableName(...)
+  )
+)
+
+
+# Built in (get value, special key)
+
+get value({
+  foo-bar: {
+    c+: 1
+  }
+}, "foo-bar").c+
+
+==>
+
+Expressions(
+  PathExpression(
+    FunctionInvocation(
+      VariableName(...),"(",
+        PositionalParameters(
+          Context("{",
+            ContextEntry(
+              Key(Name(...)),
+              Context("{",
+                ContextEntry(
+                  Key(Name(...)),
+                  NumericLiteral
+                ),
+              "}")
+            ),
+          "}"),
+          StringLiteral
+        ),
+      ")"
+    ),
+    VariableName(...)
+  )
+)
+
+
+# Built in (get value, special key, named args)
+
+get value(key: "foo-bar", m: {
+  foo-bar: {
+    c+: 1
+  }
+}).c+
+
+==>
+
+Expressions(
+  PathExpression(
+    FunctionInvocation(
+      VariableName(...),"(",
+      NamedParameters(
+        NamedParameter(ParameterName(...),StringLiteral),
+        NamedParameter(ParameterName(...),Context("{",
+          ContextEntry(
+            Key(Name(...)),
+            Context("{",
+              ContextEntry(
+                Key(Name(...)),
+                NumericLiteral
+              ),
+            "}")
+          ),
+        "}"))
+      ),
+    ")"),
+    VariableName(...)
+  )
+)
+
+
 # null
 
 null[1]
