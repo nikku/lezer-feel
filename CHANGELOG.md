@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.14.1
+
+* `FEAT`: improve highlighting inside type definitions
+* `FIX`: don't mark `VariableName` usage as `local` declarations
+
 ## 0.14.0
 
 * `FIX`: correct highlight prop definitions ([#10](https://github.com/nikku/lezer-feel/issues/10))
