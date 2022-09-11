@@ -356,29 +356,7 @@ SpecialType {
 }
 
 SpecialFunctionName {
-  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration"> |
-  ckw<"string"> ckw<"length"> |
-  ckw<"upper"> ckw<"case"> |
-  ckw<"lower"> ckw<"case"> |
-  ckw<"substring"> ckw<"before"> |
-  ckw<"substring"> ckw<"after"> |
-  ckw<"starts"> ckw<"with"> |
-  ckw<"ends"> ckw<"with"> |
-  ckw<"list"> ckw<"contains"> |
-  ckw<"insert"> ckw<"before"> |
-  ckw<"index"> ckw<"of"> |
-  ckw<"distinct"> ckw<"values"> |
-  ckw<"met"> ckw<"by"> |
-  ckw<"overlaps"> ckw<"before"> |
-  ckw<"overlaps"> ckw<"after"> |
-  ckw<"finished"> ckw<"by"> |
-  ckw<"started"> ckw<"by"> |
-  ckw<"day"> ckw<"of"> ckw<"year"> |
-  ckw<"day"> ckw<"of"> ckw<"week"> |
-  ckw<"month"> ckw<"of"> ckw<"year"> |
-  ckw<"week"> ckw<"of"> ckw<"year"> |
-  ckw<"get"> ckw<"value"> |
-  ckw<"get"> ckw<"entries">
+  ckw<"years"> kw<"and"> ckw<"months"> ckw<"duration">
 }
 
 DateTimeLiteral {

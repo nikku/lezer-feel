@@ -1771,8 +1771,34 @@ years and months duration()
 
 string(5).length
 
+string length("FOO")
+upper case("foo")
+lower case("FOO")
+substring before("foo", "o")
+substring after("foo", "f")
+starts with("foo", "f")
+ends with("foo", "oo")
+
+list contains(["a", "b"], "b")
 list contains([1, 2], 1)
+insert before(["a"], 0, "b")
+index of(["a"], "a")
+distinct values(["a", "a"])
 distinct values(1, 1, 4)
+
+met by(> 10, > 20)
+overlaps before(> 10, > 20)
+overlaps after(> 10, > 20)
+finished by(> 10, 1)
+started by(20, > 20)
+
+day of year(@"2022-09-15")
+day of week(@"2022-09-15")
+month of year(@"2022-09-15")
+week of year(@"2022-09-15")
+
+get value({ "a": 1 }, "a")
+get entries({ "a": 1 })
 
 ==>
 
@@ -1801,6 +1827,32 @@ Expressions(
   FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),
 
   PathExpression(FunctionInvocation(...),VariableName(...)),
+
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
+  FunctionInvocation(...),
 
   FunctionInvocation(...),
   FunctionInvocation(...)
