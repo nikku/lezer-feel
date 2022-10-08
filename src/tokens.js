@@ -1,3 +1,5 @@
+/* global console,process */
+
 import {
   insertSemi,
   Identifier,
