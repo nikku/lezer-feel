@@ -61,11 +61,6 @@ contextualParser.parse('if foo then bar');
 ```
 
 
-## Related
-
-* [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
-
-
 ## Development
 
 ```shell
@@ -86,6 +81,11 @@ Prefix [individual](./test/expressions.txt) [tests](./test/unary-tests.txt) with
 
 ...
 ```
+
+
+## Related
+
+* [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
 
 
 ## License
