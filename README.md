@@ -66,6 +66,28 @@ contextualParser.parse('if foo then bar');
 * [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
 
 
+## Development
+
+```shell
+# build and test
+npm run all
+
+# test
+npm test
+
+# test (debug)
+LOG=fparse:dbg,fparse,context,parse npm test
+```
+
+Prefix [individual](./test/expressions.txt) [tests](./test/unary-tests.txt) with a `*` to test them in focus mode:
+
+```markdown
+# *ArithmeticExpression (error)
+
+...
+```
+
+
 ## License
 
 The code is licensed under an MIT license.
