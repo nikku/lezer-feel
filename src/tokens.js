@@ -51,8 +51,8 @@ import {
 } from '@lezer/lr';
 
 const LOG_PARSE = typeof process != 'undefined' && process.env && /\bfparse(:dbg)?\b/.test(process.env.LOG);
-const LOG_PARSE_DEBUG = typeof process != 'undefined' && process.env && /\fparse:dbg\b/.test(process.env.LOG);
-const LOG_VARS = typeof process != 'undefined' && process.env && /\bcontext?\b/.test(process.env.LOG);
+const LOG_PARSE_DEBUG = typeof process != 'undefined' && process.env && /\bfparse:dbg\b/.test(process.env.LOG);
+const LOG_VARS = typeof process != 'undefined' && process.env && /\bcontext\b/.test(process.env.LOG);
 
 const spaceChars = [
   9, 11, 12, 32, 133, 160,
