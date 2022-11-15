@@ -15,6 +15,7 @@
   and @left,
   or @left,
   unaryTest @cut,
+  filterExpression @left,
   then @left,
   else @left,
   paren,
@@ -106,7 +107,7 @@ PathExpression {
 }
 
 filterExpressionStart[@export] {
-  "["
+  "[" !filterExpression
 }
 
 FilterExpression {
@@ -291,8 +292,7 @@ PositionalParameters {
 }
 
 endpoint {
-  QualifiedName |
-  simpleLiteral
+  expression
 }
 
 nil[@export] {
