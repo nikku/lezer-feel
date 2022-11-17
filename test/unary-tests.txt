@@ -67,6 +67,25 @@ UnaryTests(PositiveUnaryTests(
 ))
 
 
+# Interval { "top": "UnaryTests" }
+
+[ a.b.c .. e f.g ]
+
+==>
+
+UnaryTests(
+  PositiveUnaryTests(
+    PositiveUnaryTest(
+      SimplePositiveUnaryTest(
+        Interval("[",
+          PathExpression(...),
+          PathExpression(...),
+        "]")
+      )
+    )
+  )
+)
+
 
 # Negation { "top": "UnaryTests" }
 
