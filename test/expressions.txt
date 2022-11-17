@@ -121,13 +121,14 @@ Expressions(
 
 
 # ParenthesizedExpression
-
 (a);
-(a + b) * c
+(a.b = 10);
+(a + b) * c;
 
 ==>
 
 Expressions(
+  ParenthesizedExpression(...),
   ParenthesizedExpression(...),
   ArithmeticExpression(...)
 )
@@ -551,9 +552,9 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),"]")),
-  SimplePositiveUnaryTest(Interval("(",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),")")),
-  SimplePositiveUnaryTest(Interval("]",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),"[")),
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),VariableName(...),"]")),
+  SimplePositiveUnaryTest(Interval("(",VariableName(...),VariableName(...),")")),
+  SimplePositiveUnaryTest(Interval("]",VariableName(...),VariableName(...),"[")),
   SimplePositiveUnaryTest(Interval("[",NumericLiteral,NumericLiteral,"]")),
   SimplePositiveUnaryTest(Interval("(",NumericLiteral,NumericLiteral,")")),
   SimplePositiveUnaryTest(Interval("]",NumericLiteral,NumericLiteral,"["))
@@ -568,7 +569,7 @@ Expressions(
 
 Expressions(
   SimplePositiveUnaryTest(
-    Interval("[",QualifiedName(VariableName(...),VariableName(...)),QualifiedName(VariableName(...)),"]")
+    Interval("[",PathExpression(VariableName(...),VariableName(...)),VariableName(...),"]")
   )
 )
 
@@ -581,8 +582,8 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),QualifiedName(VariableName(...)),⚠)),
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(VariableName(...)),⚠))
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),VariableName(...),⚠)),
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠))
 )
 
 
@@ -590,6 +591,7 @@ Expressions(
 
 []
 [1]
+[a.b.c]
 [1 + 3, 2 * 5];
 [a, [1, { a: 1 } ], [], [1 .. 3], (1) ]
 
@@ -598,6 +600,7 @@ Expressions(
 Expressions(
   List("[","]"),
   List("[",NumericLiteral,"]"),
+  List("[",PathExpression(...),"]"),
   List("[",ArithmeticExpression(...),ArithmeticExpression(...),"]"),
   List(...)
 )
@@ -611,7 +614,7 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",QualifiedName(...),⚠)),
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠)),
   List("[",⚠)
 )
 
@@ -2038,8 +2041,8 @@ Expressions(
 
 Expressions(
   SimplePositiveUnaryTest(CompareOp,NumericLiteral),
-  SimplePositiveUnaryTest(CompareOp,QualifiedName(...)),
-  SimplePositiveUnaryTest(CompareOp,QualifiedName(...))
+  SimplePositiveUnaryTest(CompareOp,VariableName(...)),
+  SimplePositiveUnaryTest(CompareOp,PathExpression(...))
 )
 
 

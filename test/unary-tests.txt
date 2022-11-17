@@ -67,7 +67,7 @@ UnaryTests(PositiveUnaryTests(
 ))
 
 
-# QualifiedName { "top": "UnaryTests" }
+# Interval { "top": "UnaryTests" }
 
 [ a.b.c .. e f.g ]
 
@@ -78,8 +78,8 @@ UnaryTests(
     PositiveUnaryTest(
       SimplePositiveUnaryTest(
         Interval("[",
-          QualifiedName(...),
-          QualifiedName(...),
+          PathExpression(...),
+          PathExpression(...),
         "]")
       )
     )
