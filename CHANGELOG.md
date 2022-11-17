@@ -6,6 +6,16 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.15.0
+
+* `FEAT`: parse `Interval` endpoints as expressions ([#13](https://github.com/nikku/lezer-feel/pull/13))
+* `FIX`: parse `PathExpression` inside `ParenthesizedExpression` ([#12](https://github.com/nikku/lezer-feel/issues/12))
+* `FIX`: parse `PathExpression` inside `List` ([#11](https://github.com/nikku/lezer-feel/issues/11))
+
+### Breaking Changes
+
+* Recognize FEEL, not S-FEEL ([#13](https://github.com/nikku/lezer-feel/pull/13))
+
 ## 0.14.1
 
 * `FEAT`: improve highlighting inside type definitions
