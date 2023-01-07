@@ -614,8 +614,8 @@ Expressions(
 ==>
 
 Expressions(
-  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠)),
-  List("[",⚠)
+  List("[",VariableName(Identifier),⚠),
+  SimplePositiveUnaryTest(Interval("[",⚠))
 )
 
 
@@ -805,6 +805,7 @@ a[c]
 a[c].b
 ["a", "b"][ "b" ]
 [][1]
+[][true]
 null[1]
 
 ==>
@@ -813,7 +814,8 @@ Expressions(
   FilterExpression(VariableName(...),"[",VariableName(...),"]"),
   PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),VariableName(...)),
   FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]"),
-  FilterExpression(List("[","]"),"[",NumericLiteral,"]"),
+  FilterExpression(List(...),"[",NumericLiteral,"]"),
+  FilterExpression(List(...),"[",BooleanLiteral,"]"),
   FilterExpression(null,"[",NumericLiteral,"]")
 )
 
@@ -822,14 +824,18 @@ Expressions(
 
 [][1]
 null[1]
-a[1]
+a[1];
+[][false];
+[][null]
 
 ==>
 
 Expressions(
-  FilterExpression(List("[","]"),"[",NumericLiteral,"]"),
+  FilterExpression(List(...),"[",NumericLiteral,"]"),
   FilterExpression(null,"[",NumericLiteral,"]"),
-  FilterExpression(VariableName(...),"[",NumericLiteral,"]")
+  FilterExpression(VariableName(...),"[",NumericLiteral,"]"),
+  FilterExpression(List(...),"[",BooleanLiteral,"]"),
+  FilterExpression(List(...),"[","null","]")
 )
 
 
@@ -880,6 +886,46 @@ Expressions(
 )
 
 
+# FilterExpression (index access)
+
+{
+  x: [ { a+: 1 }, { b+3: 100 } ],
+  y: x[-1].b+3,
+  z: x[1].a+
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(...),List(...)),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...)))
+  "}")
+)
+
+
+# FilterExpression (index access, non existing special name)
+
+{
+  x: [ { a+: 1 }, { b+3: 100 } ],
+  a: x[2].a+,
+  b: x[100].a+,
+  c: x[false].a+
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(...),List(...)),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
+  "}")
+)
+
+
 # PathExpression
 
 a.B
@@ -911,6 +957,27 @@ Expressions(
     ),
     VariableName(...)
   )
+)
+
+
+# PathExpression (list filtering, special name)
+
+{
+  x: [ { a+: 1 }, { b+: 1 }, 1, null ],
+  a: x.a+,
+  b: x.b+,
+  c: x.d
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(...),List(...)),
+    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
+  "}")
 )
 
 

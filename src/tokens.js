@@ -27,6 +27,8 @@ import {
   StringLiteral,
   BooleanLiteral,
   NumericLiteral,
+  List,
+  listStart,
   pathExpressionStart,
   PathExpression,
   ParameterName,
@@ -373,6 +375,7 @@ const contextStarts = {
   [ contextStart ]: 'Context',
   [ functionDefinitionStart ]: 'FunctionDefinition',
   [ forExpressionStart ]: 'ForExpression',
+  [ listStart ]: 'List',
   [ ifExpressionStart ]: 'IfExpression',
   [ quantifiedExpressionStart ]: 'QuantifiedExpression'
 };
@@ -381,6 +384,7 @@ const contextEnds = {
   [ Context ]: 'Context',
   [ FunctionDefinition ]: 'FunctionDefinition',
   [ ForExpression ]: 'ForExpression',
+  [ List ]: 'List',
   [ IfExpression ]: 'IfExpression',
   [ QuantifiedExpression ]: 'QuantifiedExpression',
   [ PathExpression ]: 'PathExpression',
@@ -750,6 +754,17 @@ export function trackVariables(context = {}) {
             ...thenPart?.computedValue(),
             ...elsePart?.computedValue()
           }
+        });
+      }
+
+      if (term === List) {
+        variables = variables.assign({
+          value: variables.children.reduce((value, child) => {
+            return {
+              ...value,
+              ...child?.computedValue()
+            };
+          }, {})
         });
       }
 

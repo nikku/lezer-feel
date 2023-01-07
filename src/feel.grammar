@@ -118,8 +118,16 @@ InstanceOfExpression {
   expression !instanceOf kw<"instance"> ckw<"of"> Type
 }
 
+parenthesizedStart[@export] {
+  "("
+}
+
+parenthesizedEnd[@export] {
+  ")"
+}
+
 ParenthesizedExpression {
-  "(" expression !paren ")"
+  parenthesizedStart ~interval expression !paren parenthesizedEnd
 }
 
 Disjunction {
@@ -176,7 +184,7 @@ Comparison {
   expression !compare CompareOp<">" | ">=" | "<" | "<="> expression |
   expression !compare kw<"between"> expression kw<"and"> expression |
   expression !compare kw<"in"> PositiveUnaryTest |
-  expression !compare kw<"in"> "(" PositiveUnaryTests ")"
+  expression !compare kw<"in"> "(" ~interval PositiveUnaryTests ")"
 }
 
 SimplePositiveUnaryTest {
@@ -341,12 +349,28 @@ PropertyName[@name=Name] {
   PropertyIdentifier (!name (PropertyIdentifier | AdditionalIdentifier))*
 }
 
+intervalStart[@export] {
+  ( "]" | "(" | "[" )
+}
+
+intervalEnd[@export] {
+  ( ")" | "[" | "]" )
+}
+
 Interval {
-  ( "]" | "(" | "[" ) ~interval endpoint ".." endpoint ( ")" | "[" | "]" )
+  intervalStart ~interval endpoint ".." endpoint intervalEnd
+}
+
+listStart[@export] {
+  "["
+}
+
+listEnd[@export] {
+  "]"
 }
 
 List {
-  "[" ~interval commaSep<expression> "]"
+  listStart ~interval commaSep<expression> listEnd
 }
 
 SpecialType {
