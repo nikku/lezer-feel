@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.16.0
+
+* `FEAT`: deduce `List` shape from members ([`597ccb5b`](https://github.com/nikku/lezer-feel/commit/597ccb5b96ab20dbac455e940d6771af1b5d3010))
+
 ## 0.15.0
 
 * `FEAT`: parse `Interval` endpoints as expressions ([#13](https://github.com/nikku/lezer-feel/pull/13))
