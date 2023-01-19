@@ -1171,20 +1171,30 @@ Expressions(
 
 # IfExpression
 
-if true then 1
 if a then 1 else 2
 
 ==>
 
 Expressions(
   IfExpression(
-    if,BooleanLiteral(...),
-    then,NumericLiteral
-  ),
-  IfExpression(
     if,VariableName(...),
     then,NumericLiteral,
     else,NumericLiteral
+  )
+)
+
+
+# IfExpression (error)
+
+if true then 1
+
+==>
+
+Expressions(
+  IfExpression(
+    if,BooleanLiteral(...),
+    then,NumericLiteral,
+    ⚠
   )
 )
 
@@ -1227,13 +1237,16 @@ if
   1
 then
   1
+else
+  3
 
 ==>
 
 Expressions(
   IfExpression(
     if,NumericLiteral,
-    then,NumericLiteral
+    then,NumericLiteral,
+    else,NumericLiteral
   )
 )
 

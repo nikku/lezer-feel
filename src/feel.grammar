@@ -79,7 +79,7 @@ ifExpressionStart[@export] {
 }
 
 IfExpression {
-  ifExpressionStart expression !then kw<"then"> expression (!else kw<"else"> expression)?
+  ifExpressionStart expression !then kw<"then"> expression !else kw<"else"> expression
 }
 
 quantifiedExpressionStart[@export] {
