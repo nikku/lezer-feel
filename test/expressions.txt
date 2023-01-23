@@ -394,7 +394,6 @@ Expressions(
 )
 
 
-
 # Context (error)
 
 {
@@ -428,6 +427,44 @@ Expressions(
     ContextEntry(Key(Name(Identifier)),BooleanLiteral),
     ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier(ArithOp))),NumericLiteral),
   "}")
+)
+
+
+# Context (special, scope)  { "context": { "foo + bar": 100 } }
+
+{
+  foo: 1
+}.foo + bar
+
+==>
+
+Expressions(
+  ArithmeticExpression(
+    PathExpression(
+      Context("{",
+        ContextEntry(Key(Name(...)),NumericLiteral),
+      "}"),
+      VariableName(...)
+    ),
+    ArithOp,
+    VariableName(...)
+  )
+)
+
+
+# Context (special, error)
+
+{
+  foo + bar: 
+}.foo + bar
+
+==>
+
+Expressions(
+  PathExpression(
+    Context(ContextEntry(Key(...), ⚠)),
+    VariableName(...)
+  )
 )
 
 
@@ -978,6 +1015,26 @@ Expressions(
     ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
     ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
   "}")
+)
+
+
+# PathExpression (list filtering, special, scope) { "context": { "foo + bar": 5 } }
+
+[ 1 ].foo + bar
+
+==>
+
+Expressions(
+  ArithmeticExpression(
+    PathExpression(
+      List(
+        "[", "NumericLiteral", "]"
+      ),
+      VariableName(...)
+    ),
+    ArithOp,
+    VariableName(...)
+  )
 )
 
 

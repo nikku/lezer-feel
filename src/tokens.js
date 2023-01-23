@@ -740,12 +740,6 @@ export function trackVariables(context = {}) {
     start,
     reduce(variables, term, stack, input) {
 
-      if (term === Context) {
-        variables = variables.assign({
-          value: variables.context
-        });
-      }
-
       if (term === IfExpression) {
         const [ thenPart, elsePart ] = variables.children.slice(-2);
 
@@ -800,16 +794,32 @@ export function trackVariables(context = {}) {
       // pull <expression> into new <prefixedStart> context
       if (prefixedStart) {
 
-        const children = variables.children.slice(0, -1);
-        const lastChild = variables.children.slice(-1)[0];
+        const {
+          children: currentChildren,
+          context: currentContext,
+        } = variables;
+
+        const children = currentChildren.slice(0, -1);
+        const lastChild = currentChildren[currentChildren.length - 1];
+
+        let newContext = null;
+
+        if (term === pathExpressionStart) {
+          newContext = lastChild?.computedValue();
+        }
+
+        if (term === filterExpressionStart) {
+          newContext = {
+            ...currentContext,
+            ...lastChild?.computedValue(),
+            item: lastChild?.computedValue()
+          };
+        }
 
         return variables.assign({
           children
         }).enterScope(prefixedStart).pushChild(lastChild).assign({
-          context: {
-            ...variables.context,
-            ...lastChild?.computedValue()
-          }
+          context: newContext || currentContext
         });
       }
 
@@ -822,7 +832,19 @@ export function trackVariables(context = {}) {
       }
 
       if (term === ContextEntry) {
-        return wrap(variables, 'ContextEntry', code);
+        const parts = variables.children.filter(c => c.name !== 'ContextEntry');
+
+        const name = parts[0];
+        const value = parts[parts.length - 1];
+
+        return wrap(variables, 'ContextEntry', code).assign(
+          {
+            value: {
+              ...variables.value,
+              [name.computedValue()] : value?.computedValue()
+            }
+          }
+        );
       }
 
       if (
