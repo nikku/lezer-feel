@@ -496,7 +496,7 @@ class Variables {
    * @return {any}
    */
   computedValue() {
-    for (let scope = this;;scope = scope.children.slice(-1)[0]) {
+    for (let scope = this;;scope = last(scope.children)) {
 
       if (!scope) {
         return null;
@@ -800,7 +800,7 @@ export function trackVariables(context = {}) {
         } = variables;
 
         const children = currentChildren.slice(0, -1);
-        const lastChild = currentChildren[currentChildren.length - 1];
+        const lastChild = last(currentChildren);
 
         let newContext = null;
 
@@ -835,7 +835,7 @@ export function trackVariables(context = {}) {
         const parts = variables.children.filter(c => c.name !== 'ContextEntry');
 
         const name = parts[0];
-        const value = parts[parts.length - 1];
+        const value = last(parts);
 
         return wrap(variables, 'ContextEntry', code).assign(
           {
@@ -860,7 +860,7 @@ export function trackVariables(context = {}) {
         return variables.define(
           'partial',
           ValueProducer.of(variables => {
-            return variables.children[variables.children.length - 1]?.computedValue();
+            return last(variables.children)?.computedValue();
           })
         );
       }
@@ -868,9 +868,7 @@ export function trackVariables(context = {}) {
       if (
         term === ParameterName
       ) {
-        const [ left ] = variables.children.slice(-1);
-
-        const name = left.computedValue();
+        const name = last(variables.children).computedValue();
 
         // TODO: attach type information
         return variables.define(name, 1);
@@ -883,7 +881,7 @@ export function trackVariables(context = {}) {
         term === arithmeticExpStart
       ) {
         const children = variables.children.slice(0, -1);
-        const lastChild = variables.children.slice(-1)[0];
+        const lastChild = last(variables.children);
 
         return variables.assign({
           children
@@ -1019,4 +1017,8 @@ function extractNamedArgs(args, argNames) {
   }
 
   return argNames.map(name => context[name]);
+}
+
+function last(arr) {
+  return arr[arr.length - 1];
 }
