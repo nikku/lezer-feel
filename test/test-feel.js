@@ -1,4 +1,4 @@
-import { parser, trackVariables } from 'lezer-feel';
+import { parser, trackVariables, VariableContext } from 'lezer-feel';
 import { testTree } from '@lezer/generator/dist/test';
 import { buildParser } from '@lezer/generator';
 
@@ -72,6 +72,27 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
 
         if (context) {
           config.contextTracker = trackVariables(context);
+        }
+
+        if (parser.configure && (strict || config)) {
+          parser = parser.configure({ strict, ...config });
+        }
+
+        testTree(parser.parse(text), expected, mayIgnore);
+      }
+    });
+
+
+    // Test alternative data format
+    tests.push({
+      name: name + ' - alternative data format',
+      run(parser) {
+        let strict = !/⚠|\.\.\./.test(expected);
+        let context = config && config.context;
+
+        if (context) {
+          context = toInternalFormat(context);
+          config.contextTracker = trackVariables(context, EntriesContext);
         }
 
         if (parser.configure && (strict || config)) {
@@ -162,3 +183,74 @@ for (const file of fs.readdirSync(caseDir)) {
   });
 
 }
+
+// Alternative data format helpers
+class EntriesContext extends VariableContext {
+  constructor(value = { entries: {} }) {
+    super(value);
+
+    this.value.entries = this.value.entries || {};
+    for (const key in this.value.entries) {
+      const entry = this.value.entries[key];
+
+      if (
+        this.isAtomic(entry)
+      ) {
+        continue;
+      }
+
+      this.value.entries[key] = new EntriesContext(this.value.entries[key]);
+    }
+  }
+
+  getKeys() {
+    return Object.keys(this.value.entries);
+  }
+
+  get(key) {
+    return this.value.entries[key];
+  }
+
+  set(key, value) {
+    return new EntriesContext(
+      {
+        ...this.value,
+        entries: {
+          ...this.value.entries,
+          [key]: value
+        }
+      }
+    );
+  }
+
+  static merge(...contexts) {
+    const merged = contexts.reduce((merged, context) => {
+      if (!context?.value) {
+        return merged;
+      }
+
+      return {
+        ...merged,
+        ...context.value,
+        entries: {
+          ...merged.entries,
+          ...context.value?.entries
+        }
+      };
+    }, {});
+
+    return new EntriesContext(merged);
+  }
+}
+
+
+const toInternalFormat = (context) => {
+  return context && Object.keys(context).reduce((result, key) => {
+    const value = context[key];
+
+    result.entries[key] = typeof value === 'object' ? toInternalFormat(value)
+      : value;
+
+    return result;
+  }, { entries: {} });
+};
