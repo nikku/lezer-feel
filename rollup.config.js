@@ -16,7 +16,7 @@ export default {
       sourcemap: true
     }
   ],
-  external(id) { return !/^[./]/.test(id); },
+  external: Object.keys(pkg.dependencies),
   plugins: [
     nodeResolve()
   ]
