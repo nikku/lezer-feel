@@ -16,7 +16,10 @@ export default {
       sourcemap: true
     }
   ],
-  external(id) { return !/^[./]/.test(id); },
+  external(id) {
+    return Object.keys(pkg.dependencies)
+      .includes(id.split('/')[0]);
+  },
   plugins: [
     nodeResolve()
   ]
