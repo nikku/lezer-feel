@@ -18,7 +18,7 @@ export default {
   ],
   external(id) {
     return Object.keys(pkg.dependencies)
-      .includes(id.split('/')[0]);
+      .find(dep => id.startsWith(dep));
   },
   plugins: [
     nodeResolve()
