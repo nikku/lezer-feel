@@ -66,33 +66,12 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
     let text = m[2].trim(), expected = m[3];
     tests.push({
       name,
-      run(parser) {
+      run(parser, contextTracker = trackVariables) {
         let strict = !/⚠|\.\.\./.test(expected);
         let context = config && config.context;
 
         if (context) {
-          config.contextTracker = trackVariables(context);
-        }
-
-        if (parser.configure && (strict || config)) {
-          parser = parser.configure({ strict, ...config });
-        }
-
-        testTree(parser.parse(text), expected, mayIgnore);
-      }
-    });
-
-
-    // Test alternative data format
-    tests.push({
-      name: name + ' - alternative data format',
-      run(parser) {
-        let strict = !/⚠|\.\.\./.test(expected);
-        let context = config && config.context;
-
-        if (context) {
-          context = toInternalFormat(context);
-          config.contextTracker = trackVariables(context, EntriesContext);
+          config.contextTracker = contextTracker(context);
         }
 
         if (parser.configure && (strict || config)) {
@@ -111,6 +90,10 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
   return tests;
 }
 
+/**
+ * @param {string} name
+ * @return { { it: Function, name: string } }
+ */
 function parseTest(name) {
 
   let iit = it;
@@ -180,12 +163,35 @@ for (const file of fs.readdirSync(caseDir)) {
 
       it(name, () => run(createParser(context)));
     }
+
+
+    describe('with custom variable context', function() {
+
+      const contextTracker = (context) => {
+        return trackVariables(toEntriesContextValue(context), EntriesContext);
+      };
+
+      for (const { name: testName, run } of tests) {
+
+        const {
+          it,
+          name,
+          context
+        } = parseTest(testName, contextTracker);
+
+        it(name, () => run(createParser(context)));
+      }
+    });
+
   });
 
 }
 
-// Alternative data format helpers
+/**
+ * An alternative context that holds additional meta-data
+ */
 class EntriesContext extends VariableContext {
+
   constructor(value = { entries: {} }) {
     super(value);
 
@@ -193,13 +199,9 @@ class EntriesContext extends VariableContext {
     for (const key in this.value.entries) {
       const entry = this.value.entries[key];
 
-      if (
-        this.isAtomic(entry)
-      ) {
-        continue;
+      if (!this.isAtomic(entry)) {
+        this.value.entries[key] = this.constructor.of(this.value.entries[key]);
       }
-
-      this.value.entries[key] = new EntriesContext(this.value.entries[key]);
     }
   }
 
@@ -212,7 +214,7 @@ class EntriesContext extends VariableContext {
   }
 
   set(key, value) {
-    return new EntriesContext(
+    return this.constructor.of(
       {
         ...this.value,
         entries: {
@@ -223,34 +225,49 @@ class EntriesContext extends VariableContext {
     );
   }
 
-  static merge(...contexts) {
-    const merged = contexts.reduce((merged, context) => {
-      if (!context?.value) {
-        return merged;
+  static of(...contexts) {
+    const unwrap = (context) => {
+      if (!context || typeof context !== 'object') {
+        return {};
       }
+
+      if (context instanceof this) {
+        return context.value;
+      }
+
+      return { ...context };
+    };
+
+    const merged = contexts.reduce((merged, context) => {
+
+      const {
+        entries = {},
+        ...rest
+      } = unwrap(context);
 
       return {
         ...merged,
-        ...context.value,
+        ...rest,
         entries: {
           ...merged.entries,
-          ...context.value?.entries
+          ...entries
         }
       };
     }, {});
 
-    return new EntriesContext(merged);
+    return new this(merged);
   }
 }
 
 
-const toInternalFormat = (context) => {
+function toEntriesContextValue(context) {
+
   return context && Object.keys(context).reduce((result, key) => {
     const value = context[key];
 
-    result.entries[key] = typeof value === 'object' ? toInternalFormat(value)
+    result.entries[key] = typeof value === 'object' ? toEntriesContextValue(value)
       : value;
 
     return result;
   }, { entries: {} });
-};
+}
