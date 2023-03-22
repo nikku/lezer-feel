@@ -67,6 +67,10 @@ const newlineChars = chars('\n\r');
 const additionalNameChars = chars("'./-+*");
 
 /**
+ * @typedef { VariableContext | any } ContextValue
+ */
+
+/**
  * @param { string } str
  * @return { number[] }
  */
@@ -433,20 +437,16 @@ const dateTimeIdentifiers = Object.keys(dateTimeLiterals);
 export class VariableContext {
 
   /**
-   * Creates a new context from a JavaScript object. Non-object values should result
-   * in an empty context.
+   * Creates a new context from a JavaScript object.
    *
    * @param {any} value
    */
   constructor(value = {}) {
 
-    if (!value || typeof value !== 'object') {
-      this.value = {};
-    } else if (value instanceof VariableContext) {
-      this.value = { ...value.value };
-    } else {
-      this.value = { ...value };
-    }
+    /**
+     * @protected
+     */
+    this.value = value;
   }
 
   /**
@@ -459,8 +459,10 @@ export class VariableContext {
   }
 
   /**
-   * Returns the value of the given key. If the value is a Context itself,
-   * it should be wrapped in a context class.
+   * Returns the value of the given key.
+   *
+   * If the value represents a context itself, it should be wrapped in a
+   * context class.
    *
    * @param {String} key
    * @returns {VariableContext|ValueProducer|null}
@@ -472,7 +474,7 @@ export class VariableContext {
       return result;
     }
 
-    return new VariableContext(this.value[key]);
+    return this.constructor.of(result);
   }
 
   /**
@@ -483,12 +485,10 @@ export class VariableContext {
    * @returns {VariableContext} new context with the given key added
    */
   set(key, value) {
-    return new VariableContext(
-      {
-        ...this.value,
-        [key]: value
-      }
-    );
+    return this.constructor.of({
+      ...this.value,
+      [key]: value
+    });
   }
 
   /**
@@ -508,25 +508,33 @@ export class VariableContext {
   /**
    * Takes any number of Contexts and merges them into a single Context.
    *
-   * @param  {...VariableContext} contexts
+   * @param  {...Context} contexts
    * @returns {VariableContext}
    */
-  static merge(...contexts) {
-    const merged = contexts.reduce(
-      (merged, context) => {
-        if (!context) {
-          return merged;
-        }
+  static of(...contexts) {
 
-        return {
-          ...merged,
-          ...context.value
-        };
-      }, {}
-    );
+    const unwrap = (context) => {
+      if (!context || typeof context !== 'object') {
+        return {};
+      }
 
-    return new VariableContext(merged);
+      if (context instanceof this) {
+        return context.value;
+      }
+
+      return { ...context };
+    };
+
+    const merged = contexts.reduce((merged, context) => {
+      return {
+        ...merged,
+        ...unwrap(context)
+      };
+    }, {});
+
+    return new this(merged);
   }
+
 }
 
 class Variables {
@@ -536,7 +544,7 @@ class Variables {
     tokens = [],
     children = [],
     parent = null,
-    context = new VariableContext(),
+    context,
     value,
     raw
   } = {}) {
@@ -762,15 +770,20 @@ class Variables {
   }
 
   static of(options) {
+
     const {
       name,
       tokens = [],
       children = [],
       parent = null,
-      context = new VariableContext(),
+      context,
       value,
       raw
     } = options;
+
+    if (!context) {
+      throw new Error('must provide <context>');
+    }
 
     return new Variables({
       name,
@@ -824,14 +837,15 @@ function wrap(variables, scopeName, code) {
 }
 
 /**
- * @param { any } startingContext
+ * @param { ContextValue } [context]
+ * @param { typeof VariableContext } [Context]
  *
  * @return { ContextTracker<Variables> }
  */
-export function trackVariables(startingContext = {}, Context = VariableContext) {
+export function trackVariables(context = {}, Context = VariableContext) {
 
   const start = Variables.of({
-    context: new Context(startingContext),
+    context: Context.of(context)
   });
 
   return new ContextTracker({
@@ -842,7 +856,7 @@ export function trackVariables(startingContext = {}, Context = VariableContext) 
         const [ thenPart, elsePart ] = variables.children.slice(-2);
 
         variables = variables.assign({
-          value: Context.merge(
+          value: Context.of(
             thenPart?.computedValue(),
             elsePart?.computedValue()
           )
@@ -851,8 +865,10 @@ export function trackVariables(startingContext = {}, Context = VariableContext) 
 
       if (term === List) {
         variables = variables.assign({
-          value: Context.merge(
-            ...variables.children.map(c => c?.computedValue())
+          value: Context.of(
+            ...variables.children.map(
+              c => c?.computedValue()
+            )
           )
         });
       }
@@ -900,11 +916,11 @@ export function trackVariables(startingContext = {}, Context = VariableContext) 
         let newContext = null;
 
         if (term === pathExpressionStart) {
-          newContext = new Context(lastChild?.computedValue());
+          newContext = Context.of(lastChild?.computedValue());
         }
 
         if (term === filterExpressionStart) {
-          newContext = Context.merge(
+          newContext = Context.of(
             currentContext,
             lastChild?.computedValue()
           ).set('item', lastChild?.computedValue());
@@ -933,10 +949,9 @@ export function trackVariables(startingContext = {}, Context = VariableContext) 
 
         return wrap(variables, 'ContextEntry', code).assign(
           {
-            value:
-                new Context(variables.value)
-                  .set([ name.computedValue() ], value?.computedValue())
-
+            value: Context
+              .of(variables.value)
+              .set([ name.computedValue() ], value?.computedValue())
           }
         );
       }
