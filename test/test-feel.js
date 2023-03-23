@@ -37,7 +37,7 @@ function toLineContext(file, index) {
 function defaultIgnore(type) { return /\W/.test(type.name); }
 
 /**
- * @typedef { { name: string, run(parser: Parser): void } } Test
+ * @typedef { { name: string, run(parser: Parser, contextTracker: Function): void } } Test
  *
  * @param { string } file
  * @param { string } fileName
@@ -179,7 +179,7 @@ for (const file of fs.readdirSync(caseDir)) {
           context
         } = parseTest(testName, contextTracker);
 
-        it(name, () => run(createParser(context)));
+        it(name, () => run(createParser(context), contextTracker));
       }
     });
 
