@@ -512,7 +512,6 @@ export class VariableContext {
    * @returns {VariableContext}
    */
   static of(...contexts) {
-
     const unwrap = (context) => {
       if (!context || typeof context !== 'object') {
         return {};
