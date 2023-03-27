@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { fileURLToPath } from 'url';
+import { ContextTracker } from '@lezer/lr';
 
 const caseDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -61,18 +62,16 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
     }
 
     let [ , name, configStr ] = /(.*?)(\{.*?\})?$/.exec(m[1]);
-    let config = configStr ? JSON.parse(configStr) : null;
+    let config = configStr ? JSON.parse(configStr) : {};
 
     let text = m[2].trim(), expected = m[3];
     tests.push({
       name,
       run(parser, contextTracker = trackVariables) {
         let strict = !/⚠|\.\.\./.test(expected);
-        let context = config && config.context;
+        let context = config.context || {};
 
-        if (context) {
-          config.contextTracker = contextTracker(context);
-        }
+        config.contextTracker = contextTracker(context);
 
         if (parser.configure && (strict || config)) {
           parser = parser.configure({ strict, ...config });
@@ -167,19 +166,39 @@ for (const file of fs.readdirSync(caseDir)) {
 
     describe('with custom variable context', function() {
 
-      const contextTracker = (context) => {
+      const EntriesTracker = (context) => {
         return trackVariables(toEntriesContextValue(context), EntriesContext);
+      };
+
+      let latestVariables;
+
+      const contextTracker = context => {
+        const entriesTracker = EntriesTracker(context);
+        return new ContextTracker({
+          start: entriesTracker.start,
+          reduce(...args) {
+            const result = entriesTracker.reduce(...args);
+            latestVariables = result;
+            return result;
+          }
+        });
       };
 
       for (const { name: testName, run } of tests) {
 
         const {
           it,
-          name,
-          context
-        } = parseTest(testName, contextTracker);
+          name
+        } = parseTest(testName);
 
-        it(name, () => run(createParser(context), contextTracker));
+        it(name, () => {
+          run(createParser(context), contextTracker);
+
+          // Should always be an instance of the custom context
+          if (!(latestVariables.context instanceof EntriesContext)) {
+            throw new Error('expected latestVariables to be an instance of EntriesContext, but was ' + latestVariables.constructor.name);
+          }
+        });
       }
     });
 
