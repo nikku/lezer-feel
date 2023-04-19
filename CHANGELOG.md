@@ -6,6 +6,12 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.17.0
+
+* `FEAT`: add `VariableContext` abstraction ([#18](https://github.com/nikku/lezer-feel/pull/18))
+* `FIX`: allow building on Windows ([#20), [#21](https://github.com/nikku/lezer-feel/pull/21))
+* `DEPS`: bump `lezer*`
+
 ## 0.16.2
 
 * `FIX`: correct context propagation in some cases ([#15](https://github.com/nikku/lezer-feel/issues/15))
