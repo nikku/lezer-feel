@@ -218,7 +218,7 @@ class EntriesContext extends VariableContext {
     for (const key in this.value.entries) {
       const entry = this.value.entries[key];
 
-      if (!this.isAtomic(entry)) {
+      if (!this.constructor.isAtomic(entry)) {
         this.value.entries[key] = this.constructor.of(this.value.entries[key]);
       }
     }
@@ -246,12 +246,10 @@ class EntriesContext extends VariableContext {
 
   static of(...contexts) {
     const unwrap = (context) => {
-      if (!context || typeof context !== 'object') {
-        return {};
-      }
-
-      if (context instanceof this) {
-        return context.value;
+      if (this.isAtomic(context)) {
+        return context instanceof this ?
+          context.value :
+          { atomicValue: context };
       }
 
       return { ...context };

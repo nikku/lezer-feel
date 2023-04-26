@@ -14,7 +14,7 @@ export class VariableContext {
 
   getKeys(): string[];
 
-  isAtomic(value: any): boolean;
+  static isAtomic(value: any): boolean;
 
   static of(...values: ContextValue[]): VariableContext;
 }
