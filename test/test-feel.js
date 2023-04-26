@@ -1,3 +1,5 @@
+import { expect } from 'chai';
+
 import { parser, trackVariables, VariableContext } from 'lezer-feel';
 import { testTree } from '@lezer/generator/dist/test';
 import { buildParser } from '@lezer/generator';
@@ -205,6 +207,21 @@ for (const file of fs.readdirSync(caseDir)) {
   });
 
 }
+
+
+describe('Custom Context', function() {
+
+  it('should create context from literals', function() {
+
+    const context = EntriesContext.of(15);
+
+    // then
+    expect(context.value.atomicValue).to.exist;
+    expect(context.value.atomicValue).to.equal(15);
+
+  });
+
+});
 
 /**
  * An alternative context that holds additional meta-data
