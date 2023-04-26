@@ -470,7 +470,7 @@ export class VariableContext {
   get(key) {
     const result = this.value[key];
 
-    if (this.isAtomic(result)) {
+    if (this.constructor.isAtomic(result)) {
       return result;
     }
 
@@ -498,9 +498,9 @@ export class VariableContext {
    * @param {any} value
    * @returns {Boolean}
    */
-  isAtomic(value) {
+  static isAtomic(value) {
     return !value ||
-          value instanceof this.constructor ||
+          value instanceof this ||
           value instanceof ValueProducer ||
           typeof value !== 'object';
   }
