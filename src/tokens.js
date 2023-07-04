@@ -950,7 +950,7 @@ export function trackVariables(context = {}, Context = VariableContext) {
           {
             value: Context
               .of(variables.value)
-              .set([ name.computedValue() ], value?.computedValue())
+              .set(name.computedValue(), value?.computedValue())
           }
         );
       }
