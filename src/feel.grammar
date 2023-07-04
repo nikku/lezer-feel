@@ -22,15 +22,19 @@
   pname
 }
 
+@top Expression {
+  expression0?
+}
+
 @top Expressions {
-  expression0+
+  expression0 (";" expression0)*
 }
 
-expression0[@dynamicPrecedence=-1, @export] {
-  expression ~semi (";" | insertSemi)?
+expression0[@export] {
+  expression
 }
 
-expression[@isGroup=Expression] {
+expression {
   textualExpression |
   boxedExpression
 }
@@ -48,7 +52,7 @@ textualExpression {
   FilterExpression |
   FunctionInvocation |
   literal |
-  VariableName ~semi insertSemi? |
+  VariableName insertSemi? |
   kw<"?"> |
   SimplePositiveUnaryTest |
   ParenthesizedExpression

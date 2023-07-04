@@ -1,12 +1,13 @@
-# Literals
+# Literals { "top": "Expressions" }
 
-1
-true
-false
-"FOO"
--1220.12
-.12
-24 10
+1;
+true;
+false;
+"FOO";
+-1220.12;
+.12;
+24;
+10
 
 ==>
 
@@ -22,15 +23,15 @@ Expressions(
 )
 
 
-# ArithmeticExpression
+# ArithmeticExpression { "top": "Expressions" }
 
-1+2
-1-2
-1*2
-1^2
-1**2
+1+2;
+1-2;
+1*2;
+1^2;
+1**2;
 1/2;
--1
+-1;
 1+2*3**5
 
 ==>
@@ -55,29 +56,29 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   ArithmeticExpression(NumericLiteral,ArithOp,⚠,NumericLiteral)
 )
 
 
-# Comparison
+# Comparison { "top": "Expressions" }
 
-a = b
-a != b
-a > b
-a < b
+a = b;
+a != b;
+a > b;
+a < b;
 
-a between b and c
-a between b() and c-d
+a between b and c;
+a between b() and c-d;
 
-INPUT in 10
+INPUT in 10;
 
-a in [ 1 .. 4 ]
-a in [1..4]
-a in ([ 1 .. 4 ])
-a in (1..4)
-a in (((1..4)))
-a in ((1..4), (5..8))
+a in [ 1 .. 4 ];
+a in [1..4];
+a in ([ 1 .. 4 ]);
+a in (1..4);
+a in (((1..4)));
+a in ((1..4), (5..8));
 a in (< 20, > 10)
 
 ==>
@@ -103,7 +104,7 @@ Expressions(
 )
 
 
-# Conjunction and Disjunction
+# Conjunction and Disjunction { "top": "Expressions" }
 
 a and b;
 a or b;
@@ -120,10 +121,37 @@ Expressions(
 )
 
 
-# ParenthesizedExpression
+# Disjunction (multi-line)
+
+a = null
+or
+a > 5
+
+==>
+
+Expression(
+  Disjunction(Comparison(VariableName(Identifier),CompareOp,null),or,Comparison(VariableName(Identifier),CompareOp,NumericLiteral))
+)
+
+
+# Conjunction (multi-line)
+
+a = null
+and
+a > 5
+
+==>
+
+Expression(
+  Conjunction(Comparison(VariableName(Identifier),CompareOp,null),and,Comparison(VariableName(Identifier),CompareOp,NumericLiteral))
+)
+
+
+# ParenthesizedExpression { "top": "Expressions" }
+
 (a);
 (a.b = 10);
-(a + b) * c;
+(a + b) * c
 
 ==>
 
@@ -140,7 +168,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     ParenthesizedExpression("(",
       PathExpression(
@@ -159,15 +187,15 @@ Expressions(
 )
 
 
-# Built in (get value)
+# Built in (get value) { "top": "Expressions" }
 
-get value()
-get value(null, 1)
-get value(null, "a")
-get value(1, "x")
-get value({ x: 10 }, a)
-get value(m: { x: 10 })
-get value(key: "AAA")
+get value();
+get value(null, 1);
+get value(null, "a");
+get value(1, "x");
+get value({ x: 10 }, a);
+get value(m: { x: 10 });
+get value(key: "AAA");
 get value(key: "AAA", m: { "AAA" : 1 })
 
 ==>
@@ -190,7 +218,7 @@ get value(x, "a+b").c+
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     FunctionInvocation(
       VariableName(...),"(",
@@ -206,11 +234,11 @@ Expressions(
 
 # Built in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
-get value(key: "a+b", m: x).c+
+get value(key: "a+b", m: x).c+;
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     FunctionInvocation(
       VariableName(...),"(",NamedParameters(
@@ -232,7 +260,7 @@ get value({
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     FunctionInvocation(
       VariableName(...),"(",
@@ -267,7 +295,7 @@ get value(key: "foo-bar", m: {
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     FunctionInvocation(
       VariableName(...),"(",
@@ -291,13 +319,13 @@ Expressions(
 )
 
 
-# null
+# null { "top": "Expressions" }
 
-null[1]
-null.foo
-{ a: null }.a.b
-null and true
-1 - null
+null[1];
+null.foo;
+{ a: null }.a.b;
+null and true;
+1 - null;
 
 ==>
 
@@ -318,6 +346,16 @@ Expressions(
 )
 
 
+# Context (empty)
+
+{}
+
+==>
+
+Expression(
+  Context("{","}")
+)
+
 
 # Context (simple)
 
@@ -328,7 +366,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier)),VariableName(Identifier)),
@@ -336,17 +374,46 @@ Expressions(
 )
 
 
-# Context
+# Context (nested)
 
-{}
-{ a: a, b: b }
-{🐎: "😀"}
+{
+  a: {
+    c: 1
+  },
+  b: a
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(Name(...)),
+      Context("{",
+        ContextEntry(
+          Key(Name(...)),
+          NumericLiteral
+        ),
+      "}")
+    ),
+    ContextEntry(
+      Key(Name(Identifier)),
+      VariableName(...)
+    ),
+  "}")
+)
+
+
+# Context { "top": "Expressions" }
+
+{ a: a, b: b };
+{🐎: "😀"};
 {java:{class:"java.lang.Math",method signature:"cos(double)"}}
+
 
 ==>
 
 Expressions(
-  Context("{","}"),
   Context("{",ContextEntry(Key(Name(...)),VariableName(...)),ContextEntry(Key(Name(...)),VariableName(...)),"}"),
   Context("{",ContextEntry(Key(Name(Identifier)),StringLiteral),"}"),
   Context("{",
@@ -367,7 +434,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(...)),StringLiteral),
     ContextEntry(Key(Name(...)),ArithmeticExpression(
@@ -386,7 +453,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(...)),NumericLiteral),
     ContextEntry(Key(Name(...)),NumericLiteral),
@@ -400,7 +467,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context(⚠)
 )
 
@@ -418,7 +485,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(Identifier,Identifier,Identifier)),NumericLiteral),
     ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),NumericLiteral),
@@ -430,6 +497,25 @@ Expressions(
 )
 
 
+# Context (special)
+
+{
+  foo+bar: 1
+}.foo + bar
+
+==>
+
+Expression(
+  PathExpression(
+    Context("{",
+      ContextEntry(Key(Name(...)),NumericLiteral),
+    "}"),
+    VariableName(...)
+  )
+)
+
+
+
 # Context (special, scope)  { "context": { "foo + bar": 100 } }
 
 {
@@ -438,7 +524,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   ArithmeticExpression(
     PathExpression(
       Context("{",
@@ -460,7 +546,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     Context(ContextEntry(Key(...), ⚠)),
     VariableName(...)
@@ -479,7 +565,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(
       Key(Name(...)),
@@ -514,7 +600,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(StringLiteral),NumericLiteral),
     ContextEntry(Key(Name(...)),VariableName(...)),
@@ -531,7 +617,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(Identifier,Identifier(ArithOp),Identifier)),ArithmeticExpression(
       NumericLiteral,ArithOp,NumericLiteral
@@ -552,7 +638,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     ParenthesizedExpression("(",
       Context("{",
@@ -577,7 +663,7 @@ Expressions(
 )
 
 
-# Interval
+# Interval { "top": "Expressions" }
 
 [a..b];
 (a..b);
@@ -604,17 +690,17 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   SimplePositiveUnaryTest(
     Interval("[",PathExpression(VariableName(...),VariableName(...)),VariableName(...),"]")
   )
 )
 
 
-# Interval (error)
+# Interval (error) { "top": "Expressions" }
 
 [a..b;
-[a..;
+[a..
 
 ==>
 
@@ -624,11 +710,11 @@ Expressions(
 )
 
 
-# List
+# List { "top": "Expressions" }
 
-[]
-[1]
-[a.b.c]
+[];
+[1];
+[a.b.c];
 [1 + 3, 2 * 5];
 [a, [1, { a: 1 } ], [], [1 .. 3], (1) ]
 
@@ -643,7 +729,7 @@ Expressions(
 )
 
 
-# Interval / List (error)
+# Interval / List (error) { "top": "Expressions" }
 
 [a;
 [
@@ -656,10 +742,10 @@ Expressions(
 )
 
 
-# VariableName (simple)
+# VariableName (simple) { "top": "Expressions" }
 
-a
-aas
+a;
+aas;
 ﷰͿ
 
 ==>
@@ -677,14 +763,14 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   VariableName(Identifier)
 )
 
 
-# VariableName (spaced)
+# VariableName (spaced) { "top": "Expressions" }
 
-a b c
+a b c;
 aas asda
 
 ==>
@@ -695,13 +781,13 @@ Expressions(
 )
 
 
-# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1, "true": 1, "f + 10": 1 } }
+# VariableName (contextual) { "context": { "Foo + Bar": 1, "if foo then": 1, "true": 1, "f + 10": 1 }, "top": "Expressions" }
 
-Foo +  Bar
-Foo + Bar
-Foo+Bar
-if foo then
-true
+Foo +  Bar;
+Foo + Bar;
+Foo+Bar;
+if foo then;
+true;
 f + 10
 
 ==>
@@ -722,7 +808,7 @@ a**'s
 
 ==>
 
-Expressions(
+Expression(
   ArithmeticExpression(VariableName(...),ArithOp,⚠,VariableName(...))
 )
 
@@ -733,16 +819,13 @@ a if
 
 ==>
 
-Expressions(
-  VariableName(Identifier),
-  IfExpression(if,⚠)
-)
+Expression(VariableName(Identifier,⚠(if)))
 
 
-# Special Names
+# Special Names { "top": "Expressions" }
 
-date and time
-date and other
+date and time;
+date and other;
 year
 
 ==>
@@ -754,11 +837,11 @@ Expressions(
 )
 
 
-# QuantifiedExpression
+# QuantifiedExpression { "top": "Expressions" }
 
-every a in b satisfies c
-some a in b satisfies c
-every a in b, c in d satisfies c
+every a in b satisfies c;
+some a in b satisfies c;
+every a in b, c in d satisfies c;
 some a in b, c in d satisfies c
 
 ==>
@@ -778,16 +861,10 @@ every
 satisfies
   3
 
-  every
-    a in 1
-  satisfies
-    3
-
 ==>
 
-Expressions(
+Expression(
   QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,NumericLiteral),
-  QuantifiedExpression(every,InExpressions(InExpression(...)),satisfies,NumericLiteral)
 )
 
 
@@ -800,7 +877,7 @@ satisfies
 
 ==>
 
-Expressions(
+Expression(
   QuantifiedExpression(
     every,InExpressions(
       InExpression(Name(...),in,List("[","]"))
@@ -821,7 +898,7 @@ satisfies
 
 ==>
 
-Expressions(
+Expression(
   QuantifiedExpression(
     every,InExpressions(
       InExpression(Name(...),in,List("[",
@@ -836,13 +913,13 @@ Expressions(
 )
 
 
-# FilterExpression
+# FilterExpression { "top": "Expressions" }
 
-a[c]
-a[c].b
-["a", "b"][ "b" ]
-[][1]
-[][true]
+a[c];
+a[c].b;
+["a", "b"][ "b" ];
+[][1];
+[][true];
 null[1]
 
 ==>
@@ -857,10 +934,10 @@ Expressions(
 )
 
 
-# FilterExpression / null { "context": { "a": null } }
+# FilterExpression / null { "context": { "a": null }, "top": "Expressions" }
 
-[][1]
-null[1]
+[][1];
+null[1];
 a[1];
 [][false];
 [][null]
@@ -882,7 +959,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   FilterExpression(
     List("[",
       Context("{",
@@ -902,7 +979,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   FilterExpression(
     List("[",Context("{",
       ContextEntry(Key(Name(...)),Context("{",
@@ -933,7 +1010,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
     ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
@@ -953,7 +1030,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
     ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
@@ -963,11 +1040,11 @@ Expressions(
 )
 
 
-# PathExpression
+# PathExpression { "top": "Expressions" }
 
-a.B
-(a).b
-(a).b.c
+a.B;
+(a).b;
+(a).b.c;
 a+b.c
 
 ==>
@@ -975,8 +1052,12 @@ a+b.c
 Expressions(
   PathExpression(VariableName(...),VariableName(...)),
   PathExpression(ParenthesizedExpression(...),VariableName(...)),
-  PathExpression(PathExpression(ParenthesizedExpression(...),VariableName(...)),VariableName(...)),
-  ArithmeticExpression(VariableName(...),ArithOp,PathExpression(VariableName(...),VariableName(...)))
+  PathExpression(
+    PathExpression(ParenthesizedExpression(...),VariableName(...)),VariableName(...)
+  ),
+  ArithmeticExpression(
+    VariableName(...),ArithOp,PathExpression(VariableName(...),VariableName(...))
+  )
 )
 
 
@@ -986,7 +1067,7 @@ Foo + Bar.o + +.blub
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     PathExpression(
       VariableName(...),
@@ -1008,7 +1089,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
     ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
@@ -1024,7 +1105,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   ArithmeticExpression(
     PathExpression(
       List(
@@ -1038,9 +1119,9 @@ Expressions(
 )
 
 
-# ForExpression
+# ForExpression { "top": "Expressions" }
 
-for a in c return d
+for a in c return d;
 for a in c, b in d return d
 
 ==>
@@ -1061,17 +1142,9 @@ for
 return
   2
 
-  for
-    a in 1
-  return
-    2
-
 ==>
 
-Expressions(
-  ForExpression(for,InExpressions(
-    InExpression(Name(Identifier),in,IterationContext(NumericLiteral))
-  ),return,NumericLiteral),
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(Identifier),in,IterationContext(NumericLiteral))
   ),return,NumericLiteral)
@@ -1084,7 +1157,7 @@ for i in 0..4 return i
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(Identifier),in,IterationContext(
       NumericLiteral,
@@ -1103,7 +1176,7 @@ return
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(Identifier),in,IterationContext(
       NumericLiteral,
@@ -1119,7 +1192,7 @@ for i in 1..c return i.b+
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(...),in,IterationContext(
       NumericLiteral,VariableName(...)
@@ -1137,7 +1210,7 @@ for i in [ 0, 1, 2 ] return partial[-1]
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(Identifier),in,IterationContext(
       List("[",NumericLiteral,NumericLiteral,NumericLiteral,"]"))
@@ -1154,7 +1227,7 @@ for i in [1] return if i = 1 then { a+: 1 } else partial[-1].a+
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(
@@ -1187,7 +1260,7 @@ return
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(...))
@@ -1205,7 +1278,7 @@ return
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(...))
@@ -1220,9 +1293,16 @@ for fruit in [ ." ]
 
 ==>
 
-Expressions(
-  ForExpression(for,InExpressions(...),⚠),
-  StringLiteral
+Expression(
+  ForExpression(for,
+    InExpressions(
+      InExpression(Name(...),in,IterationContext(
+        SimplePositiveUnaryTest(
+          Interval("[",⚠,StringLiteral,⚠)
+        )
+      ))
+    ),⚠
+  )
 )
 
 
@@ -1232,7 +1312,7 @@ if a then 1 else 2
 
 ==>
 
-Expressions(
+Expression(
   IfExpression(
     if,VariableName(...),
     then,NumericLiteral,
@@ -1247,7 +1327,7 @@ if true then 1
 
 ==>
 
-Expressions(
+Expression(
   IfExpression(
     if,BooleanLiteral(...),
     then,NumericLiteral,
@@ -1265,43 +1345,11 @@ then
 else
   2
 
-  if
-    a
-  then
-    1
-  else
-    2
-
 ==>
 
-Expressions(
+Expression(
   IfExpression(
     if,VariableName(...),
-    then,NumericLiteral,
-    else,NumericLiteral
-  ),
-  IfExpression(
-    if,VariableName(...),
-    then,NumericLiteral,
-    else,NumericLiteral
-  )
-)
-
-
-# IfExpression (multi-line)
-
-if
-  1
-then
-  1
-else
-  3
-
-==>
-
-Expressions(
-  IfExpression(
-    if,NumericLiteral,
     then,NumericLiteral,
     else,NumericLiteral
   )
@@ -1314,7 +1362,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     ParenthesizedExpression("(",
       IfExpression(
@@ -1332,11 +1380,11 @@ Expressions(
 )
 
 
-# FunctionDefinition
+# FunctionDefinition { "top": "Expressions" }
 
-function() a
-function(a, b) a
-function(a, b) external a
+function() a;
+function(a, b) a;
+function(a, b) external a;
 function(n1) external {java:{class:"java.lang.Math",method signature:"cos(double)"}}
 
 ==>
@@ -1352,10 +1400,10 @@ Expressions(
 )
 
 
-# FunctionDefinition (special)
+# FunctionDefinition (special) { "top": "Expressions" }
 
-function(a+b) a+b
-function(a+1) a+1
+function(a+b) a+b;
+function(a+1) a+1;
 function(a ++) a + +
 
 ==>
@@ -1397,7 +1445,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(
       Key(Name(...)),
@@ -1429,10 +1477,10 @@ Expressions(
 )
 
 
-# FunctionInvocation (positional)
+# FunctionInvocation (positional) { "top": "Expressions" }
 
-a()
-a(foo, bar, other)
+a();
+a(foo, bar, other);
 a(foo.bar)
 
 ==>
@@ -1450,10 +1498,10 @@ Expressions(
 )
 
 
-# FunctionInvocation (named)
+# FunctionInvocation (named) { "top": "Expressions" }
 
-a(foo: f, bar: b, other: o)
-a(stringa: f, bar: b)
+a(foo: f, bar: b, other: o);
+a(stringa: f, bar: b);
 a(string: f, bar: b)
 
 ==>
@@ -1475,10 +1523,10 @@ Expressions(
 )
 
 
-# FunctionInvocation (positional, arithmetics)
+# FunctionInvocation (positional, arithmetics) { "top": "Expressions" }
 
-a(x-y)
-a(x+y)
+a(x-y);
+a(x+y);
 a(x/y)
 
 ==>
@@ -1514,7 +1562,7 @@ a(x: x-y)
 
 ==>
 
-Expressions(
+Expression(
   FunctionInvocation(
     VariableName(...),"(",NamedParameters(
       NamedParameter(
@@ -1528,11 +1576,11 @@ Expressions(
 
 # FunctionInvocation (named, special name)
 
-a(x-10: 5)
+a(x-10: 5);
 
 ==>
 
-Expressions(
+Expression(
   FunctionInvocation(
     VariableName(...),"(",NamedParameters(
       NamedParameter(ParameterName(...), NumericLiteral)
@@ -1541,9 +1589,9 @@ Expressions(
 )
 
 
-# FunctionInvocation (multi-name)
+# FunctionInvocation (multi-name) { "top": "Expressions" }
 
-a b c d()
+a b c d();
 with spaces()
 
 ==>
@@ -1554,10 +1602,10 @@ Expressions(
 )
 
 
-# FunctionInvocation (literal args)
+# FunctionInvocation (literal args) { "top": "Expressions" }
 
-abs( -10 )
-append("foo", "bar")
+abs( -10 );
+append("foo", "bar");
 contains(["foo"], "bar")
 
 ==>
@@ -1579,20 +1627,20 @@ a(foo+bar)
 
 ==>
 
-Expressions(
+Expression(
   FunctionInvocation(VariableName(...),"(",PositionalParameters(
     VariableName(...)
   ),")")
 )
 
 
-# DateTimeLiteral / DateTimeConstructor
+# DateTimeLiteral / DateTimeConstructor { "top": "Expressions" }
 
-date and time()
-date and time(date("2017-01-01"),time("23:59:01"))
-date and  time("2018-12-08T10:30:01")
-time("23:59:01")
-date("2017-01-01")
+date and time();
+date and time(date("2017-01-01"),time("23:59:01"));
+date and  time("2018-12-08T10:30:01");
+time("23:59:01");
+date("2017-01-01");
 duration("P2M")
 
 ==>
@@ -1616,7 +1664,7 @@ time(from: "12:45:00")
 
 ==>
 
-Expressions(
+Expression(
   DateTimeLiteral(
     DateTimeConstructor(time),"(",NamedParameters(
       NamedParameter(ParameterName(...),StringLiteral)
@@ -1631,7 +1679,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   PathExpression(
     PathExpression(
       DateTimeLiteral(...),
@@ -1642,9 +1690,9 @@ Expressions(
 )
 
 
-# DateTimeLiteral / AtLiteral
+# DateTimeLiteral / AtLiteral { "top": "Expressions" }
 
-@"2019-03-31"
+@"2019-03-31";
 @"PT01H"
 
 ==>
@@ -1661,8 +1709,8 @@ Expressions(
 
 ==>
 
-Expressions(
-  DateTimeLiteral(AtLiteral(⚠)), StringLiteral
+Expression(
+  DateTimeLiteral(AtLiteral(⚠,StringLiteral))
 )
 
 
@@ -1672,7 +1720,7 @@ date_input_001+@"P11M"
 
 ==>
 
-Expressions(
+Expression(
   ArithmeticExpression(
     VariableName(Identifier),
     ArithOp,
@@ -1681,11 +1729,11 @@ Expressions(
 )
 
 
-# DateTimeLiteral / Comparison
+# DateTimeLiteral / Comparison { "top": "Expressions" }
 
-time("10:30:05") in [time("10:30:02")..time("10:30:04")]
-duration("P11Y") in [[duration("P5Y") .. duration("P7Y")], [duration("P10Y") .. duration("P12Y")]]
-date and time("2018-12-08T10:30:01") in (date and time("2018-12-08T10:30:02")..date and time("2018-12-08T10:30:04")]
+time("10:30:05") in [time("10:30:02")..time("10:30:04")];
+duration("P11Y") in [[duration("P5Y") .. duration("P7Y")], [duration("P10Y") .. duration("P12Y")]];
+date and time("2018-12-08T10:30:01") in (date and time("2018-12-08T10:30:02")..date and time("2018-12-08T10:30:04")];
 date("2018-12-01") in (date("2018-12-02")..date("2018-12-04"))
 
 ==>
@@ -1698,10 +1746,10 @@ Expressions(
 )
 
 
-# DateTimeLiteral / Conjunction
+# DateTimeLiteral / Conjunction { "top": "Expressions" }
 
-a > 5 and years and months duration()
-years and months duration() and a > 5
+a > 5 and years and months duration();
+years and months duration() and a > 5;
 date and  time("2018-12-08T10:30:01") and 20
 
 ==>
@@ -1726,7 +1774,7 @@ date and time("2018-12-08T00:00:00@Europe/Paris") = date and
 
 ==>
 
-Expressions(
+Expression(
   Comparison(
     DateTimeLiteral(DateTimeConstructor(date,and,time),"(",PositionalParameters(StringLiteral),")"),
     CompareOp,
@@ -1741,7 +1789,7 @@ years and months duration() and a > 5
 
 ==>
 
-Expressions(
+Expression(
   Conjunction(
     FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),and,Comparison(...)
   )
@@ -1754,7 +1802,7 @@ a > 5 and years and months duration()
 
 ==>
 
-Expressions(
+Expression(
   Conjunction(
     Comparison(...),and,FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")")
   )
@@ -1771,7 +1819,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(...)),FunctionDefinition(function,"(",FormalParameters(FormalParameter(ParameterName(...))),")",FunctionBody(ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)))),
     ContextEntry(Key(Name(...)),FunctionInvocation(VariableName(...),"(",PositionalParameters(VariableName(...)),")")),
@@ -1790,7 +1838,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   Context("{",
     ContextEntry(Key(Name(...)),Context("{",
       ContextEntry(Key(Name(...)),NumericLiteral),
@@ -1803,9 +1851,9 @@ Expressions(
 )
 
 
-# FunctionDefinition (variable scopes)
+# FunctionDefinition (variable scopes) { "top": "Expressions" }
 
-function(a) a + 1
+function(a) a + 1;
 function(b: foo, c) b.today() + c
 
 ==>
@@ -1835,7 +1883,7 @@ every a a in b, dd in [] satisfies a a < dd - c
 
 ===>
 
-Expressions(
+Expression(
   QuantifiedExpression(
     every,InExpressions(
       InExpression(Name(...),in,VariableName(...)),
@@ -1855,7 +1903,7 @@ for a a in b, dd in [] return [ a a, dd, c ]
 
 ===>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(Name(...),in,IterationContext(VariableName(...))),
     InExpression(Name(...),in,IterationContext(List("[","]")))
@@ -1871,7 +1919,7 @@ foo(bar)
 
 ===>
 
-Expressions(
+Expression(
   FunctionInvocation(
     VariableName(...),"(",PositionalParameters(VariableName(Identifier)),")"
   )
@@ -1884,7 +1932,7 @@ a + foo.bar[foo=1]
 
 ===>
 
-Expressions(
+Expression(
   ArithmeticExpression(
     VariableName(...),ArithOp,FilterExpression(
       PathExpression(VariableName(...),VariableName(...)),"[",Comparison(
@@ -1895,49 +1943,49 @@ Expressions(
 )
 
 
-# Built-in Functions
+# Built-in Functions { "top": "Expressions" }
 
-not(false)
-sort([1, 2, 3])
-concatenate([1, 2], [3, 4])
-string(5)
+not(false);
+sort([1, 2, 3]);
+concatenate([1, 2], [3, 4]);
+string(5);
 
-substring(string:"foobar",start position :3)
-number(from: "1.000.000,01", decimal sep:",", grouping sep:".")
-number(from: "1.000.000,01", decimal separator:",", grouping separator:".")
+substring(string:"foobar",start position :3);
+number(from: "1.000.000,01", decimal sep:",", grouping sep:".");
+number(from: "1.000.000,01", decimal separator:",", grouping separator:".");
 
-date and time("2018-12-08T10:30:01")
-years and months duration()
+date and time("2018-12-08T10:30:01");
+years and months duration();
 
-string(5).length
+string(5).length;
 
-string length("FOO")
-upper case("foo")
-lower case("FOO")
-substring before("foo", "o")
-substring after("foo", "f")
-starts with("foo", "f")
-ends with("foo", "oo")
+string length("FOO");
+upper case("foo");
+lower case("FOO");
+substring before("foo", "o");
+substring after("foo", "f");
+starts with("foo", "f");
+ends with("foo", "oo");
 
-list contains(["a", "b"], "b")
-list contains([1, 2], 1)
-insert before(["a"], 0, "b")
-index of(["a"], "a")
-distinct values(["a", "a"])
-distinct values(1, 1, 4)
+list contains(["a", "b"], "b");
+list contains([1, 2], 1);
+insert before(["a"], 0, "b");
+index of(["a"], "a");
+distinct values(["a", "a"]);
+distinct values(1, 1, 4);
 
-met by(> 10, > 20)
-overlaps before(> 10, > 20)
-overlaps after(> 10, > 20)
-finished by(> 10, 1)
-started by(20, > 20)
+met by(> 10, > 20);
+overlaps before(> 10, > 20);
+overlaps after(> 10, > 20);
+finished by(> 10, 1);
+started by(20, > 20);
 
-day of year(@"2022-09-15")
-day of week(@"2022-09-15")
-month of year(@"2022-09-15")
-week of year(@"2022-09-15")
+day of year(@"2022-09-15");
+day of week(@"2022-09-15");
+month of year(@"2022-09-15");
+week of year(@"2022-09-15");
 
-get value({ "a": 1 }, "a")
+get value({ "a": 1 }, "a");
 get entries({ "a": 1 })
 
 ==>
@@ -2007,7 +2055,7 @@ date and time(
 
 ==>
 
-Expressions(
+Expression(
   DateTimeLiteral(
     DateTimeConstructor(...),"(",
       NamedParameters(
@@ -2021,9 +2069,9 @@ Expressions(
 )
 
 
-# Built-in Functions / month of year
+# Built-in Functions / month of year { "top": "Expressions" }
 
-month of year(@"2022-09-15")
+month of year(@"2022-09-15");
 day of week(@"2022-09-15")
 
 ==>
@@ -2034,9 +2082,9 @@ Expressions(
 )
 
 
-# Instance Of / List
+# Instance Of / List { "top": "Expressions" }
 
-a instance of list< context< foo: function<foo> -> bar > >
+a instance of list< context< foo: function<foo> -> bar > >;
 a instance of list<boolean>
 
 ==>
@@ -2065,10 +2113,10 @@ Expressions(
 )
 
 
-# Instance Of / Function
+# Instance Of / Function { "top": "Expressions" }
 
-a instance of function<string> -> string
-a instance of function<string, boolean> -> string
+a instance of function<string> -> string;
+a instance of function<string, boolean> -> string;
 a instance of function<> -> string
 
 ==>
@@ -2107,7 +2155,7 @@ a instance of context<foo: string, bar: string>
 
 ==>
 
-Expressions(
+Expression(
   InstanceOfExpression(VariableName(...),instance,of,Type(
     ContextType(context,"<",ContextEntryTypes(
       ContextEntryType(Name(...),Type(QualifiedName(VariableName(...)))),
@@ -2117,10 +2165,10 @@ Expressions(
 )
 
 
-# Instance Of / Qualified Name(...)
+# Instance Of / Qualified Name(...) { "top": "Expressions" }
 
-a instance of string
-a instance of b.C
+a instance of string;
+a instance of b.C;
 a instance of b
 
 ==>
@@ -2138,10 +2186,10 @@ Expressions(
 )
 
 
-# Instance Of / DateTimeLiteral
+# Instance Of / DateTimeLiteral { "top": "Expressions" }
 
-a instance of years and months duration
-a instance of days and time duration
+a instance of years and months duration;
+a instance of days and time duration;
 a instance of date and time
 
 ==>
@@ -2159,7 +2207,7 @@ Expressions(
 
 ==>
 
-Expressions(
+Expression(
   InstanceOfExpression(
     DateTimeLiteral(AtLiteral(StringLiteral)),instance,of,Type(
       SpecialType(days,and,time,duration)
@@ -2168,10 +2216,10 @@ Expressions(
 )
 
 
-# Simple Positive Unary Test
+# Simple Positive Unary Test { "top": "Expressions" }
 
->= 10
-> a
+>= 10;
+> a;
 >= a.b.c
 
 ==>
@@ -2189,22 +2237,22 @@ Expressions(
 
 ==>
 
-Expressions(
-  ArithmeticExpression[group="Expression"](
-    NumericLiteral[group="Expression Literal"],
+Expression(
+  ArithmeticExpression(
+    NumericLiteral[group="Literal"],
     ArithOp,
     VariableName(...)
   )
 )
 
 
-# VariableName (contextual) { "context": { "foo'a **": 1, "aa**": 1, "a - b": 1, "a * b": 1, "what if?": 1, "Profit and loss": 1 } }
+# VariableName (contextual) { "context": { "foo'a **": 1, "aa**": 1, "a - b": 1, "a * b": 1, "what if?": 1, "Profit and loss": 1 }, "top": "Expressions" }
 
-foo'a  **
-aa**
-a-b
-a * b
-what if?
+foo'a  **;
+aa**;
+a-b;
+a * b;
+what if?;
 Profit and loss
 
 ==>
@@ -2225,7 +2273,20 @@ foo'a
 
 ==>
 
-Expressions(VariableName(Identifier,⚠,Identifier))
+Expression(
+  VariableName(Identifier,⚠,Identifier)
+)
+
+
+# VariableName (Mike's age) { "context": { "Mike's age": 35 } }
+
+Mike's age
+
+==>
+
+Expression(
+  VariableName(Identifier,Identifier,Identifier,Identifier)
+)
 
 
 # VariableName (Mike's age) { "context": { "Mike's age": 35 } }
@@ -2237,7 +2298,7 @@ return
 
 ==>
 
-Expressions(
+Expression(
   ForExpression(for,InExpressions(
     InExpression(
       Name(Identifier),in,IterationContext(...))
