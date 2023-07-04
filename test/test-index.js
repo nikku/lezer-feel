@@ -11,23 +11,47 @@ import {
 
 describe('lezer-feel', () => {
 
-  it('should parse', () => {
+  describe('should parse', function() {
 
-    // when
-    const tree = parser.parse('foo');
+    it('expression', () => {
 
-    // then
-    expect(tree).to.exist;
-  });
+      // when
+      const tree = parser.parse('foo');
+
+      // then
+      expect(tree).to.exist;
+    });
 
 
-  it('should parse empty', () => {
+    it('expression (empty)', () => {
 
-    // then
-    const tree = parser.parse('');
+      // then
+      const tree = parser.parse('');
 
-    // then
-    expect(tree).to.exist;
+      // then
+      expect(tree).to.exist;
+    });
+
+
+    it('unaryTests', () => {
+
+      // when
+      const tree = parser.parse('> 10', { top: 'UnaryTests' });
+
+      // then
+      expect(tree).to.exist;
+    });
+
+
+    it('unaryTests (empty)', () => {
+
+      // then
+      const tree = parser.parse('', { top: 'UnaryTests' });
+
+      // then
+      expect(tree).to.exist;
+    });
+
   });
 
 

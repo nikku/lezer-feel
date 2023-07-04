@@ -23,7 +23,7 @@
 }
 
 @top Expression {
-  expression0?
+  expression0
 }
 
 @top Expressions {
