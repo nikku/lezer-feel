@@ -13,8 +13,21 @@ describe('lezer-feel', () => {
 
   it('should parse', () => {
 
+    // when
+    const tree = parser.parse('foo');
+
     // then
-    parser.parse('foo');
+    expect(tree).to.exist;
+  });
+
+
+  it('should parse empty', () => {
+
+    // then
+    const tree = parser.parse('');
+
+    // then
+    expect(tree).to.exist;
   });
 
 
