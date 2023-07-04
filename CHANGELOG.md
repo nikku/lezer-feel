@@ -6,6 +6,15 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.0.0
+
+* `FEAT`: parse single `Expression`
+* `FIX`: consistently parse expression split across multiple lines
+
+### Breaking Changes
+
+* Rather than parsing multiple expressions we strictly parse a single expression as mandated by the DMN FEEL spec.
+
 ## 0.17.1
 
 * `FIX`: make `VariableContext#isAtomic` static ([#22](https://github.com/nikku/lezer-feel/pull/22))
