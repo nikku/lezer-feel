@@ -15,14 +15,14 @@ import {
   parser
 } from 'lezer-feel';
 
-// parse <Expressions>
+// parse <Expression>
 parser.parse('foo > 1');
 ```
 
 
 #### Choose Dialect
 
-Use `Expressions` or `UnaryTests` as a [top node](https://lezer.codemirror.net/docs/ref/#lr.LRParser.topNode) depending on which FEEL dialect you intend to parse:
+Use `Expression` or `UnaryTests` as a [top node](https://lezer.codemirror.net/docs/ref/#lr.LRParser.topNode) depending on which FEEL dialect you intend to parse:
 
 ```javascript
 import {
@@ -86,6 +86,7 @@ Prefix [individual](./test/expressions.txt) [tests](./test/unary-tests.txt) with
 ## Related
 
 * [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
+* [feel-playground](https://github.com/nikku/feel-playground) - A visual playground to learn the FEEL language
 
 
 ## License
