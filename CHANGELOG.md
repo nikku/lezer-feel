@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.0.2
+
+* `FIX`: correctly parse names with `**` ([#23](https://github.com/nikku/lezer-feel/issues/23))
+
 ## 1.0.1
 
 * `FIX`: fail on empty expression
