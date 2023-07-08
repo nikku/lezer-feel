@@ -80,6 +80,10 @@ describe('lezer-feel', () => {
 
       expect(normalizeContextKey('A\'111+B  C')).to.eql('A \' 111 + B C');
 
+      expect(normalizeContextKey('a**\'s')).to.eql('a ** \' s');
+
+      expect(normalizeContextKey('a***')).to.eql('a ** *');
+
     });
 
   });

@@ -64,7 +64,9 @@ const spaceChars = [
 
 const newlineChars = chars('\n\r');
 
-const additionalNameChars = chars("'./-+*");
+const asterix = '*'.charCodeAt(0);
+
+const additionalNameChars = chars("'./-+*^");
 
 /**
  * @typedef { VariableContext | any } ContextValue
@@ -138,13 +140,20 @@ function indent(str, spaces) {
 /**
  * @param { import('@lezer/lr').InputStream } input
  * @param  { number } [offset]
- * @param { boolean } [includeOperators]
  *
  * @return { { token: string, offset: number } | null }
  */
 function parseAdditionalSymbol(input, offset = 0) {
 
   const next = input.peek(offset);
+
+  if (next === asterix && input.peek(offset + 1) === asterix) {
+
+    return {
+      offset: 2,
+      token: '**'
+    };
+  }
 
   if (isAdditional(next)) {
     return {
@@ -235,7 +244,7 @@ function parseName(input, variables) {
 
     const match = (
       parseIdentifier(input, i, namePart) ||
-      namePart && parseAdditionalSymbol(input, i, true) ||
+      namePart && parseAdditionalSymbol(input, i) ||
       maybeSpace && parseSpaces(input, i)
     );
 
@@ -803,7 +812,7 @@ class Variables {
  * @return { string } normalizedName
  */
 export function normalizeContextKey(name) {
-  return name.replace(/\s*([./\-'+*])\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
+  return name.replace(/\s*([./\-'+]|\*\*?)\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
 }
 
 /**

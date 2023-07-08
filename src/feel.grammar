@@ -169,7 +169,7 @@ arithmeticTimesStart[@export] {
 }
 
 arithmeticExpStart[@export] {
-  ArithOp<"^" | "**">
+  exp
 }
 
 arithmeticUnaryStart[@export] {
@@ -338,7 +338,8 @@ VariableName {
 AdditionalIdentifier[@name=Identifier] {
   "." | "'" |
   minus | plus |
-  divide | multi
+  divide | multi |
+  exp
 }
 
 Name {
@@ -496,12 +497,17 @@ commaSep<Expr> {
     "/"
   }
 
+  exp[@name=ArithOp] {
+    "**" | "^"
+  }
+
   multi[@name=ArithOp] {
     "*"
   }
 
-  ArithOp<Expr> {
-    Expr
+  @precedence {
+    exp,
+    multi
   }
 
   CompareOp<Expr> {

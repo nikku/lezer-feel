@@ -802,6 +802,17 @@ Expressions(
 )
 
 
+# VariableName (special, scoped) { "context": { "a**'s": 1 } }
+
+a**'s
+
+==>
+
+Expression(
+  VariableName(Identifier,Identifier,Identifier,Identifier)
+)
+
+
 # VariableName (error)
 
 a**'s
@@ -820,6 +831,24 @@ a if
 ==>
 
 Expression(VariableName(Identifier,⚠(if)))
+
+
+# Name (special)
+
+{
+  a**'s: 1
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(Name(Identifier,Identifier(ArithOp),Identifier,Identifier)),
+      NumericLiteral
+    ),
+  "}")
+)
 
 
 # Special Names { "top": "Expressions" }
@@ -2258,8 +2287,8 @@ Profit and loss
 ==>
 
 Expressions(
-  VariableName(Identifier,Identifier,Identifier,Identifier,Identifier),
-  VariableName(Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier,Identifier,Identifier),
+  VariableName(Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier,Identifier),
   VariableName(Identifier,Identifier),
