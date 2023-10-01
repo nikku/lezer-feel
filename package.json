@@ -2,14 +2,14 @@
   "name": "lezer-feel",
   "version": "1.0.2",
   "description": "Lezer-based FEEL grammar",
-  "main": "dist/index.cjs",
   "type": "module",
   "exports": {
-    "import": "./dist/index.es.js",
+    "import": "./dist/index.js",
     "require": "./dist/index.cjs"
   },
   "source": "src/index.js",
-  "module": "dist/index.es.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
