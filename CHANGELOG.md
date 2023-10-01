@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.2.0
+
+_Re-publish of `v1.1.0`._
+
 ## 1.1.0
 
 * `DEPS`: update `@lezer/*` dependencies
