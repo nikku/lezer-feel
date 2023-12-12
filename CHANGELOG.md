@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.2.2
+
+* `FIX`: parse long, nested lists
+
 ## 1.2.1
 
 * `FIX`: correct partial `QuantifiedExpression` parse ([#24](https://github.com/nikku/lezer-feel/issues/24))
