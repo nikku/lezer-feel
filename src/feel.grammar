@@ -35,8 +35,8 @@ expression0[@export] {
 }
 
 expression {
-  textualExpression |
-  boxedExpression
+  boxedExpression |
+  textualExpression
 }
 
 textualExpression {
@@ -138,11 +138,11 @@ Disjunction {
   expression !or kw<"or"> expression
 }
 
-Conjunction [@dynamicPrecedence=-1] {
+Conjunction[@dynamicPrecedence=-1] {
   expression !and kw<"and"> expression
 }
 
-boxedExpression {
+boxedExpression[@dynamicPrecedence=1] {
   List |
   FunctionDefinition |
   Context

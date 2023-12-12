@@ -96,7 +96,7 @@ Expressions(
 
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
+  Comparison(VariableName(...),in,"(",PositiveUnaryTests(PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),")")
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
   Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
   Comparison(VariableName(...),in,"(",PositiveUnaryTests(...),")"),
@@ -738,7 +738,7 @@ Expressions(
 
 Expressions(
   List("[",VariableName(Identifier),⚠),
-  SimplePositiveUnaryTest(Interval("[",⚠))
+  List("[",⚠)
 )
 
 
@@ -2355,4 +2355,60 @@ Expression(
     ),return,
     VariableName(Identifier,Identifier,Identifier,Identifier)
   )
+)
+
+
+# List (long)
+
+[[
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),
+  a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a(),a()
+]]
+
+==>
+
+Expression(List(List(...)))
+
+
+# List / Interval (nested)
+
+[[
+  (1..3),
+  ([1]..[3, []]),
+  [],
+  [[]]
+]]
+
+==>
+
+Expression(
+  List("[",
+    List("[",
+      SimplePositiveUnaryTest(Interval(...)),
+      SimplePositiveUnaryTest(Interval(...)),
+      List(...),
+      List(...),
+    "]"),
+  "]")
+)
+
+
+# -List (nested)
+
+[[[[]]]]
+
+==>
+
+Expression(
+  ...
 )
