@@ -96,7 +96,7 @@ Expressions(
 
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
-  Comparison(VariableName(...),in,"(",PositiveUnaryTests(PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),")")
+  Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",SimplePositiveUnaryTest(Interval(...)),")"))),
   Comparison(VariableName(...),in,PositiveUnaryTest(SimplePositiveUnaryTest(Interval(...)))),
   Comparison(VariableName(...),in,PositiveUnaryTest(ParenthesizedExpression("(",ParenthesizedExpression(...),")"))),
   Comparison(VariableName(...),in,"(",PositiveUnaryTests(...),")"),
@@ -184,6 +184,16 @@ Expression(
     ")"),
     VariableName(...)
   )
+)
+
+# ParenthesizedExpression (nested)
+
+((((((((((((1))))))))))))
+
+==>
+
+Expression(
+  ParenthesizedExpression(...)
 )
 
 
@@ -737,7 +747,7 @@ Expressions(
 ==>
 
 Expressions(
-  List("[",VariableName(Identifier),⚠),
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠)),
   List("[",⚠)
 )
 
@@ -2403,12 +2413,27 @@ Expression(
 )
 
 
-# -List (nested)
+# List (nested)
 
-[[[[]]]]
+[[[[[[[[[[[[[]]]]]]]]]]]]]
 
 ==>
 
 Expression(
-  ...
+  List("[",List("[",List("[",List("[",List("[",
+    List("[",List("[",List("[",List("[",List("[",
+      List("[",List("[",List("[","]"),"]"),"]"),
+    "]"),"]"),"]"),"]"),"]"),
+  "]"),"]"),"]"),"]"),"]")
+)
+
+
+# FilterExpression (nested list)
+
+foo[[[[[[[(1..10).start included]]]]]]]
+
+==>
+
+Expression(
+  FilterExpression(VariableName(...), List(...))
 )

@@ -34,8 +34,8 @@ expression0[@export] {
 }
 
 expression {
-  boxedExpression |
-  textualExpression
+  textualExpression |
+  boxedExpression
 }
 
 textualExpression {
@@ -121,16 +121,8 @@ InstanceOfExpression {
   expression !instanceOf kw<"instance"> ckw<"of"> Type
 }
 
-parenthesizedStart[@export] {
-  "("
-}
-
-parenthesizedEnd[@export] {
-  ")"
-}
-
 ParenthesizedExpression {
-  parenthesizedStart ~interval expression !paren parenthesizedEnd
+  "(" expression !paren ")"
 }
 
 Disjunction {
@@ -141,7 +133,7 @@ Conjunction[@dynamicPrecedence=-1] {
   expression !and kw<"and"> expression
 }
 
-boxedExpression[@dynamicPrecedence=1] {
+boxedExpression {
   List |
   FunctionDefinition |
   Context
@@ -187,7 +179,7 @@ Comparison {
   expression !compare CompareOp<">" | ">=" | "<" | "<="> expression |
   expression !compare kw<"between"> expression kw<"and"> expression |
   expression !compare kw<"in"> PositiveUnaryTest |
-  expression !compare kw<"in"> "(" ~interval PositiveUnaryTests ")"
+  expression !compare kw<"in"> "(" PositiveUnaryTests ")"
 }
 
 SimplePositiveUnaryTest {
@@ -353,28 +345,16 @@ PropertyName[@name=Name] {
   PropertyIdentifier (!name (PropertyIdentifier | AdditionalIdentifier))*
 }
 
-intervalStart[@export] {
-  ( "]" | "(" | "[" )
-}
-
-intervalEnd[@export] {
-  ( ")" | "[" | "]" )
-}
-
 Interval {
-  intervalStart ~interval endpoint ".." endpoint intervalEnd
+  ( "]" | "(" | listStart ~interval ) endpoint ".." endpoint ( ")" | "[" | "]" )
 }
 
 listStart[@export] {
   "["
 }
 
-listEnd[@export] {
-  "]"
-}
-
 List {
-  listStart ~interval commaSep<expression> listEnd
+  listStart ~interval commaSep<expression> "]"
 }
 
 SpecialType {
