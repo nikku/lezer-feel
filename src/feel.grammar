@@ -99,7 +99,7 @@ QuantifiedInExpression[@name=InExpression] {
 }
 
 QuantifiedExpression {
-  quantifiedExpressionStart QuantifiedInExpressions ckw<"satisfies"> expression
+  quantifiedExpressionStart QuantifiedInExpressions kw<"satisfies"> expression
 }
 
 pathExpressionStart[@export] {

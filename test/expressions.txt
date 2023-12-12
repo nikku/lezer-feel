@@ -942,6 +942,17 @@ Expression(
 )
 
 
+# QuantifiedExpression (error)
+
+every a in b satisfies
+
+==>
+
+Expression(
+  QuantifiedExpression(every,InExpressions(...),satisfies,⚠),
+)
+
+
 # FilterExpression { "top": "Expressions" }
 
 a[c];
@@ -1279,7 +1290,6 @@ Expression(
 )
 
 
-
 # ForExpression (multi-name)
 
 for
@@ -1332,6 +1342,17 @@ Expression(
       ))
     ),⚠
   )
+)
+
+
+# ForExpression (error)
+
+for a in b return
+
+==>
+
+Expression(
+  ForExpression(for,InExpressions(...),return,⚠),
 )
 
 
