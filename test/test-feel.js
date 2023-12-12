@@ -73,11 +73,11 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
         let strict = !/⚠|\.\.\./.test(expected);
         let context = config.context || {};
 
-        config.contextTracker = contextTracker(context);
-
-        if (parser.configure && (strict || config)) {
-          parser = parser.configure({ strict, ...config });
+        if (contextTracker) {
+          config.contextTracker = contextTracker(context);
         }
+
+        parser = parser.configure({ strict, ...config });
 
         testTree(parser.parse(text), expected, mayIgnore);
       }
@@ -152,6 +152,10 @@ for (const file of fs.readdirSync(caseDir)) {
       }) : parser;
     };
 
+    const contextTracker = /expressions|unary-test/.test(fileName)
+      ? trackVariables
+      : null;
+
     const tests = fileTests(specs, fileName);
 
     for (const { name: testName, run } of tests) {
@@ -162,11 +166,11 @@ for (const file of fs.readdirSync(caseDir)) {
         context
       } = parseTest(testName);
 
-      it(name, () => run(createParser(context)));
+      it(name, () => run(createParser(context), contextTracker));
     }
 
 
-    describe('with custom variable context', function() {
+    contextTracker && describe('with custom variable context', function() {
 
       const EntriesTracker = (context) => {
         return trackVariables(toEntriesContextValue(context), EntriesContext);
