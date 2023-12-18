@@ -834,6 +834,25 @@ Expression(
 )
 
 
+# VariableName (error, start char)
+
+{
+  §foo: 1,
+  4bar: 1
+}
+
+==>
+
+Expression(
+  Context("{",
+    ⚠,
+    ContextEntry(Key(...),NumericLiteral),
+    ⚠,
+    ContextEntry(Key(...),NumericLiteral),
+  "}")
+)
+
+
 # VariableName (spaced, keyword error)
 
 a if
