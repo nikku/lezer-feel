@@ -838,7 +838,8 @@ Expression(
 
 {
   §foo: 1,
-  4bar: 1
+  4bar: 1,
+  a§YEA: 1
 }
 
 ==>
@@ -848,6 +849,7 @@ Expression(
     ⚠,
     ContextEntry(Key(...),NumericLiteral),
     ⚠,
+    ContextEntry(Key(...),NumericLiteral),
     ContextEntry(Key(...),NumericLiteral),
   "}")
 )
