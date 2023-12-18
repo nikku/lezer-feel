@@ -88,13 +88,37 @@ function isStartChar(ch) {
   return (
     ch === 63 // ?
   ) || (
-    ch === 95 // _
-  ) || (
     ch >= 65 && ch <= 90 // A-Z
+  ) || (
+    ch === 95 // _
   ) || (
     ch >= 97 && ch <= 122 // a-z
   ) || (
-    ch >= 161 && !isPartChar(ch) && !isSpace(ch)
+    ch >= 0xC0 && ch <= 0xD6
+  ) || (
+    ch >= 0xD8 && ch <= 0xF6
+  ) || (
+    ch >= 0xF8 && ch <= 0x2FF
+  ) || (
+    ch >= 0x370 && ch <= 0x37D
+  ) || (
+    ch >= 0x37F && ch <= 0x1FFF
+  ) || (
+    ch >= 0x200C && ch <= 0x200D
+  ) || (
+    ch >= 0x2070 && ch <= 0x218F
+  ) || (
+    ch >= 0x2C00 && ch <= 0x2FEF
+  ) || (
+    ch >= 0x3001 && ch <= 0xD7FF
+  ) || (
+    ch >= 0xF900 && ch <= 0xFDCF
+  ) || (
+    ch >= 0xFDF0 && ch <= 0xFFFD
+  ) || (
+    ch >= 0xD800 && ch <= 0xDBFF // upper surrogate
+  ) || (
+    ch >= 0xDC00 && ch <= 0xDFFF // lower surrogate
   );
 }
 
