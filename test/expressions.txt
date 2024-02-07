@@ -884,18 +884,63 @@ Expression(
 
 # Special Names { "top": "Expressions" }
 
+date;
 date and time;
+days and time duration;
+years and months duration;
 date and other;
 year
 
 ==>
 
 Expressions(
+  VariableName(...),
+  Conjunction(VariableName(...),and,VariableName(...)),
+  Conjunction(VariableName(...),and,VariableName(...)),
   Conjunction(VariableName(...),and,VariableName(...)),
   Conjunction(VariableName(...),and,VariableName(...)),
   VariableName(...)
 )
 
+
+# Special Names (from context) { "top": "Expressions", "context": { "date and time": 1, "days and time duration": 1, "years and months duration": 1 } }
+
+date and time;
+days and time duration;
+years and months duration
+
+==>
+
+Expressions(
+  VariableName(...),
+  VariableName(...),
+  VariableName(...)
+)
+
+
+# Special Names (local override) { "top": "Expressions" }
+
+{
+  date and time: 1,
+  days and time duration: 1,
+  years and months duration: 1,
+  foo: date and time,
+  bar: days and time duration,
+  baz: years and months duration
+}
+
+==>
+
+Expressions(
+  Context("{",
+    ContextEntry(Key(...),NumericLiteral),
+    ContextEntry(Key(...),NumericLiteral),
+    ContextEntry(Key(...),NumericLiteral),
+    ContextEntry(Key(...),VariableName(...)),
+    ContextEntry(Key(...),VariableName(...)),
+    ContextEntry(Key(...),VariableName(...)),
+  "}")
+)
 
 # QuantifiedExpression { "top": "Expressions" }
 
