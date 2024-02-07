@@ -302,6 +302,10 @@ function parseName(input, variables) {
       };
     }
 
+    if (contextKeys.some(el => el.startsWith(name))) {
+      continue;
+    }
+
     if (dateTimeIdentifiers.some(el => el === name)) {
       const token = tokens[0];
 
@@ -316,12 +320,11 @@ function parseName(input, variables) {
       };
     }
 
-    if (
-      !contextKeys.some(el => el.startsWith(name)) &&
-      !dateTimeIdentifiers.some(el => el.startsWith(name))
-    ) {
-      return nextMatch;
+    if (dateTimeIdentifiers.some(el => el.startsWith(name))) {
+      continue;
     }
+
+    return nextMatch;
   }
 
 }
