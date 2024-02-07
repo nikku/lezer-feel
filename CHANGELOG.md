@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.2.5
+
+* `FIX`: correctly parse `date and time` as a variable name ([#31](https://github.com/nikku/lezer-feel/pull/31))
+
 ## 1.2.4
 
 * `FIX`: only parse valid name start chars
