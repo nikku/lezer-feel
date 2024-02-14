@@ -1,6 +1,6 @@
 {
   "name": "lezer-feel",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Lezer-based FEEL grammar",
   "type": "module",
   "exports": {
