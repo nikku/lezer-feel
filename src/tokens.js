@@ -858,7 +858,7 @@ function wrap(variables, scopeName, code) {
   const namePart = parts[0];
   const valuePart = parts[Math.max(1, parts.length - 1)];
 
-  const name = namePart.computedValue();
+  const name = namePart?.computedValue();
   const value = valuePart?.computedValue() || null;
 
   return variables
@@ -986,7 +986,7 @@ export function trackVariables(context = {}, Context = VariableContext) {
           {
             value: Context
               .of(variables.value)
-              .set(name.computedValue(), value?.computedValue())
+              .set(name?.computedValue(), value?.computedValue())
           }
         );
       }
