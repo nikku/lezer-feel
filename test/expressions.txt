@@ -482,6 +482,36 @@ Expression(
 )
 
 
+# Context (error, empty entry)
+
+{
+  "key": {
+    nested key: v + ^{}"
+  }
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),
+      Context("{",
+        ContextEntry(
+          Key(...),
+          ArithmeticExpression(
+            ArithmeticExpression(VariableName(...),ArithOp,⚠),
+            ArithOp,
+            Context("{","}"),
+            ⚠
+          )
+        ),
+      "}")
+    ),
+  "}")
+)
+
+
 # Context (special key)
 
 {
