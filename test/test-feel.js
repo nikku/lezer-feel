@@ -4,16 +4,16 @@ import { parser, trackVariables, VariableContext } from 'lezer-feel';
 import { testTree } from '@lezer/generator/dist/test';
 import { buildParser } from '@lezer/generator';
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 import { ContextTracker } from '@lezer/lr';
 
 const caseDir = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * @typedef { import('@lezer/common').SyntaxNodeRef } SyntaxNodeRef
+ * @typedef { import('@lezer/common').NodeType } NodeType
  * @typedef { import('@lezer/lr').LRParser } Parser
  */
 
@@ -34,17 +34,20 @@ function toLineContext(file, index) {
 }
 
 /**
- * @param { SyntaxNodeRef } type
+ * @param { NodeType } type
  * @return { boolean }
  */
 function defaultIgnore(type) { return /\W/.test(type.name); }
 
 /**
- * @typedef { { name: string, run(parser: Parser, contextTracker: Function): void } } Test
+ * @typedef { {
+ *   name: string,
+ *   run: (parser: Parser, contextTracker: typeof trackVariables | null) => void
+ * } } Test
  *
  * @param { string } file
  * @param { string } fileName
- * @param { (node: SyntaxNodeRef ) => boolean } mayIgnore
+ * @param { (node: NodeType ) => boolean } mayIgnore
  * @return { Test[] }
  */
 export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
@@ -63,7 +66,14 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
       );
     }
 
-    let [ , name, configStr ] = /(.*?)(\{.*?\})?$/.exec(m[1]);
+
+    const titleMatch = /(.*?)(\{.*?\})?$/.exec(m[1]);
+
+    if (!titleMatch) {
+      throw new Error('unexpected title format: ' + m[1] + ', expected NAME (CONFIG)?');
+    }
+
+    const [ _, name, configStr ] = titleMatch;
     let config = configStr ? JSON.parse(configStr) : {};
 
     let text = m[2].trim(), expected = m[3];
@@ -92,11 +102,21 @@ export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
 }
 
 /**
+ * @typedef { import('mocha').ExclusiveTestFunction | import('mocha').PendingTestFunction | import('mocha').TestFunction } AnyTestFunction
+ */
+
+/**
  * @param {string} name
- * @return { { it: Function, name: string } }
+ * @return { {
+ *   it: AnyTestFunction,
+ *   name: string
+ * } }
  */
 function parseTest(name) {
 
+  /**
+   * @type { AnyTestFunction }
+   */
   let iit = it;
 
   const match = /([*-]?)\s*([^{]+)?/.exec(name);
@@ -132,7 +152,7 @@ for (const file of fs.readdirSync(caseDir)) {
     continue;
   }
 
-  const name = /^[^.]*/.exec(file)[0];
+  const name = path.basename(file);
 
   describe(name, () => {
 
@@ -144,8 +164,7 @@ for (const file of fs.readdirSync(caseDir)) {
 
     const specs = grammar ? fileContents.substring(grammar.length) : fileContents;
 
-    const createParser = (context) => {
-
+    const createParser = () => {
       return grammar ? buildParser(grammar, {
         fileName,
         warn(msg) { throw new Error(msg); }
@@ -162,11 +181,10 @@ for (const file of fs.readdirSync(caseDir)) {
 
       const {
         it,
-        name,
-        context
+        name
       } = parseTest(testName);
 
-      it(name, () => run(createParser(context), contextTracker));
+      it(name, () => run(createParser(), contextTracker));
     }
 
 
@@ -179,6 +197,10 @@ for (const file of fs.readdirSync(caseDir)) {
       let latestVariables;
 
       const contextTracker = context => {
+
+        /**
+         * @type {any}
+         */
         const entriesTracker = EntriesTracker(context);
         return new ContextTracker({
           start: entriesTracker.start,
@@ -198,7 +220,7 @@ for (const file of fs.readdirSync(caseDir)) {
         } = parseTest(testName);
 
         it(name, () => {
-          run(createParser(context), contextTracker);
+          run(createParser(), contextTracker);
 
           // Should always be an instance of the custom context
           if (!(latestVariables.context instanceof EntriesContext)) {
@@ -239,8 +261,10 @@ class EntriesContext extends VariableContext {
     for (const key in this.value.entries) {
       const entry = this.value.entries[key];
 
-      if (!this.constructor.isAtomic(entry)) {
-        this.value.entries[key] = this.constructor.of(this.value.entries[key]);
+      const constructor = /** @type { typeof EntriesContext } */ (this.constructor);
+
+      if (!constructor.isAtomic(entry)) {
+        this.value.entries[key] = constructor.of(this.value.entries[key]);
       }
     }
   }
@@ -253,8 +277,17 @@ class EntriesContext extends VariableContext {
     return this.value.entries[key];
   }
 
+  /**
+   * @param {string} key
+   * @param {any} value
+   *
+   * @return {this}
+   */
   set(key, value) {
-    return this.constructor.of(
+
+    const constructor = /** @type { typeof EntriesContext } */ (this.constructor);
+
+    return /** @type {this} */ (constructor.of(
       {
         ...this.value,
         entries: {
@@ -262,7 +295,7 @@ class EntriesContext extends VariableContext {
           [key]: value
         }
       }
-    );
+    ));
   }
 
   static of(...contexts) {
