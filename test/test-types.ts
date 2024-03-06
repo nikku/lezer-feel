@@ -3,13 +3,11 @@ import {
   trackVariables,
   normalizeContextKey,
   VariableContext
-} from '..';
+} from 'lezer-feel';
 
 import {
   expect
 } from 'chai';
-
-import { Variables } from '../src/tokens';
 
 
 describe('types', () => {
