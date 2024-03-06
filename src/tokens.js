@@ -52,8 +52,13 @@ import {
   ExternalTokenizer
 } from '@lezer/lr';
 
+// @ts-expect-error env access
 const LOG_PARSE = typeof process != 'undefined' && process.env && /\bfparse(:dbg)?\b/.test(process.env.LOG);
+
+// @ts-expect-error env access
 const LOG_PARSE_DEBUG = typeof process != 'undefined' && process.env && /\bfparse:dbg\b/.test(process.env.LOG);
+
+// @ts-expect-error env access
 const LOG_VARS = typeof process != 'undefined' && process.env && /\bcontext\b/.test(process.env.LOG);
 
 const spaceChars = [
@@ -447,7 +452,7 @@ class ValueProducer {
   }
 
   /**
-   * @param { Function }
+   * @param { Function } fn
    *
    * @return { ValueProducer }
    */
@@ -506,11 +511,13 @@ export class VariableContext {
   get(key) {
     const result = this.value[key];
 
-    if (this.constructor.isAtomic(result)) {
+    const constructor = /** @type { typeof VariableContext } */ (this.constructor);
+
+    if (constructor.isAtomic(result)) {
       return result;
     }
 
-    return this.constructor.of(result);
+    return constructor.of(result);
   }
 
   /**
@@ -518,10 +525,14 @@ export class VariableContext {
    *
    * @param {String} key
    * @param {any} value
+   *
    * @returns {VariableContext} new context with the given key added
    */
   set(key, value) {
-    return this.constructor.of({
+
+    const constructor = /** @type { typeof VariableContext } */ (this.constructor);
+
+    return constructor.of({
       ...this.value,
       [key]: value
     });
@@ -579,9 +590,9 @@ class Variables {
     tokens = [],
     children = [],
     parent = null,
-    context,
-    value,
-    raw
+    context = null,
+    value = null,
+    raw = null
   } = {}) {
     this.name = name;
     this.tokens = tokens;
@@ -727,6 +738,9 @@ class Variables {
 
   pushChildren(children) {
 
+    /**
+     * @type {Variables}
+     */
     let parent = this;
 
     for (const child of children) {
@@ -846,7 +860,7 @@ export function normalizeContextKey(name) {
  * Wrap children of variables under the given named child.
  *
  * @param { Variables } variables
- * @param { string } name
+ * @param { string } scopeName
  * @param { string } code
  * @return { Variables }
  */
@@ -968,6 +982,7 @@ export function trackVariables(context = {}, Context = VariableContext) {
           .assign({ context: newContext || currentContext });
       }
 
+      // @ts-expect-error internal method
       const code = input.read(input.pos, stack.pos);
 
       const end = contextEnds[term];
