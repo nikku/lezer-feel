@@ -12,7 +12,7 @@ export const feelHighlighting = styleTags({
   function: t.definitionKeyword,
   as: t.keyword,
   'Type/...': t.typeName,
-  Wildcard: t.special,
+  Wildcard: t.special(t.variableName),
   null: t.null,
   LineComment: t.lineComment,
   BlockComment: t.blockComment,
