@@ -9,6 +9,11 @@ export function normalizeContextKey(
 ) : string;
 
 export class VariableContext {
+
+  value: any;
+
+  constructor(value: any);
+
   get(key: string): any;
   set(key: string, value: any): this;
 
