@@ -4,13 +4,13 @@
   "description": "Lezer-based FEEL grammar",
   "type": "module",
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
   },
-  "source": "src/index.js",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
   "sideEffects": false,

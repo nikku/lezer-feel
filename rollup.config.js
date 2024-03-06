@@ -1,21 +1,24 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
+import fs from 'node:fs';
+import { URL } from 'node:url';
 
-const pkg = require('./package.json');
+const pkg = JSON.parse(
+  fs.readFileSync(new URL('./package.json', import.meta.url))
+);
 
+const pkgExport = pkg.exports['.'];
 
 export default {
-  input: pkg.source,
+  input: './src/index.js',
   output: [
     {
       format: 'cjs',
-      file: pkg.main,
+      file: pkgExport.require,
       sourcemap: true
     }, {
       format: 'es',
-      file: pkg.module,
+      file: pkgExport.import,
       sourcemap: true
     }
   ],
