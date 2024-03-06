@@ -6,6 +6,13 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.2.7
+
+* `FIX`: correct broken `main` export ([#33](https://github.com/nikku/lezer-feel/pull/33))
+* `FIX`: correctly export `VariableContext` constructor type ([#33](https://github.com/nikku/lezer-feel/pull/33), [`2ba5471`](https://github.com/nikku/lezer-feel/pull/33/commits/2ba5471069b8357f48197b629f440d079f5c2f40))
+* `FIX`: correct wildcard style definition ([#33](https://github.com/nikku/lezer-feel/pull/33), [`0f7e7e1`](https://github.com/nikku/lezer-feel/pull/33/commits/0f7e7e1c5d1a30ed4d0c1dd5d178e59743a5e034))
+* `CHORE`: introduce `exports` declaration ([#33](https://github.com/nikku/lezer-feel/pull/33))
+
 ## 1.2.6
 
 * `FIX`: correctly reduce `ContextEntry` without name ([#32](https://github.com/nikku/lezer-feel/pull/32))
