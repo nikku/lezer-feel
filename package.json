@@ -47,9 +47,9 @@
     "dev": "run-p dev:*",
     "dev:build": "chokidar 'src/*.grammar' 'src/{highlight,tokens}.js' --initial -c 'npm run build-debug'",
     "dev:test": "chokidar '{dist,test}/**/*.{js,cjs,txt}' -c 'npm test'",
-    "all": "run-s lint build test:types test",
+    "all": "run-s lint build check-types test",
     "lint": "eslint .",
-    "test:types": "tsc --lib es6 --noEmit test/test-types.ts",
+    "check-types": "tsc --noEmit",
     "prepare": "run-s build"
   },
   "files": [
