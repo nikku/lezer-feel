@@ -11,6 +11,7 @@
     },
     "./package.json": "./package.json"
   },
+  "types": "./dist/index.d.ts",
   "author": "Nico Rehwaldt <https://github.com/nikku>",
   "license": "MIT",
   "sideEffects": false,
