@@ -36,7 +36,7 @@ describe('lezer-feel', () => {
     it('unaryTests', () => {
 
       // when
-      const tree = parser.parse('> 10', { top: 'UnaryTests' });
+      const tree = parser.configure({ top: 'UnaryTests' }).parse('> 10');
 
       // then
       expect(tree).to.exist;
@@ -46,7 +46,7 @@ describe('lezer-feel', () => {
     it('unaryTests (empty)', () => {
 
       // then
-      const tree = parser.parse('', { top: 'UnaryTests' });
+      const tree = parser.configure({ top: 'UnaryTests' }).parse('');
 
       // then
       expect(tree).to.exist;
