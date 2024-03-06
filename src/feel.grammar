@@ -406,18 +406,18 @@ commaSep<Expr> {
   "" | Expr ("," Expr)*
 }
 
-@context variableTracker from "./tokens"
+@context variableTracker from "./tokens.js"
 
-@external tokens propertyIdentifiers from "./tokens" {
+@external tokens propertyIdentifiers from "./tokens.js" {
   propertyIdentifier[@export]
 }
 
-@external tokens identifiers from "./tokens" {
+@external tokens identifiers from "./tokens.js" {
   identifier[@export],
   nameIdentifier[@export]
 }
 
-@external tokens insertSemicolon from "./tokens" {
+@external tokens insertSemicolon from "./tokens.js" {
   insertSemi
 }
 
@@ -497,4 +497,4 @@ commaSep<Expr> {
 
 @detectDelim
 
-@external propSource feelHighlighting from "./highlight"
+@external propSource feelHighlighting from "./highlight.js"

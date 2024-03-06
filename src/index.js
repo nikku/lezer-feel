@@ -1,7 +1,7 @@
-export * from './parser';
+export * from './parser.js';
 
 export {
   trackVariables,
   normalizeContextKey,
   VariableContext
-} from './tokens';
+} from './tokens.js';
