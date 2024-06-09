@@ -16,7 +16,7 @@
   "license": "MIT",
   "sideEffects": false,
   "devDependencies": {
-    "@lezer/generator": "^1.6.0",
+    "@lezer/generator": "^1.7.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@lezer/highlight": "^1.2.0",
-    "@lezer/lr": "^1.4.0"
+    "@lezer/lr": "^1.4.1"
   },
   "engines": {
     "node": "*"
