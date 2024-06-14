@@ -1654,6 +1654,35 @@ Expressions(
 )
 
 
+# FunctionInvocation (positional, error) { "top": "Expressions" }
+
+bar(foo., bazzzzzz);
+bar(foo., baz)
+
+==>
+
+Expressions(
+
+  FunctionInvocation(VariableName(...), "(",
+    PositionalParameters(
+      PathExpression(
+        VariableName(...), ⚠
+      ),
+      VariableName(...)
+    ),
+  ")"),
+
+  FunctionInvocation(VariableName(...), "(",
+    PositionalParameters(
+      PathExpression(
+        VariableName(...), ⚠
+      ),
+      VariableName(...)
+    ),
+  ")")
+)
+
+
 # FunctionInvocation (named) { "top": "Expressions" }
 
 a(foo: f, bar: b, other: o);
@@ -1676,6 +1705,64 @@ Expressions(
     NamedParameter(ParameterName(...),VariableName(...)),
     NamedParameter(ParameterName(...),VariableName(...))
   ),")")
+)
+
+
+# FunctionInvocation (named, error) { "top": "Expressions" }
+
+bar(foo: foo., baz: bazzzzzz);
+bar(foo: foo., baz: baz);
+bar(foo: foo., bazzzzzz);
+bar(foo: foo., baz)
+
+==>
+
+Expressions(
+
+  FunctionInvocation(VariableName(Identifier),"(",
+    NamedParameters(
+      NamedParameter(
+        ParameterName(...),
+        PathExpression(VariableName(...),⚠)
+      ),
+      NamedParameter(
+        ParameterName(...),
+        VariableName(...)
+      )
+    ),
+  ")"),
+
+  FunctionInvocation(VariableName(Identifier),"(",
+    NamedParameters(
+      NamedParameter(
+        ParameterName(...),
+        PathExpression(VariableName(...),⚠)
+      ),
+      NamedParameter(
+        ParameterName(...),
+        VariableName(...)
+      )
+    ),
+  ")"),
+
+  FunctionInvocation(VariableName(Identifier),"(",
+    NamedParameters(
+      NamedParameter(
+        ParameterName(...),
+        PathExpression(VariableName(...),⚠,VariableName(...))
+      )
+    ),
+  ")"),
+
+  FunctionInvocation(VariableName(Identifier),"(",
+    NamedParameters(
+      NamedParameter(
+        ParameterName(...),
+        PathExpression(VariableName(...),⚠,VariableName(...))
+      )
+    ),
+  ")")
+
 )
 
 
