@@ -1,0 +1,13 @@
+# VariableName (backtick escaped) { "top": "Expressions", "dialect": "camunda" }
+
+`foo`;
+foo.`bar`;
+foo.`bar-baz`;
+
+==>
+
+Expressions(
+  VariableName(BacktickIdentifier(...)),
+  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
+  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...)))
+)

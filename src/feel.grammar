@@ -1,3 +1,5 @@
+@dialects { camunda }
+
 @precedence {
   name,
   type,
@@ -322,8 +324,12 @@ Identifier {
   identifier | nameIdentifier
 }
 
+BacktickIdentifier {
+  backtickIdentifier
+}
+
 VariableName {
-  (!name Identifier ~ident)+
+  (!name Identifier ~ident)+ | BacktickIdentifier
 }
 
 AdditionalIdentifier[@name=Identifier] {
@@ -451,6 +457,10 @@ commaSep<Expr> {
 
   number {
     (digits ("." digits)? | "." digits)
+  }
+
+  backtickIdentifier[@dialect=camunda] {
+    "`" (![\\\n`] | "\\" _)* "`"
   }
 
   @precedence { BlockComment, LineComment, divide }
