@@ -2620,3 +2620,18 @@ foo[[[[[[[(1..10).start included]]]]]]]
 Expression(
   FilterExpression(VariableName(...), List(...))
 )
+
+
+# Backtick escaped variables (Camunda) { "top": "Expressions", "dialect": "camunda" }
+
+`foo`;
+foo.`bar`;
+foo.`bar-baz`;
+
+==>
+
+Expressions(
+  VariableName(...),
+  PathExpression(VariableName(...), VariableName(...)),
+  PathExpression(VariableName(...), VariableName(...))
+)

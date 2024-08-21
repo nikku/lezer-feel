@@ -171,7 +171,7 @@ for (const file of fs.readdirSync(caseDir)) {
       }) : parser;
     };
 
-    const contextTracker = /expressions|unary-test/.test(fileName)
+    const contextTracker = /expressions|unary-test|camunda/.test(fileName)
       ? trackVariables
       : null;
 
