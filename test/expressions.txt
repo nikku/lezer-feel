@@ -1901,6 +1901,27 @@ Expressions(
 )
 
 
+# DateTimeLiteral / PositionalParameters (nested)
+
+date and time(date(date and time(test.parameterName)))
+
+==>
+
+Expression(
+  DateTimeLiteral(DateTimeConstructor(...),"(",
+    PositionalParameters(
+      DateTimeLiteral(DateTimeConstructor(...),"(",
+        PositionalParameters(
+          DateTimeLiteral(DateTimeConstructor(...),"(",
+            PositionalParameters(...),
+          ")"),
+        ),
+      ")"),
+    ),
+  ")"),
+)
+
+
 # DateTimeLiteral / NamedParameters
 
 time(from: "12:45:00")
