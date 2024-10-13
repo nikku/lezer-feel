@@ -9,11 +9,11 @@ import {
 } from 'chai';
 
 
-describe('lezer-feel', () => {
+describe('lezer-feel', function() {
 
   describe('should parse', function() {
 
-    it('expression', () => {
+    it('expression', function() {
 
       // when
       const tree = parser.parse('foo');
@@ -23,7 +23,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('expression (empty)', () => {
+    it('expression (empty)', function() {
 
       // then
       const tree = parser.parse('');
@@ -33,7 +33,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('unaryTests', () => {
+    it('unaryTests', function() {
 
       // when
       const tree = parser.configure({ top: 'UnaryTests' }).parse('> 10');
@@ -43,7 +43,7 @@ describe('lezer-feel', () => {
     });
 
 
-    it('unaryTests (empty)', () => {
+    it('unaryTests (empty)', function() {
 
       // then
       const tree = parser.configure({ top: 'UnaryTests' }).parse('');
@@ -55,7 +55,7 @@ describe('lezer-feel', () => {
   });
 
 
-  it('should configure with context', () => {
+  it('should configure with context', function() {
 
     // given
     const tracker = trackVariables({
@@ -72,9 +72,9 @@ describe('lezer-feel', () => {
   });
 
 
-  describe('normalizeContextKey', () => {
+  describe('normalizeContextKey', function() {
 
-    it('should normalize string', () => {
+    it('should normalize string', function() {
 
       expect(normalizeContextKey('A+B  C')).to.eql('A + B C');
 
