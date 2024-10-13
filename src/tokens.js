@@ -554,7 +554,7 @@ export class VariableContext {
   /**
    * Takes any number of Contexts and merges them into a single Context.
    *
-   * @param  {...Context} contexts
+   * @param  {...VariableContext} contexts
    * @returns {VariableContext}
    */
   static of(...contexts) {
@@ -584,15 +584,26 @@ export class VariableContext {
 
 class Variables {
 
+  /**
+   * @param { {
+   *   name?: string,
+   *   tokens?: string[],
+   *   children?: Variables[],
+   *   parent: Variables | null
+   *   context: VariableContext,
+   *   value?: any,
+   *   raw?: any
+   * } } options
+   */
   constructor({
     name = 'Expressions',
     tokens = [],
     children = [],
     parent = null,
-    context = null,
-    value = null,
-    raw = null
-  } = {}) {
+    context,
+    value,
+    raw
+  }) {
     this.name = name;
     this.tokens = tokens;
     this.children = children;
@@ -817,6 +828,19 @@ class Variables {
     });
   }
 
+  /**
+   * @param { {
+   *   name?: string,
+   *   tokens?: string[],
+   *   children?: Variables[],
+   *   parent?: Variables | null
+   *   context: VariableContext,
+   *   value?: any,
+   *   raw?: any
+   * } } options
+   *
+   * @return {Variables}
+   */
   static of(options) {
 
     const {
