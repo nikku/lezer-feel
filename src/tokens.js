@@ -159,7 +159,6 @@ function isSpace(ch) {
   return spaceChars.includes(ch);
 }
 
-// eslint-disable-next-line
 function indent(str, spaces) {
   return spaces.concat(
     str.split(/\n/g).join('\n' + spaces)

@@ -50,7 +50,7 @@ function defaultIgnore(type) { return /\W/.test(type.name); }
  * @param { (node: NodeType ) => boolean } mayIgnore
  * @return { Test[] }
  */
-export function fileTests(file, fileName, mayIgnore = defaultIgnore) {
+function fileTests(file, fileName, mayIgnore = defaultIgnore) {
   let caseExpr = /\s*#\s*(.*)(?:\r\n|\r|\n)([^]*?)==+>([^]*?)(?:$|(?:\r\n|\r|\n)+(?=#))/gy;
 
   /**
@@ -154,7 +154,7 @@ for (const file of fs.readdirSync(caseDir)) {
 
   const name = path.basename(file);
 
-  describe(name, () => {
+  describe(name, function() {
 
     const fileName = path.join(caseDir, file);
     const fileContents = fs.readFileSync(fileName, 'utf8');
