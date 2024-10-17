@@ -188,7 +188,7 @@ for (const file of fs.readdirSync(caseDir)) {
     }
 
 
-    contextTracker && describe('with custom variable context', function() {
+    contextTracker && describe('custom variable context', function() {
 
       const EntriesTracker = (context) => {
         return trackVariables(toEntriesContextValue(context), EntriesContext);
