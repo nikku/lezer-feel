@@ -222,10 +222,7 @@ for (const file of fs.readdirSync(caseDir)) {
         it(name, () => {
           run(createParser(), contextTracker);
 
-          // Should always be an instance of the custom context
-          if (!(latestVariables.context instanceof EntriesContext)) {
-            throw new Error('expected latestVariables to be an instance of EntriesContext, but was ' + latestVariables.constructor.name);
-          }
+          expect(latestVariables.context).to.be.instanceOf(EntriesContext);
         });
       }
     });
