@@ -437,6 +437,10 @@ const contextEnds = {
   [ ArithmeticExpression ]: 'ArithmeticExpression'
 };
 
+/**
+ * A simple producer that retrievs a value from
+ * a given context. Used to lazily take things.
+ */
 class ValueProducer {
 
   /**
