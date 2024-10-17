@@ -1,11 +1,20 @@
-import { VariableContext } from 'lezer-feel';
+import {
+  VariableContext
+} from 'lezer-feel';
 
+
+/**
+ * @typedef { { entries?: Record<string, any>, [key: string]: any } } EntriesContextValue
+ */
 
 /**
  * An alternative context that holds additional meta-data
  */
 export class EntriesContext extends VariableContext {
 
+  /**
+   * @param {EntriesContextValue} value
+   */
   constructor(value = { entries: {} }) {
     super(value);
 
@@ -50,35 +59,50 @@ export class EntriesContext extends VariableContext {
     ));
   }
 
-  static of(...contexts) {
-    const unwrap = (context) => {
-      if (this.isAtomic(context)) {
-        return context instanceof this ?
-          context.value :
-          { atomicValue: context };
-      }
+  /**
+   * @param { EntriesContext | EntriesContextValue | Record<string, any> } context
+   *
+   * @return { EntriesContextValue }
+   */
+  static __unwrap(context) {
 
-      return { ...context };
+    if (this.isAtomic(context)) {
+      return context instanceof this
+        ? context.value
+        : { atomicValue: context };
+    }
+
+    return {
+      ...context
     };
+  }
 
-    const merged = contexts.reduce((merged, context) => {
+  /**
+   * @param { EntriesContextValue } context
+   * @param { EntriesContextValue} other
+   *
+   * @return { EntriesContextValue }
+   */
+  static __merge(context, other) {
 
-      const {
-        entries = {},
-        ...rest
-      } = unwrap(context);
+    const {
+      entries: contextEntries = {},
+      ...contextRest
+    } = this.__unwrap(context);
 
-      return {
-        ...merged,
-        ...rest,
-        entries: {
-          ...merged.entries,
-          ...entries
-        }
-      };
-    }, {});
+    const {
+      entries: otherEntries = {},
+      ...otherRest
+    } = this.__unwrap(other);
 
-    return new this(merged);
+    // @ts-ignore "access to internals"
+    const mergedEntries = super.__merge(contextEntries, otherEntries);
+
+    return {
+      ...contextRest,
+      ...otherRest,
+      entries: mergedEntries
+    };
   }
 }
 
