@@ -555,7 +555,6 @@ Expression(
 )
 
 
-
 # Context (special, scope)  { "context": { "foo + bar": 100 } }
 
 {
@@ -667,6 +666,7 @@ Expression(
     )),
   "}")
 )
+
 
 
 # Context / FunctionDefinition / FunctionInvocation
@@ -1375,23 +1375,20 @@ for i in [1] return if i = 1 then { a+: 1 } else partial[-1].a+
 
 Expression(
   ForExpression(
-    for,InExpressions(
-      InExpression(Name(...),in,IterationContext(
-        List("[",NumericLiteral,"]")
-      ))
-    ),
-    return,IfExpression(
-      if,Comparison(
-        VariableName(...),CompareOp,NumericLiteral
-      ),
-      then, Context("{",
-        ContextEntry(Key(Name(...)),NumericLiteral),
-      "}"),
-      else,PathExpression(
-        FilterExpression(VariableName(...),"[",NumericLiteral(ArithOp),"]"),
-        VariableName(...)
+    for,
+      InExpressions(...),
+    return,
+      IfExpression(
+        if,
+          Comparison(...),
+        then,
+          Context(...),
+        else,
+          PathExpression(
+            FilterExpression(VariableName(...),"[",NumericLiteral(...),"]"),
+            VariableName(...)
+          )
       )
-    )
   )
 )
 
@@ -1531,6 +1528,32 @@ Expression(
         "}")
       ),
     ")"),
+    VariableName(...)
+  )
+)
+
+
+# IfExpression (special, nested merged context)
+
+(if true then { a: { a+: 1 } } else { a: { a-: 1 } }).a.a+
+
+==>
+
+Expression(
+  PathExpression(
+    PathExpression(
+      ParenthesizedExpression("(",
+        IfExpression(
+          if,
+            BooleanLiteral,
+          then,
+            Context(...),
+          else,
+            Context(...)
+        ),
+      ")"),
+      VariableName(...)
+    ),
     VariableName(...)
   )
 )
