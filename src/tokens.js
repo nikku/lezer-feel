@@ -483,7 +483,7 @@ export class VariableContext {
   /**
    * Creates a new context from a JavaScript object.
    *
-   * @param {any} value
+   * @param {any} [value]
    */
   constructor(value = {}) {
 
