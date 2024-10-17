@@ -19,6 +19,8 @@ export class VariableContext {
 
   getKeys(): string[];
 
+  merge(other: ContextValue) : VariableContext
+
   static isAtomic(value: any): boolean;
 
   static of(...values: ContextValue[]): VariableContext;
