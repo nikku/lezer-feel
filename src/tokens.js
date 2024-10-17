@@ -1,5 +1,7 @@
 /* global console,process */
 
+import { has, reduce } from 'min-dash';
+
 import {
   insertSemi,
   Identifier,
@@ -542,6 +544,22 @@ export class VariableContext {
   }
 
   /**
+   * Non-destructively merge another context into this one,
+   * and return the result.
+   *
+   * @param {ContextValue} other
+   *
+   * @return {VariableContext}
+   */
+  merge(other) {
+    const constructor = /** @type { typeof VariableContext } */ (this.constructor);
+
+    return new constructor(
+      constructor.__merge(this.value, other)
+    );
+  }
+
+  /**
    * Wether the given value is atomic. Non-atomic values need to be wrapped in a
    * context Class.
    *
@@ -556,32 +574,72 @@ export class VariableContext {
   }
 
   /**
-   * Takes any number of Contexts and merges them into a single Context.
+   * Takes any number of Contexts and merges them into a single context.
    *
-   * @param  {...VariableContext} contexts
-   * @returns {VariableContext}
+   * @param { ...VariableContext } contexts
+   * @returns { VariableContext }
    */
   static of(...contexts) {
-    const unwrap = (context) => {
-      if (!context || typeof context !== 'object') {
-        return {};
+    return contexts.reduce((context, otherContext) => {
+      return context.merge(otherContext);
+    }, new this({}));
+  }
+
+  /**
+   * Returns the raw representation of the given context.
+   *
+   * @param {VariableContext | any} context
+   *
+   * @return {any}
+   */
+  static __unwrap(context) {
+    if (!context) {
+      return {};
+    }
+
+    if (context instanceof this) {
+      return context.value;
+    }
+
+    if (typeof context !== 'object') {
+      return {};
+    }
+
+    return { ...context };
+  }
+
+  /**
+   * Non-destructively merges two contexts (or their values)
+   * with each other, returning the result.
+   *
+   * @param {ContextValue} context
+   * @param {ContextValue} other
+   *
+   * @return {any}
+   */
+  static __merge(context, other) {
+
+    return reduce(this.__unwrap(other), (merged, value, key) => {
+      if (value instanceof ValueProducer) {
+
+        // keep value producers in tact
+        return {
+          ...merged,
+          [key]: value
+        };
       }
 
-      if (context instanceof this) {
-        return context.value;
+      value = this.__unwrap(value);
+
+      if (has(merged, key)) {
+        value = this.__merge(this.__unwrap(merged[key]), value);
       }
 
-      return { ...context };
-    };
-
-    const merged = contexts.reduce((merged, context) => {
       return {
         ...merged,
-        ...unwrap(context)
+        [key]: value
       };
-    }, {});
-
-    return new this(merged);
+    }, this.__unwrap(context));
   }
 
 }
