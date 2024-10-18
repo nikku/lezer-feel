@@ -576,7 +576,7 @@ export class VariableContext {
   /**
    * Takes any number of Contexts and merges them into a single context.
    *
-   * @param { ...VariableContext } contexts
+   * @param  { ...ContextValue } contexts
    * @returns { VariableContext }
    */
   static of(...contexts) {
