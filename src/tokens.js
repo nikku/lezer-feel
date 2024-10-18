@@ -1,6 +1,6 @@
 /* global process */
 
-import { has, isNil } from 'min-dash';
+import { has, isNil, reduce } from 'min-dash';
 
 import {
   insertSemi,
@@ -1171,6 +1171,11 @@ export function trackVariables(context = {}, Context = VariableContext) {
             value: name?.computedValue() || Context.of(undefined)
           });
         }
+
+        // construct context type through context(entries) utility
+        if (name?.raw === 'context') {
+          variables = getContextFromEntries(variables, args);
+        }
       }
 
       const start = contextStarts[term];
@@ -1388,6 +1393,72 @@ function getContextValue(variables, args) {
     value: [ normalizeContextKey(keyValue), keyValue ].reduce((value, keyValue) => {
       return contextValue.get(keyValue) || value;
     }, null)
+  });
+}
+
+function getContextFromEntries(variables, args) {
+
+  if (!args.length) {
+    return variables.assign({
+      value: null
+    });
+  }
+
+  if (args[0].name === 'Name') {
+    args = extractNamedArgs(args, [ 'entries' ]);
+  }
+
+  if (args.length !== 1) {
+    return variables.assign({
+      value: null
+    });
+  }
+
+  const [
+    key
+  ] = args;
+
+  console.log('\n\n\n------------');
+
+  const keyValue = key?.computedValue();
+
+  console.log('%o', {
+    keyValue,
+    children: keyValue?.children
+  });
+
+  const entryContexts = keyValue?.get('$$entries')?.value || (keyValue && [ keyValue ]) || [];
+
+  const context = reduce(entryContexts, (context, entryContext) => {
+
+    console.log('%o', { entryContext });
+
+    const keyValue = entryContext?.get('key');
+    const valueValue = entryContext?.get('value');
+
+    console.log('%o', {
+      keyValue,
+      valueValue
+    });
+
+    const value = entryContext?.value;
+
+    if (!value) {
+      return context;
+    }
+
+    if (has(value, 'key') && has(value, 'value')) {
+      return {
+        ...context,
+        [ value.key ]: value.value
+      };
+    }
+
+    return context;
+  }, {});
+
+  return variables.assign({
+    value: context
   });
 }
 
