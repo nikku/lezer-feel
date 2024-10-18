@@ -271,7 +271,7 @@ Expression(
 )
 
 
-# Built in (get value) { "top": "Expressions" }
+# Built-in (get value) { "top": "Expressions" }
 
 get value();
 get value(null, 1);
@@ -296,7 +296,7 @@ Expressions(
 )
 
 
-# Built in (get value, literal key) { "context": { "x": { "a+b": { "c+": 1 } } } }
+# Built-in (get value, literal key) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
 get value(x, "a+b").c+
 
@@ -316,7 +316,7 @@ Expression(
 )
 
 
-# Built in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
+# Built-in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
 get value(key: "a+b", m: x).c+;
 
@@ -334,7 +334,7 @@ Expression(
 )
 
 
-# Built in (get value, special key)
+# Built-in (get value, special key)
 
 get value({
   foo-bar: {
@@ -369,7 +369,7 @@ Expression(
 )
 
 
-# Built in (get value, special key, named args)
+# Built-in (get value, special key, named args)
 
 get value(key: "foo-bar", m: {
   foo-bar: {
