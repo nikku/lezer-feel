@@ -1656,6 +1656,35 @@ Expression(
 )
 
 
+# *FunctionDefinition (special, dynamic return type)
+
+{
+  a: function(b) { a+: b },
+  b: a({ b-: 1 }).a+.b-
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),
+      FunctionDefinition(...)
+    ),
+    ContextEntry(
+      Key(...),
+      PathExpression(
+        PathExpression(
+          FunctionInvocation(...),
+          VariableName(...)
+        ),
+        VariableName(...)
+      )
+    ),
+  "}")
+)
+
+
 # FunctionInvocation (positional) { "top": "Expressions" }
 
 a();
