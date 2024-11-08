@@ -1223,6 +1223,19 @@ Expression(
   )
 )
 
+# *PathExpression (special, error)
+
+{ b-: 1 }.b-a
+
+==>
+
+Expression(
+  PathExpression(
+    Context(...),
+    VariableName(...), ⚠
+  )
+)
+
 
 # PathExpression (list filtering, special name)
 
