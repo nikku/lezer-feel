@@ -103,3 +103,18 @@ UnaryTests(not,"(",PositiveUnaryTests(...),")")
 ==>
 
 UnaryTests(Wildcard(...))
+
+
+# Backtick escaped variables (Camunda) { "top": "UnaryTests", "dialect": "camunda" }
+
+`foo`
+
+==>
+
+UnaryTests(
+  PositiveUnaryTests(
+    PositiveUnaryTest(
+      VariableName(...)
+    )
+  )
+)
