@@ -185,6 +185,7 @@ Comparison {
 }
 
 SimplePositiveUnaryTest {
+  CompareOp<"=" | "!="> endpoint |
   CompareOp<">" | ">=" | "<" | "<="> endpoint |
   Interval
 }

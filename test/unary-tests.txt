@@ -86,6 +86,26 @@ UnaryTests(
   )
 )
 
+# Comparison { "top": "UnaryTests" }
+
+= 10,
+!= 10,
+< 10,
+<= 10,
+> 10,
+>= 10
+
+==>
+
+UnaryTests(PositiveUnaryTests(
+  PositiveUnaryTest(...),
+  PositiveUnaryTest(...),
+  PositiveUnaryTest(...),
+  PositiveUnaryTest(...),
+  PositiveUnaryTest(...),
+  PositiveUnaryTest(...)
+))
+
 
 # Negation { "top": "UnaryTests" }
 
