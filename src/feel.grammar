@@ -457,7 +457,7 @@ commaSep<Expr> {
   }
 
   number {
-    (digits ("." digits)? | "." digits)
+    (digits ("." digits)? | "." digits) ( ("e" | "E") ("+" | "-")? digits)?
   }
 
   backtickIdentifier[@dialect=camunda] {
