@@ -104,6 +104,27 @@ Expressions(
 )
 
 
+# Comparison (simple positive unary tests) { "top": "Expressions" }
+
+(=10) = [10..10];
+(=10) = (=10);
+(!=10) = (!=10)
+
+==>
+
+Expressions(
+  Comparison(
+    ParenthesizedExpression(...),CompareOp,SimplePositiveUnaryTest(...)
+  ),
+  Comparison(
+    ParenthesizedExpression(...),CompareOp,ParenthesizedExpression(...)
+  ),
+  Comparison(
+    ParenthesizedExpression(...),CompareOp,ParenthesizedExpression(...)
+  )
+)
+
+
 # Conjunction and Disjunction { "top": "Expressions" }
 
 a and b;
