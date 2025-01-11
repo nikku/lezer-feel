@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.5.0
+
+* `FEAT`: allow `=` and `!=` as comparison operators ([#48](https://github.com/nikku/lezer-feel/pull/48))
+
 ## 1.4.0
 
 * `FEAT`: deeply merge type contexts ([#19](https://github.com/nikku/lezer-feel/issues/19), [#41](https://github.com/nikku/lezer-feel/pull/41))
