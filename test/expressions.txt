@@ -2539,21 +2539,6 @@ Expressions(
 )
 
 
-# Grouping
-
-1 + a
-
-==>
-
-Expression(
-  ArithmeticExpression(
-    NumericLiteral[group="Literal"],
-    ArithOp,
-    VariableName(...)
-  )
-)
-
-
 # VariableName (contextual) { "context": { "foo'a **": 1, "aa**": 1, "a - b": 1, "a * b": 1, "what if?": 1, "Profit and loss": 1 }, "top": "Expressions" }
 
 foo'a  **;

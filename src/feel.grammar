@@ -40,7 +40,7 @@ expression {
   boxedExpression
 }
 
-textualExpression {
+textualExpression[@isGroup=Expr] {
   ForExpression |
   IfExpression |
   QuantifiedExpression |
@@ -135,7 +135,7 @@ Conjunction[@dynamicPrecedence=-1] {
   expression !and kw<"and"> expression
 }
 
-boxedExpression {
+boxedExpression[@isGroup=Expr] {
   List |
   FunctionDefinition |
   Context
