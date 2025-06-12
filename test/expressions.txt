@@ -4,6 +4,7 @@
 true;
 false;
 "FOO";
+"escaped\ncharacter\u0009";
 -1220.12;
 .12;
 24;
@@ -15,6 +16,7 @@ Expressions(
   NumericLiteral,
   BooleanLiteral,
   BooleanLiteral,
+  StringLiteral,
   StringLiteral,
   NumericLiteral(ArithOp),
   NumericLiteral,
