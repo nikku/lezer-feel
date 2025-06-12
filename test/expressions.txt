@@ -46,6 +46,18 @@ Expressions(
   NumericLiteral
 )
 
+# String Literal (error) { "top": "Expressions" }
+
+"test;
+"test\n;
+
+==>
+
+Expressions(
+  ⚠,VariableName(Identifier),
+  ⚠,VariableName(Identifier,⚠,Identifier),⚠
+)
+
 # ArithmeticExpression { "top": "Expressions" }
 
 1+2;
@@ -624,7 +636,7 @@ Expression(
 # Context (special, error)
 
 {
-  foo + bar: 
+  foo + bar:
 }.foo + bar
 
 ==>
@@ -1484,7 +1496,11 @@ Expression(
     InExpressions(
       InExpression(Name(...),in,IterationContext(
         SimplePositiveUnaryTest(
-          Interval("[",⚠,StringLiteral,⚠)
+          Interval("[",⚠,
+            SimplePositiveUnaryTest(
+              Interval("]",⚠)
+            ),⚠
+          )
         )
       ))
     ),⚠
