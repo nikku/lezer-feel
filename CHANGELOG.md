@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.7.1
+
+* `FIX`: require closing `"` on string literals ([#52](https://github.com/nikku/lezer-feel/pull/52))
+
 ## 1.7.0
 
 * `FEAT`: attach `Expr` group to expression statements
