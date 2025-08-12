@@ -738,7 +738,7 @@ class Variables {
   }
 
   contextKeys() {
-    return this.context.getKeys().map(normalizeContextKey);
+    return this.context.getKeys();
   }
 
   get path() {
@@ -753,17 +753,7 @@ class Variables {
    */
   get(variable) {
 
-    const names = [ variable, variable && normalizeContextKey(variable) ];
-
-    const contextKey = this.context.getKeys().find(
-      key => names.includes(normalizeContextKey(key))
-    );
-
-    if (typeof contextKey === 'undefined') {
-      return undefined;
-    }
-
-    const val = this.context.get(contextKey);
+    const val = this.context.get(variable);
 
     if (val instanceof ValueProducer) {
       return val.get(this);
@@ -828,7 +818,7 @@ class Variables {
       throw Error('no tokens to declare name');
     }
 
-    const variableName = this.tokens.join(' ');
+    const variableName = normalizeContextKey(this.tokens.join(' '));
 
     LOG_VARS && console.log('[%s] declareName <%s>', this.path, variableName);
 
@@ -852,7 +842,7 @@ class Variables {
 
     LOG_VARS && console.log('[%s] define <%s=%s>', this.path, name, value);
 
-    const context = this.context.set(name, value);
+    const context = this.context.set(normalizeContextKey(name), value);
 
     return this.assign({
       context
@@ -938,7 +928,39 @@ class Variables {
  * @return { string } normalizedName
  */
 export function normalizeContextKey(name) {
-  return name.replace(/\s*([./\-'+]|\*\*?)\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
+  return name && name.replace(/\s*([./\-'+]|\*\*?)\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
+}
+
+const nativeToString = Object.prototype.toString;
+
+export function isArray(obj) {
+  return nativeToString.call(obj) === '[object Array]';
+}
+
+export function isObject(obj) {
+  return nativeToString.call(obj) === '[object Object]';
+}
+
+/**
+ * @param {any} context
+ *
+ * @return {Object}
+ */
+export function normalizeContextKeys(context) {
+
+  if (isArray(context)) {
+    return context.map(normalizeContextKeys);
+  }
+
+  if (isObject(context)) {
+    return Object.entries(context).reduce((normalized, [ key, value ]) => {
+      normalized[normalizeContextKey(key)] = normalizeContextKeys(value);
+
+      return normalized;
+    }, {});
+  }
+
+  return context;
 }
 
 /**
@@ -979,7 +1001,7 @@ function wrap(variables, scopeName, code) {
 export function trackVariables(context = {}, Context = VariableContext) {
 
   const start = Variables.of({
-    context: Context.of(context)
+    context: Context.of(normalizeContextKeys(context))
   });
 
   return new ContextTracker({
@@ -1086,7 +1108,7 @@ export function trackVariables(context = {}, Context = VariableContext) {
           {
             value: Context
               .of(variables.value)
-              .set(name?.computedValue(), value?.computedValue())
+              .set(normalizeContextKey(name?.computedValue()), value?.computedValue())
           }
         );
       }
@@ -1240,9 +1262,7 @@ function getContextValue(variables, args) {
   }
 
   return variables.assign({
-    value: [ normalizeContextKey(keyValue), keyValue ].reduce((value, keyValue) => {
-      return contextValue.get(keyValue) || value;
-    }, null)
+    value: contextValue.get(normalizeContextKey(keyValue)) || null
   });
 }
 

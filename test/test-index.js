@@ -1,7 +1,8 @@
 import {
   parser,
   trackVariables,
-  normalizeContextKey
+  normalizeContextKey,
+  normalizeContextKeys
 } from 'lezer-feel';
 
 import {
@@ -96,7 +97,7 @@ describe('lezer-feel', function() {
     // given
     const context = {};
 
-    for (var i = 0; i < 1000; i++) {
+    for (let i = 0; i < 1000; i++) {
       context[`key_${i}`] = i;
     }
 
@@ -117,7 +118,7 @@ describe('lezer-feel', function() {
     // given
     const context = {};
 
-    for (var i = 0; i < 1000; i++) {
+    for (let i = 0; i < 1000; i++) {
       context[`key_${i}`] = i;
     }
 
@@ -147,6 +148,54 @@ describe('lezer-feel', function() {
       expect(normalizeContextKey('a**\'s')).to.eql('a ** \' s');
 
       expect(normalizeContextKey('a***')).to.eql('a ** *');
+
+    });
+
+  });
+
+
+  describe('normalizeContextKeys', function() {
+
+    it('should normalize context', function() {
+
+      // given
+      const date = new Date();
+
+      expect(normalizeContextKeys({
+        'A+B  C': {
+          'A\'111+B  C': {
+            'a**\'s': 10,
+            bar: 100,
+            woop: true,
+            wap: false,
+            arr: [ 1, 'two', {
+              'a***': 10
+            }, [ [ [ {
+              'c++': 10
+            } ] ] ] ]
+          },
+          'foo': undefined,
+          'bar': null,
+          'd': date
+        }
+      })).to.eql({
+        'A + B C': {
+          'A \' 111 + B C': {
+            'a ** \' s': 10,
+            'bar': 100,
+            'woop': true,
+            wap: false,
+            arr: [ 1, 'two', {
+              'a ** *': 10
+            }, [ [ [ {
+              'c + +': 10
+            } ] ] ] ]
+          },
+          'foo': undefined,
+          'bar': null,
+          'd': date
+        }
+      });
 
     });
 
