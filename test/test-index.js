@@ -72,6 +72,70 @@ describe('lezer-feel', function() {
   });
 
 
+  it('should parse with small context', function() {
+
+    // given
+    const tracker = trackVariables({
+      a: 10,
+      b: 30,
+      'c + d': 10
+    });
+
+    // when
+    const configuredParser = parser.configure({
+      contextTracker: tracker
+    });
+
+    // then
+    configuredParser.parse('a + b + c+d');
+  });
+
+
+  it('should parse with large context', function() {
+
+    // given
+    const context = {};
+
+    for (var i = 0; i < 1000; i++) {
+      context[`key_${i}`] = i;
+    }
+
+    const tracker = trackVariables(context);
+
+    // when
+    const configuredParser = parser.configure({
+      contextTracker: tracker
+    });
+
+    // then
+    configuredParser.parse('key_191 + key_999');
+  });
+
+
+  it('should allow re-use of context tracker', function() {
+
+    // given
+    const context = {};
+
+    for (var i = 0; i < 1000; i++) {
+      context[`key_${i}`] = i;
+    }
+
+    const tracker = trackVariables(context);
+
+    // when
+    const configuredParser = parser.configure({
+      contextTracker: tracker
+    });
+
+    // then
+    configuredParser.parse('key_191 + key_999');
+
+    // and also
+    configuredParser.parse('key_2 + key_1');
+  });
+
+
   describe('normalizeContextKey', function() {
 
     it('should normalize string', function() {
