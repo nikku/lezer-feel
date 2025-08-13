@@ -461,7 +461,7 @@ commaSep<Expr> {
   }
 
   backtickIdentifier[@dialect=camunda] {
-    "`" (![\\\n`] | "\\" _)* "`"
+    "`" (![`] | "\\" _)* "`"
   }
 
   @precedence { BlockComment, LineComment, divide }
