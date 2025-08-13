@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.8.0
+
+* `FEAT`: improve parsing speed with large contexts ([#54](https://github.com/nikku/lezer-feel/pull/54))
+* `FEAT`: eagerly normalize context keys ([#54](https://github.com/nikku/lezer-feel/pull/54))
+
 ## 1.7.1
 
 * `FIX`: require closing `"` on string literals ([#52](https://github.com/nikku/lezer-feel/pull/52))
