@@ -3,13 +3,18 @@
 `foo`;
 foo.`bar`;
 foo.`bar-baz`;
+`foo
+baz`;
+`foo\``
 
 ==>
 
 Expressions(
   VariableName(BacktickIdentifier(...)),
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
-  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...)))
+  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
+  VariableName(BacktickIdentifier(...)),
+  VariableName(BacktickIdentifier(...))
 )
 
 
