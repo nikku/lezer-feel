@@ -8,10 +8,6 @@ export function normalizeContextKey(
   string
 ) : string;
 
-export function normalizeContextKeys<T>(
-  T
-) : T;
-
 export class VariableContext {
 
   value: any;
