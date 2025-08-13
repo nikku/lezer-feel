@@ -314,7 +314,20 @@ simpleLiteral {
   NumericLiteral |
   StringLiteral |
   BooleanLiteral |
-  DateTimeLiteral
+  DateTimeLiteral |
+  TemplateLiteral
+}
+
+@skip {} {
+  TemplateLiteral {
+    templateStart TemplateText templateEnd
+  }
+
+  // A template's body is many small tokens for good incremental parsing.
+  //
+  TemplateText {
+    (TemplateNL | TemplateBT2 | TemplateBT1 | TemplateChunk)*
+  }
 }
 
 QualifiedName {
@@ -459,6 +472,36 @@ commaSep<Expr> {
   number {
     (digits ("." digits)? | "." digits) ( ("e" | "E") ("+" | "-")? digits)?
   }
+
+  templateStart[@name=TemplateFence, @dialect=camunda] {
+    "```"
+  }
+
+  templateEnd[@name=TemplateFence, @dialect=camunda]
+  {
+    "```"
+  }
+
+  TemplateNL[@name=TemplateNewLine, @dialect=camunda]
+  {
+    $[\n]
+  }
+
+  TemplateBT1[@name=TemplateSimpleBacktick, @dialect=camunda]
+  {
+    "`"  ![`]
+  }
+
+  TemplateBT2[@name=TemplateDoubleBacktick, @dialect=camunda]
+  {
+    "``" ![`]
+  }
+
+  TemplateChunk[@dialect=camunda] {
+    ![\n`]+
+  }
+
+  @precedence { templateEnd, TemplateBT2, TemplateBT1 }
 
   backtickIdentifier[@dialect=camunda] {
     "`" (![\\\n`] | "\\" _)* "`"
