@@ -390,7 +390,7 @@ NumericLiteral {
 }
 
 StringLiteral {
-  string
+  multilineString | string
 }
 
 BooleanLiteral {
@@ -453,8 +453,14 @@ commaSep<Expr> {
   }
 
   string {
-    '"' (![\\\n"] | "\\" _)* '"'
+    '"' (![\n"] | "\\" _)* '"'
   }
+
+  multilineString[@dialect=camunda] {
+    '"' (!["] | "\\" _)* '"'
+  }
+
+  @precedence { multilineString, string }
 
   number {
     (digits ("." digits)? | "." digits) ( ("e" | "E") ("+" | "-")? digits)?

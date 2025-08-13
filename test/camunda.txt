@@ -11,3 +11,13 @@ Expressions(
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...)))
 )
+
+
+# String Literal (multi-line) { "dialect": "camunda" }
+
+"foo
+baz"
+
+==>
+
+Expression(StringLiteral)

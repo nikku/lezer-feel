@@ -46,17 +46,35 @@ Expressions(
   NumericLiteral
 )
 
-# String Literal (error) { "top": "Expressions" }
+# String Literal (escaped quotes)
 
-"test;
-"test\n;
+"test\""
 
 ==>
 
-Expressions(
-  ⚠,VariableName(Identifier),
-  ⚠,VariableName(Identifier,⚠,Identifier),⚠
+Expression(StringLiteral)
+
+
+# String Literal (error, no closing quotes)
+
+"test
+
+==>
+
+Expression(
+  ⚠,VariableName(Identifier)
 )
+
+
+# String Literal (error, newline)
+
+"test
+"
+
+==>
+
+Expression(⚠,VariableName(Identifier),⚠)
+
 
 # ArithmeticExpression { "top": "Expressions" }
 
