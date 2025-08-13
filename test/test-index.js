@@ -8,6 +8,11 @@ import {
   expect
 } from 'chai';
 
+import {
+  EntriesContext,
+  toEntriesContextValue
+} from './custom-context.js';
+
 
 describe('lezer-feel', function() {
 
@@ -133,6 +138,33 @@ describe('lezer-feel', function() {
 
     // and also
     configuredParser.parse('key_2 + key_1');
+  });
+
+
+  describe('custom entries context', function() {
+
+    it('should ignore external meta-data', function() {
+
+      // given
+      const context = toEntriesContextValue({
+        foo: 'BAR'
+      });
+
+      // we don't care about meta-data
+      context.meta = {};
+      context.meta.meta = context.meta;
+
+      const tracker = trackVariables(context, EntriesContext);
+
+      // when
+      const configuredParser = parser.configure({
+        contextTracker: tracker
+      });
+
+      // then
+      configuredParser.parse('foo');
+    });
+
   });
 
 
