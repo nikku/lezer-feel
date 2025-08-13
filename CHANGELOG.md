@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.8.1
+
+_Revert of `v1.8.0`, as it broke custom contexts._
+
 ## 1.8.0
 
 * `FEAT`: improve parsing speed with large contexts ([#54](https://github.com/nikku/lezer-feel/pull/54))
