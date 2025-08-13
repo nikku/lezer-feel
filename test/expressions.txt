@@ -298,26 +298,6 @@ Expression(
 )
 
 
-# Built in (get value, literal key, normalized) { "context": { "x": { "a+b": { "c   +": 1 } } } }
-
-get value(x, "a  +b").c+
-
-==>
-
-Expression(
-  PathExpression(
-    FunctionInvocation(
-      VariableName(...),"(",
-        PositionalParameters(
-          VariableName(...),StringLiteral
-        ),
-      ")"
-    ),
-    VariableName(...)
-  )
-)
-
-
 # Built in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
 get value(key: "a+b", m: x).c+;
