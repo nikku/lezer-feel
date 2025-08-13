@@ -11,3 +11,46 @@ Expressions(
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...)))
 )
+
+# TemplateLiteral (tripe-backtick escaped) { "top": "Expressions", "dialect": "camunda" }
+
+```Hello```;
+```` `` ```;
+```Hello {{name}},
+How are you?```;
+{
+  a: ```My name is {{name}}```,
+  b: ```My name is {{name}},
+  How are you?```
+};
+
+
+==>
+
+Expressions(
+  TemplateLiteral(TemplateFence, TemplateText(TemplateChunk), TemplateFence),
+  TemplateLiteral(TemplateFence, TemplateText(TemplateSimpleBacktick, TemplateDoubleBacktick), TemplateFence),
+  TemplateLiteral(
+    TemplateFence,
+    TemplateText(
+      TemplateChunk,
+      TemplateNewLine,
+      TemplateChunk
+    ),
+    TemplateFence
+  ),
+  Context("{",
+    ContextEntry(Key(Name(Identifier)),TemplateLiteral(TemplateFence, TemplateText(TemplateChunk(...)), TemplateFence)),
+    ContextEntry(Key(Name(Identifier)),
+      TemplateLiteral(
+        TemplateFence,
+        TemplateText(
+          TemplateChunk,
+          TemplateNewLine,
+          TemplateChunk
+        ),
+        TemplateFence
+      )
+    )
+  "}")
+)
