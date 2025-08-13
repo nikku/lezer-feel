@@ -24,7 +24,7 @@ Expressions(
   NumericLiteral
 )
 
-# Literals (number, exponential notation) { "top": "Expressions"}
+# Literals (number, exponential notation) { "top": "Expressions" }
 
 1.231e4;
 1.231e+4;
