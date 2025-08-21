@@ -1,5 +1,5 @@
 {
-  "name": "lezer-feel",
+  "name": "@bpmn-io/lezer-feel",
   "version": "1.8.1",
   "description": "Lezer-based FEEL grammar",
   "type": "module",
@@ -41,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nikku/lezer-feel.git"
+    "url": "https://github.com/bpmn-io/lezer-feel.git"
   },
   "scripts": {
     "build": "lezer-generator src/feel.grammar -o src/parser && rollup -c",

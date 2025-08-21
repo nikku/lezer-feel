@@ -2,7 +2,7 @@ import {
   parser,
   trackVariables,
   normalizeContextKey
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 import {
   expect
@@ -14,7 +14,7 @@ import {
 } from './custom-context.js';
 
 
-describe('lezer-feel', function() {
+describe('@bpmn-io/lezer-feel', function() {
 
   describe('should parse', function() {
 

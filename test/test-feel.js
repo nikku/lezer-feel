@@ -6,7 +6,7 @@ import { buildParser } from '@lezer/generator';
 import {
   parser,
   trackVariables
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 import fs from 'node:fs';
 import path from 'node:path';

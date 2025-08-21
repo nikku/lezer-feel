@@ -1,6 +1,8 @@
-# lezer-feel
+# @bpmn-io/lezer-feel
 
-[![CI](https://github.com/nikku/lezer-feel/actions/workflows/CI.yml/badge.svg)](https://github.com/nikku/lezer-feel/actions/workflows/CI.yml)
+[![CI](https://github.com/bpmn-io/lezer-feel/actions/workflows/CI.yml/badge.svg)](https://github.com/bpmn-io/lezer-feel/actions/workflows/CI.yml)
+
+> [!INFO] This is a fork of [lezer-feel](https://github.com/nikku/lezer-feel)
 
 This is a [DMN](https://www.omg.org/spec/DMN/) FEEL grammar for the
 [Lezer](https://lezer.codemirror.net/) parser system.
@@ -13,7 +15,7 @@ Parse FEEL to a [`Tree`](https://lezer.codemirror.net/docs/ref/#common.Tree):
 ```javascript
 import {
   parser
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 // parse <Expression>
 parser.parse('foo > 1');
@@ -27,7 +29,7 @@ Use `Expression` or `UnaryTests` as a [top node](https://lezer.codemirror.net/do
 ```javascript
 import {
   parser
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 const unaryParser = parser.configure({
   top: 'UnaryTests'
@@ -46,7 +48,7 @@ Override the default [context tracker](https://lezer.codemirror.net/docs/ref/#lr
 import {
   parser,
   trackVariables
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 const contextTracker = trackVariables({
   'if foo then bar': 1
@@ -85,7 +87,7 @@ Prefix [individual](./test/expressions.txt) [tests](./test/unary-tests.txt) with
 
 ## Related
 
-* [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
+* [feelin](https://github.com/bpmn-io/feelin) - Interpreter for the FEEL language
 * [feel-playground](https://github.com/nikku/feel-playground) - A visual playground to learn the FEEL language
 
 

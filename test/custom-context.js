@@ -1,6 +1,6 @@
 import {
   VariableContext
-} from 'lezer-feel';
+} from '@bpmn-io/lezer-feel';
 
 
 /**
