@@ -10,6 +10,7 @@ ___Note:__ Yet to be released changes appear here._
 
 * `FEAT`: support multi line strings in `camunda` dialect ([#56](https://github.com/nikku/lezer-feel/pull/56))
 * `FIX`: allow line breaks in `camunda` backtick identifiers ([#57](https://github.com/nikku/lezer-feel/pull/57))
+* `DEPS`: update to `min-dash@4.2.3`
 
 ## 1.8.1
 

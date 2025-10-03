@@ -34,7 +34,7 @@
   "dependencies": {
     "@lezer/highlight": "^1.2.1",
     "@lezer/lr": "^1.4.2",
-    "min-dash": "^4.2.1"
+    "min-dash": "^4.2.3"
   },
   "engines": {
     "node": "*"
