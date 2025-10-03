@@ -1,4 +1,4 @@
-/* global console,process */
+/* global process */
 
 import { has, reduce } from 'min-dash';
 
