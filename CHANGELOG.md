@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 1.9.0
+
+* `FEAT`: support multi line strings in `camunda` dialect ([#56](https://github.com/nikku/lezer-feel/pull/56))
+* `FIX`: allow line breaks in `camunda` backtick identifiers ([#57](https://github.com/nikku/lezer-feel/pull/57))
+
 ## 1.8.1
 
 _Revert of `v1.8.0`, as it broke custom contexts._
