@@ -87,7 +87,7 @@ Prefix [individual](./test/expressions.txt) [tests](./test/unary-tests.txt) with
 
 * [feelin](https://github.com/nikku/feelin) - Interpreter for the FEEL language
 * [feel-playground](https://github.com/nikku/feel-playground) - A visual playground to learn the FEEL language
-
+* [lang-feel](https://github.com/nikku/lang-feel) - Integration into a [CodeMirror](https://codemirror.net/) editor
 
 ## License
 
