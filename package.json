@@ -32,8 +32,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@lezer/highlight": "^1.2.1",
-    "@lezer/lr": "^1.4.2",
+    "@lezer/highlight": "^1.2.3",
+    "@lezer/lr": "^1.4.4",
     "min-dash": "^4.2.3"
   },
   "engines": {
