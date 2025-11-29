@@ -6,6 +6,16 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.0.0
+
+* `FEAT`: make pure ES module
+* `DEPS`: update to `@lezer/lr@1.4.4`
+* `DEPS`: update to `@lezer/highlight@1.2.3`
+
+### Breaking Changes
+
+* Dropped CJS distribution. You need `Node >= 20.12.0` to import this module from CJS
+
 ## 1.9.0
 
 * `FEAT`: support multi line strings in `camunda` dialect ([#56](https://github.com/nikku/lezer-feel/pull/56))
