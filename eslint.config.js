@@ -5,7 +5,8 @@ const files = {
     '*.js'
   ],
   test: [
-    'test/**/*.js'
+    'test/**/*.js',
+    'test/**/*.cjs'
   ],
   ignored: [
     'src/parser*.js',
@@ -37,5 +38,15 @@ export default [
       ...config,
       files: files.test
     };
-  })
+  }),
+  {
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 'latest'
+      }
+    },
+    files: [
+      './rollup.config.js'
+    ]
+  }
 ];
