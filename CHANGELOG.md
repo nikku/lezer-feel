@@ -8,7 +8,7 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 2.0.0
 
-* `FEAT`: make pure ES module
+* `FEAT`: make pure ES module ([#66](https://github.com/nikku/lezer-feel/pull/66))
 * `DEPS`: update to `@lezer/lr@1.4.4`
 * `DEPS`: update to `@lezer/highlight@1.2.3`
 
