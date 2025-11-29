@@ -629,6 +629,42 @@ Expression(
 )
 
 
+# Context (special, overridding key recognized)
+
+{
+  foo+bar: {
+    b-10: 2
+  },
+  foo+  bar: {
+    a-10: 2
+  }
+}.foo + bar.a-10
+
+==>
+
+Expression(
+  PathExpression(...)
+)
+
+
+# Context (special, overridden not recognized)
+
+{
+  foo+bar: {
+    b-10: 2
+  },
+  foo+  bar: {
+    a-10: 2
+  }
+}.foo + bar.b-10
+
+==>
+
+Expression(
+  ArithmeticExpression(...)
+)
+
+
 # Context (special, scope)  { "context": { "foo + bar": 100 } }
 
 {
