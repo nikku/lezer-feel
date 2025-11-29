@@ -156,70 +156,37 @@ function parseTest(name) {
 }
 
 
-for (const file of fs.readdirSync(caseDir)) {
-  if (!/\.txt$/.test(file)) {
-    continue;
-  }
+describe('feel parsing', function() {
 
-  const name = path.basename(file);
-
-  describe(name, function() {
-
-    const fileName = path.join(caseDir, file);
-    const fileContents = fs.readFileSync(fileName, 'utf8');
-
-    const grammarMatch = /^([^#][^]*?)($|\n# )/.exec(fileContents);
-    const grammar = grammarMatch && grammarMatch[1];
-
-    const specs = grammar ? fileContents.substring(grammar.length) : fileContents;
-
-    const createParser = () => {
-      return grammar ? buildParser(grammar, {
-        fileName,
-        warn(msg) { throw new Error(msg); }
-      }) : parser;
-    };
-
-    const contextTracker = /expressions|unary-test|camunda/.test(fileName)
-      ? trackVariables
-      : null;
-
-    const tests = fileTests(specs, fileName);
-
-    for (const { name: testName, run } of tests) {
-
-      const {
-        it,
-        name
-      } = parseTest(testName);
-
-      it(name, () => run(createParser(), contextTracker));
+  for (const file of fs.readdirSync(caseDir)) {
+    if (!/\.txt$/.test(file)) {
+      continue;
     }
 
+    const name = path.basename(file);
 
-    contextTracker && describe('custom variable context', function() {
+    describe(name, function() {
 
-      const EntriesTracker = (context) => {
-        return trackVariables(toEntriesContextValue(context), EntriesContext);
+      const fileName = path.join(caseDir, file);
+      const fileContents = fs.readFileSync(fileName, 'utf8');
+
+      const grammarMatch = /^([^#][^]*?)($|\n# )/.exec(fileContents);
+      const grammar = grammarMatch && grammarMatch[1];
+
+      const specs = grammar ? fileContents.substring(grammar.length) : fileContents;
+
+      const createParser = () => {
+        return grammar ? buildParser(grammar, {
+          fileName,
+          warn(msg) { throw new Error(msg); }
+        }) : parser;
       };
 
-      let latestVariables;
+      const contextTracker = /expressions|unary-test|camunda/.test(fileName)
+        ? trackVariables
+        : null;
 
-      const contextTracker = context => {
-
-        /**
-         * @type {any}
-         */
-        const entriesTracker = EntriesTracker(context);
-        return new ContextTracker({
-          start: entriesTracker.start,
-          reduce(...args) {
-            const result = entriesTracker.reduce(...args);
-            latestVariables = result;
-            return result;
-          }
-        });
-      };
+      const tests = fileTests(specs, fileName);
 
       for (const { name: testName, run } of tests) {
 
@@ -228,14 +195,51 @@ for (const file of fs.readdirSync(caseDir)) {
           name
         } = parseTest(testName);
 
-        it(name, () => {
-          run(createParser(), contextTracker);
-
-          expect(latestVariables.context).to.be.instanceOf(EntriesContext);
-        });
+        it(name, () => run(createParser(), contextTracker));
       }
+
+
+      contextTracker && describe('custom variable context', function() {
+
+        const EntriesTracker = (context) => {
+          return trackVariables(toEntriesContextValue(context), EntriesContext);
+        };
+
+        let latestVariables;
+
+        const contextTracker = context => {
+
+          /**
+           * @type {any}
+           */
+          const entriesTracker = EntriesTracker(context);
+          return new ContextTracker({
+            start: entriesTracker.start,
+            reduce(...args) {
+              const result = entriesTracker.reduce(...args);
+              latestVariables = result;
+              return result;
+            }
+          });
+        };
+
+        for (const { name: testName, run } of tests) {
+
+          const {
+            it,
+            name
+          } = parseTest(testName);
+
+          it(name, () => {
+            run(createParser(), contextTracker);
+
+            expect(latestVariables.context).to.be.instanceOf(EntriesContext);
+          });
+        }
+      });
+
     });
 
-  });
+  }
 
-}
+});
