@@ -1,32 +1,19 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import pkg from 'lezer-feel/package.json' with { type: 'json' };
 
-import fs from 'node:fs';
-import { URL } from 'node:url';
-
-const pkg = JSON.parse(
-  fs.readFileSync(new URL('./package.json', import.meta.url))
-);
-
-const pkgExport = pkg.exports['.'];
+const external = [
+  '@lezer/highlight',
+  '@lezer/lr',
+  'min-dash'
+];
 
 export default {
-  input: './src/index.js',
+  input: pkg.source,
   output: [
     {
-      format: 'cjs',
-      file: pkgExport.require,
-      sourcemap: true
-    }, {
       format: 'es',
-      file: pkgExport.import,
+      file: pkg.exports['.'],
       sourcemap: true
     }
   ],
-  external(id) {
-    return Object.keys(pkg.dependencies)
-      .find(dep => id.startsWith(dep));
-  },
-  plugins: [
-    nodeResolve()
-  ]
+  external
 };
