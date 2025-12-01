@@ -1623,7 +1623,7 @@ Expression(
 )
 
 
-# IfExpression (special)
+# IfExpression (special, then)
 
 (if foo then { a+: 1 } else { b-: 1 }).a+
 
@@ -1631,17 +1631,21 @@ Expression(
 
 Expression(
   PathExpression(
-    ParenthesizedExpression("(",
-      IfExpression(
-        if,VariableName(...),
-        then,Context("{",
-          ContextEntry(Key(Name(...)),NumericLiteral),
-        "}"),
-        else,Context("{",
-          ContextEntry(Key(Name(...)),NumericLiteral),
-        "}")
-      ),
-    ")"),
+    ParenthesizedExpression(...),
+    VariableName(...)
+  )
+)
+
+
+# IfExpression (special, else)
+
+(if foo then { a+: 1 } else { b-: 1 }).b-
+
+==>
+
+Expression(
+  PathExpression(
+    ParenthesizedExpression(...),
     VariableName(...)
   )
 )
@@ -1656,16 +1660,7 @@ Expression(
 Expression(
   PathExpression(
     PathExpression(
-      ParenthesizedExpression("(",
-        IfExpression(
-          if,
-            BooleanLiteral,
-          then,
-            Context(...),
-          else,
-            Context(...)
-        ),
-      ")"),
+      ParenthesizedExpression(...),
       VariableName(...)
     ),
     VariableName(...)
