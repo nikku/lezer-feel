@@ -1,6 +1,6 @@
 /* global process */
 
-import { has, reduce } from 'min-dash';
+import { has } from 'min-dash';
 
 import {
   insertSemi,
@@ -580,9 +580,12 @@ export class VariableContext {
    * @returns { VariableContext }
    */
   static of(...contexts) {
-    return contexts.reduce((context, otherContext) => {
-      return context.merge(otherContext);
-    }, new this({}));
+
+    const merged = contexts.reduce((context, otherContext) => {
+      return this.__merge(context, otherContext);
+    }, {});
+
+    return new this(merged);
   }
 
   /**
@@ -601,11 +604,11 @@ export class VariableContext {
       return context.value;
     }
 
-    if (typeof context !== 'object') {
+    if (this.isAtomic(context)) {
       return {};
     }
 
-    return { ...context };
+    return context;
   }
 
   /**
@@ -615,31 +618,31 @@ export class VariableContext {
    * @param {ContextValue} context
    * @param {ContextValue} other
    *
-   * @return {any}
+   * @return {ContextValue} merged context value
    */
   static __merge(context, other) {
 
-    return reduce(this.__unwrap(other), (merged, value, key) => {
+    const merged = Object.assign({}, this.__unwrap(context));
+
+    for (const [ key, value ] of Object.entries(this.__unwrap(other))) {
       if (value instanceof ValueProducer) {
 
         // keep value producers in tact
-        return {
-          ...merged,
-          [key]: value
-        };
+        merged[key] = value;
+        continue;
       }
-
-      value = this.__unwrap(value);
 
       if (has(merged, key)) {
-        value = this.__merge(this.__unwrap(merged[key]), value);
+
+        // deep merge nested contexts
+        merged[key] = this.__merge(merged[key], value);
+        continue;
       }
 
-      return {
-        ...merged,
-        [key]: value
-      };
-    }, this.__unwrap(context));
+      merged[key] = value;
+    }
+
+    return merged;
   }
 
 }
