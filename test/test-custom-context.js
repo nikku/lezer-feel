@@ -12,6 +12,7 @@ describe('custom context', function() {
 
   it('should create from literal', function() {
 
+    // when
     const context = EntriesContext.of(15);
 
     // then
@@ -22,6 +23,7 @@ describe('custom context', function() {
 
   it('should create from context value', function() {
 
+    // given
     const context = EntriesContext.of({
       entries: {
         a: {
@@ -44,16 +46,43 @@ describe('custom context', function() {
 
   it('should create value via utility', function() {
 
-    const context = EntriesContext.of(toEntriesContextValue({
-      a: { ab: 10 }
-    }));
+    // given
+    const contextValue = toEntriesContextValue({
+      a: {
+        ab: 10
+      }
+    });
+
+    // assume
+    expect(contextValue).to.eql({
+      entries: {
+        a: {
+          entries: {
+            ab: 10
+          }
+        }
+      }
+    });
+
+    // when
+    const context = EntriesContext.of(contextValue);
 
     // then
-    expect(context.value).to.have.key('entries');
-
-    // expose nested entry
-    expect(context.value.entries.a.value.entries.ab).to.eql({
-      value: { atomicValue: 10, entries: {} }
+    expect(context.value).to.eql({
+      entries: {
+        a: {
+          value: {
+            entries: {
+              ab: {
+                value: {
+                  atomicValue: 10,
+                  entries: {}
+                }
+              }
+            }
+          }
+        }
+      }
     });
   });
 
@@ -64,18 +93,26 @@ describe('custom context', function() {
     const context = EntriesContext.of(
       EntriesContext.of(
         toEntriesContextValue({
-          a: { ab: 10 }
+          a: {
+            ab: 10
+          }
         })
       ),
       EntriesContext.of(
         toEntriesContextValue({
-          a: { ac: 20 }
+          a: {
+            ac: 20
+          }
         })
       )
     );
 
     // then
-    expect(context.value.entries.a.value.entries).to.have.keys([ 'ab', 'ac' ]);
+    expect(
+      context.value.entries.a.value.entries
+    ).to.have.keys([
+      'ab', 'ac'
+    ]);
   });
 
 
@@ -86,20 +123,58 @@ describe('custom context', function() {
         entries: {
           a: EntriesContext.of(
             {
-              entries: { ab: 10 }
+              entries: {
+                ab: 10
+              }
             }
           )
         }
       }),
       EntriesContext.of({
         entries: {
-          a: { ac: 20 }
+          a: {
+            entries: {
+              ac: 20
+            }
+          }
         }
       })
     );
 
     // then
-    expect(context).to.exist;
+    expect(
+      context.value.entries.a.value.entries
+    ).to.have.keys([
+      'ab', 'ac'
+    ]);
+  });
+
+
+  it('should create empty', function() {
+
+    // when
+    const context = EntriesContext.of({});
+
+    // then
+    expect(context).to.eql({
+      value: {
+        entries: { }
+      }
+    });
+  });
+
+
+  it('should merge empty', function() {
+
+    // when
+    const context = EntriesContext.of({}, {});
+
+    // then
+    expect(context).to.eql({
+      value: {
+        entries: { }
+      }
+    });
   });
 
 });
