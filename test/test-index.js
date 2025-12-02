@@ -77,6 +77,33 @@ describe('lezer-feel', function() {
   });
 
 
+  it('should allow re-use of context tracker', function() {
+
+    // given
+    const tracker = trackVariables({
+      a: 100,
+      b: 300,
+      c: {
+        'd + 1': {
+          'e**': 31
+        }
+      }
+    });
+
+    // when
+    const configuredParser = parser.configure({
+      contextTracker: tracker
+    });
+
+    // then
+    // parse basic variable access
+    configuredParser.parse('a + b');
+
+    // parse nested context access
+    configuredParser.parse('c.d+ 1.e**');
+  });
+
+
   it('should parse with small context', function() {
 
     // given
@@ -96,48 +123,122 @@ describe('lezer-feel', function() {
   });
 
 
-  it('should parse with large context', function() {
+  describe('should parse with large context', function() {
 
-    // given
-    const context = {};
+    /**
+     * @param {number} numberOfKeys
+     *
+     * @return {Record<string, number>}
+     */
+    function createContext(numberOfKeys) {
 
-    for (var i = 0; i < 1000; i++) {
-      context[`key_${i}`] = i;
+      const context = {};
+
+      for (var i = 0; i < 1000; i++) {
+        context[`key_${i}`] = i;
+      }
+
+      return Object.freeze(context);
     }
 
-    const tracker = trackVariables(context);
 
-    // when
-    const configuredParser = parser.configure({
-      contextTracker: tracker
-    });
+    function verifyParse({ context, expression }) {
 
-    // then
-    configuredParser.parse('key_191 + key_999');
-  });
+      return function() {
 
+        // given
+        const tracker = trackVariables(context);
 
-  it('should allow re-use of context tracker', function() {
+        // when
+        const configuredParser = parser.configure({
+          contextTracker: tracker
+        });
 
-    // given
-    const context = {};
-
-    for (var i = 0; i < 1000; i++) {
-      context[`key_${i}`] = i;
+        // then
+        configuredParser.parse(expression);
+      };
     }
 
-    const tracker = trackVariables(context);
-
-    // when
-    const configuredParser = parser.configure({
-      contextTracker: tracker
+    testParse({
+      name: 'default',
+      context: () => createContext(1000)
     });
 
-    // then
-    configuredParser.parse('key_191 + key_999');
 
-    // and also
-    configuredParser.parse('key_2 + key_1');
+    testParse({
+      name: 'custom entries context',
+      context: () => toEntriesContextValue(
+        createContext(1000)
+      )
+    });
+
+
+    function testParse({ name, context: createContext }) {
+
+      describe(name, function() {
+
+        // log all test timings
+        this.slow(5);
+
+        it('basic', verifyParse({
+          context: createContext(),
+          expression: 'key_191 + key_999'
+        }));
+
+
+        it('many keys', verifyParse({
+          context: createContext(),
+          expression: `
+            key_2 + key_1 +
+            key_5 + key_6 +
+            key_7 + key_9 +
+            key_100 + key_3 +
+            key_999 + non_existing_key
+          `
+        }));
+
+
+        it('FEEL context', verifyParse({
+          context: createContext(),
+          expression: `
+            {
+              a: key_191,
+              b: key_999,
+              c: key_311,
+              d: key_111,
+              e: key_134,
+              f: key_111
+            }
+          `
+        }));
+
+
+        it('nested FEEL contexts', verifyParse({
+          context: createContext(),
+          expression: `
+            {
+              a: {
+                bb: key_11,
+                b: {
+                  cc: key_999,
+                  c: {
+                    dd: key_51,
+                    d: {
+                      ee: key_113,
+                      e: {
+                        f: key_191
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `
+        }));
+      });
+
+    }
+
   });
 
 
