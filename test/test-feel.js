@@ -1,3 +1,5 @@
+/* global global */
+
 import { expect } from 'chai';
 
 import { testTree } from '@lezer/generator/dist/test';
@@ -157,6 +159,20 @@ function parseTest(name) {
 
 
 describe('feel parsing', function() {
+
+  before(function() {
+    global.NORMALIZE_COUNTER = 0;
+  });
+
+
+  after(function() {
+    console.log('stats', {
+      NORMALIZE_COUNTER: global.NORMALIZE_COUNTER
+    });
+
+    delete global.NORMALIZE_COUNTER;
+  });
+
 
   for (const file of fs.readdirSync(caseDir)) {
     if (!/\.txt$/.test(file)) {

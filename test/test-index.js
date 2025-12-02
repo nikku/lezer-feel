@@ -1,3 +1,5 @@
+/* global global */
+
 import {
   parser,
   trackVariables,
@@ -15,6 +17,22 @@ import {
 
 
 describe('lezer-feel', function() {
+
+  before(function() {
+    global.NORMALIZE_COUNTER = 0;
+  });
+
+
+  after(function() {
+    console.log('stats', {
+      NORMALIZE_COUNTER: global.NORMALIZE_COUNTER
+    });
+
+    expect(global.NORMALIZE_COUNTER, 'NORMALIZE_COUNTER').to.be.lessThan(7500);
+
+    delete global.NORMALIZE_COUNTER;
+  });
+
 
   describe('should parse', function() {
 

@@ -1,4 +1,4 @@
-/* global process */
+/* global process,global */
 
 import { has } from 'min-dash';
 
@@ -941,6 +941,11 @@ class Variables {
  * @return { string } normalizedName
  */
 export function normalizeContextKey(name) {
+
+  if (typeof global.NORMALIZE_COUNTER === 'number') {
+    global.NORMALIZE_COUNTER++;
+  }
+
   return name.replace(/\s*([./\-'+]|\*\*?)\s*/g, ' $1 ').replace(/\s{2,}/g, ' ').trim();
 }
 
