@@ -303,7 +303,16 @@ describe('lezer-feel', function() {
 
       // given
       const context = toEntriesContextValue({
-        foo: 'BAR'
+        'foo +  100': {
+          'baa---': 'BAR'
+        },
+        woop: 'WAAP',
+        yup: 'YUP',
+        other: {
+          nested: {
+            thing: 0
+          }
+        }
       });
 
       // we don't care about meta-data
@@ -318,7 +327,7 @@ describe('lezer-feel', function() {
       });
 
       // then
-      configuredParser.parse('foo');
+      configuredParser.parse('foo +  100.baa--- + woop + yup + other.nested.thing');
     });
 
   });
