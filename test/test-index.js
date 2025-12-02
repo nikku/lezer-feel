@@ -134,8 +134,10 @@ describe('lezer-feel', function() {
 
       const context = {};
 
-      for (var i = 0; i < 1000; i++) {
+      for (var i = 0; i < numberOfKeys / 3; i++) {
         context[`key_${i}`] = i;
+        context[`key_${i} key_${i - 1}`] = i;
+        context[`key_${i}+key_${i - 1}-key_${i - 2}`] = i;
       }
 
       return Object.freeze(context);
@@ -178,7 +180,7 @@ describe('lezer-feel', function() {
       describe(name, function() {
 
         // log all test timings
-        this.slow(5);
+        this.slow(1);
 
         it('basic', verifyParse({
           context: createContext(),
@@ -189,11 +191,37 @@ describe('lezer-feel', function() {
         it('many keys', verifyParse({
           context: createContext(),
           expression: `
-            key_2 + key_1 +
-            key_5 + key_6 +
-            key_7 + key_9 +
-            key_100 + key_3 +
-            key_999 + non_existing_key
+            key_191 +
+            key_999 +
+            key_311 +
+            key_111 +
+            key_134 +
+            key_718 +
+            key_7 +
+            key_876 +
+            key_132 +
+            key_718 +
+            key_717 +
+            non_existing_key
+          `
+        }));
+
+
+        it('many keys (special)', verifyParse({
+          context: createContext(),
+          expression: `
+            key_191 key_190 +
+            key_999 key_998 +
+            key_311 key_310 +
+            key_111 key_110 +
+            key_134 + key_133 - key_132 +
+            key_718 + key_717 - key_716 +
+            key_7 key_6 +
+            key_876 key_875 +
+            key_132 key_131 +
+            key_718 key_717 +
+            key_717 key_716 +
+            non_existing_key
           `
         }));
 
@@ -207,7 +235,34 @@ describe('lezer-feel', function() {
               c: key_311,
               d: key_111,
               e: key_134,
-              f: key_111
+              f: key_718,
+              g: key_7,
+              h: key_876,
+              i: key_132,
+              j: key_718,
+              k: key_717,
+              l: non_existing_key
+            }
+          `
+        }));
+
+
+        it('FEEL context (special)', verifyParse({
+          context: createContext(),
+          expression: `
+            {
+              a: key_191 key_190,
+              b: key_999 key_998,
+              c: key_311 key_310,
+              d: key_111 key_110,
+              e: key_134 + key_133 - key_132,
+              f: key_718 + key_717 - key_716,
+              g: key_7 key_6,
+              h: key_876 key_875,
+              i: key_132 key_131,
+              j: key_718 key_717,
+              k: key_717 key_716,
+              l: non_existing_key
             }
           `
         }));
