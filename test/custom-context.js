@@ -18,15 +18,14 @@ export class EntriesContext extends VariableContext {
   constructor(value = { entries: {} }) {
     super(value);
 
-    this.value.entries = this.value.entries || {};
-    for (const key in this.value.entries) {
-      const entry = this.value.entries[key];
+    const entries = this.value.entries = this.value.entries || {};
 
-      const constructor = /** @type { typeof EntriesContext } */ (this.constructor);
-
-      if (!constructor.isAtomic(entry)) {
-        this.value.entries[key] = constructor.of(this.value.entries[key]);
+    for (const [ key, entry ] of Object.entries(entries)) {
+      if (entry instanceof EntriesContext) {
+        continue;
       }
+
+      entries[key] = EntriesContext.of(entry);
     }
   }
 
@@ -35,7 +34,20 @@ export class EntriesContext extends VariableContext {
   }
 
   get(key) {
-    return this.value.entries[key];
+    const value = this.value.entries[key];
+
+    if (!value) {
+      return value;
+    }
+
+    const atomicValue = value?.value.atomicValue;
+
+    // keep value producer
+    if (atomicValue?.fn) {
+      return atomicValue;
+    }
+
+    return value;
   }
 
   /**
@@ -72,9 +84,7 @@ export class EntriesContext extends VariableContext {
         : { atomicValue: context };
     }
 
-    return {
-      ...context
-    };
+    return context;
   }
 
   /**
