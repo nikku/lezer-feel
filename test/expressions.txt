@@ -879,6 +879,35 @@ Expressions(
 )
 
 
+# List (union type, special A)
+
+[ { a+: 1 }, { b+: 1 }, 1, null ].a+
+
+
+==>
+
+Expression(
+  PathExpression(
+    List(...),
+    VariableName(...)
+  )
+)
+
+
+# List (union type, special B)
+
+[ { a+: 1 }, { b+: 1 }, 1, null ].b+
+
+
+==>
+
+Expression(
+  PathExpression(
+    List(...),
+    VariableName(...)
+  )
+)
+
 # Interval / List (error) { "top": "Expressions" }
 
 [a;
