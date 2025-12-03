@@ -144,12 +144,16 @@ describe('lezer-feel', function() {
     }
 
 
-    function verifyParse({ context, expression }) {
+    function verifyParse({ context: contextOrBuilder, expression }) {
 
       return function() {
 
         // given
-        const tracker = trackVariables(context);
+        const tracker = trackVariables(
+          typeof contextOrBuilder === 'function'
+            ? contextOrBuilder()
+            : contextOrBuilder
+        );
 
         // when
         const configuredParser = parser.configure({
@@ -175,7 +179,7 @@ describe('lezer-feel', function() {
     });
 
 
-    function testParse({ name, context: createContext }) {
+    function testParse({ name, context }) {
 
       describe(name, function() {
 
@@ -183,13 +187,13 @@ describe('lezer-feel', function() {
         this.slow(1);
 
         it('basic', verifyParse({
-          context: createContext(),
+          context,
           expression: 'key_191 + key_999'
         }));
 
 
         it('many keys', verifyParse({
-          context: createContext(),
+          context,
           expression: `
             key_191 +
             key_999 +
@@ -208,7 +212,7 @@ describe('lezer-feel', function() {
 
 
         it('many keys (special)', verifyParse({
-          context: createContext(),
+          context,
           expression: `
             key_191 key_190 +
             key_999 key_998 +
@@ -227,7 +231,7 @@ describe('lezer-feel', function() {
 
 
         it('FEEL context', verifyParse({
-          context: createContext(),
+          context,
           expression: `
             {
               a: key_191,
@@ -248,7 +252,7 @@ describe('lezer-feel', function() {
 
 
         it('FEEL context (special)', verifyParse({
-          context: createContext(),
+          context,
           expression: `
             {
               a: key_191 key_190,
@@ -269,7 +273,7 @@ describe('lezer-feel', function() {
 
 
         it('nested FEEL contexts', verifyParse({
-          context: createContext(),
+          context,
           expression: `
             {
               a: {
