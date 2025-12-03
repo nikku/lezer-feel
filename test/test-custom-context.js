@@ -48,46 +48,93 @@ describe('custom context', function() {
   });
 
 
-  it('should create value via utility', function() {
+  describe('should create value via utility', function() {
 
-    // given
-    const contextValue = toEntriesContextValue({
-      a: {
-        ab: 10
-      }
-    });
+    it('context', function() {
 
-    // assume
-    expect(contextValue).to.eql({
-      entries: {
+      // given
+      const contextValue = toEntriesContextValue({
         a: {
-          entries: {
-            ab: 10
+          ab: 10
+        }
+      });
+
+      // assume
+      expect(contextValue).to.eql({
+        entries: {
+          a: {
+            entries: {
+              ab: 10
+            }
           }
         }
-      }
-    });
+      });
 
-    // when
-    const context = EntriesContext.of(contextValue);
+      // when
+      const context = EntriesContext.of(contextValue);
 
-    // then
-    expect(context.value).to.eql({
-      entries: {
-        a: {
-          value: {
-            entries: {
-              ab: {
-                value: {
-                  atomicValue: 10,
-                  entries: {}
+      // then
+      expect(context.value).to.eql({
+        entries: {
+          a: {
+            value: {
+              entries: {
+                ab: {
+                  value: {
+                    atomicValue: 10,
+                    entries: {}
+                  }
                 }
               }
             }
           }
         }
-      }
+      });
     });
+
+
+    it('list', function() {
+
+      // given
+      const contextValue = toEntriesContextValue({
+        a: [
+          { b: 1 },
+          { b: 2 }
+        ]
+      });
+
+      // assume
+      expect(contextValue).to.eql({
+        entries: {
+          a: [
+            { entries: { b: 1 } },
+            { entries: { b: 2 } }
+          ]
+        }
+      });
+
+      // when
+      const context = EntriesContext.of(contextValue);
+
+      // then
+      expect(context.value).to.eql({
+        entries: {
+          a: {
+            value: {
+              entries: {
+                b: {
+                  value: {
+                    atomicValue: 2,
+                    entries: {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
   });
 
 
@@ -255,6 +302,60 @@ describe('custom context', function() {
     });
 
 
+    it('list (from context, path)', function() {
+
+      // given
+      const context = {
+        list: [ 1, null, { 'a+': 1 }, { 'b+': 2 } ]
+      };
+
+      // when
+      const shape = computedValue(`
+        list.a+
+      `, context);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: 1,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('list (from context, filter, path)', function() {
+
+      // given
+      const context = {
+        list: [
+          { a: { b: 1 } },
+          { a: { b: 2 } },
+          { a: { b: 3 } }
+        ]
+      };
+
+      // when
+      const shape = computedValue(`
+        list[1].a
+      `, context);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          entries: {
+            b: {
+              value: {
+                atomicValue: 3,
+                entries: {}
+              }
+            }
+          }
+        }
+      });
+    });
+
+
     it('context', function() {
 
       // when
@@ -282,6 +383,60 @@ describe('custom context', function() {
               }
             }
           }
+        }
+      });
+    });
+
+
+    it('context (from context)', function() {
+
+      // given
+      const context = {
+        'd+': {
+          result: 100
+        }
+      };
+
+      // when
+      const shape = computedValue(`
+        d+.result
+      `, context);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: 100,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('context (from context, path, filter)', function() {
+
+      // given
+      const context = {
+        a: {
+          'b+': {
+            c: {
+              d: [
+                { e: 1 },
+                { e: 2 }
+              ]
+            }
+          }
+        }
+      };
+
+      // when
+      const shape = computedValue(`
+        a.b+.c.d[1]
+      `, context);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          entries: { e: { value: { atomicValue: 2, entries: {} } } }
         }
       });
     });
