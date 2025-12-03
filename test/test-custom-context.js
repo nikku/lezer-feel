@@ -7,6 +7,10 @@ import {
   toEntriesContextValue
 } from './custom-context.js';
 
+import { ContextTracker } from '@lezer/lr';
+
+import { trackVariables, parser } from 'lezer-feel';
+
 
 describe('custom context', function() {
 
@@ -175,6 +179,129 @@ describe('custom context', function() {
         entries: { }
       }
     });
+  });
+
+
+  describe('should allow retrival of context value', function() {
+
+    function computedValue(expression, context = {}) {
+
+      const contextTracker = trackVariables(toEntriesContextValue(context), EntriesContext);
+
+      // @ts-ignore
+      let latestVariables = contextTracker.start;
+
+      const customContextTracker = new ContextTracker({
+        start: latestVariables,
+        reduce(...args) {
+
+          // @ts-ignore
+          const result = contextTracker.reduce(...args);
+          latestVariables = result;
+          return result;
+        }
+      });
+
+      const contextualParser = parser.configure({
+        contextTracker: customContextTracker,
+        strict: true
+      });
+
+      contextualParser.parse(expression);
+
+      return latestVariables.computedValue();
+    }
+
+
+    it('atomic value', function() {
+
+      // then
+      const shape = computedValue(`
+        1
+      `);
+
+      // then
+      expect(shape).to.eql(1);
+    });
+
+
+    it('list', function() {
+
+      // when
+      const shape = computedValue(`
+        [ 1, null, { a+: 1 }, { b+: 2 } ]
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'a +': {
+              value: {
+                atomicValue: 1,
+                entries: {}
+              }
+            },
+            'b +': {
+              value: {
+                atomicValue: 2,
+                entries: {}
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('context', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: 1,
+          b: {
+            n: 10
+          },
+          d: {
+            result: a + b.n
+          }
+        }.d
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            result: {
+              value: {
+                atomicValue: 10,
+                entries: {}
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it.skip('function', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          add: function(a, b) { result: a + b },
+          n: add(1, 2)
+        }
+      `);
+
+      // then
+      // TODO(nikku): support this
+      expect(shape).to.eql();
+    });
+
   });
 
 });
