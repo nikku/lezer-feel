@@ -457,7 +457,7 @@ class ValueProducer {
   }
 
   /**
-   * @param { Function } fn
+   * @param { (variables: Variables) => ContextValue } fn
    *
    * @return { ValueProducer }
    */
@@ -725,7 +725,7 @@ class Variables {
    * @return {any}
    */
   computedValue() {
-    for (let scope = this;;scope = last(scope.children)) {
+    for (let scope = /** @type {Variables} */ (this);;scope = last(scope.children)) {
 
       if (!scope) {
         return null;
@@ -1259,6 +1259,13 @@ function extractNamedArgs(args, argNames) {
   return argNames.map(name => context[name]);
 }
 
+/**
+ * @template T
+ *
+ * @param {T[]} arr
+ *
+ * @return {T}
+ */
 function last(arr) {
   return arr[arr.length - 1];
 }
