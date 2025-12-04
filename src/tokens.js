@@ -619,7 +619,7 @@ export class VariableContext {
 
     const constructor = /** @type { typeof VariableContext } */ (this.constructor);
 
-    return constructor.of({
+    return new constructor({
       ...this.value,
       [key]: value
     });
