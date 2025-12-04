@@ -2281,6 +2281,18 @@ Expressions(
 )
 
 
+# *FunctionDefinition (variable scopes)
+
+{
+  add: function(a, b) { a+b: a + b },
+  sum: add(1, 3)
+}.sum.a+b
+
+==>
+
+Expression(PathExpression(...))
+
+
 # QuantifiedExpression (variable scopes)
 
 every a a in b, dd in [] satisfies a a < dd - c
