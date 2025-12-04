@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.1.0
+
+* `CHORE`: improve performance with large contexts ([#73](https://github.com/nikku/lezer-feel/pull/73), [#70](https://github.com/nikku/lezer-feel/pull/70), [#59](https://github.com/nikku/lezer-feel/issues/59), [#67](https://github.com/nikku/lezer-feel/issues/67))
+
 ## 2.0.0
 
 * `FEAT`: make pure ES module ([#66](https://github.com/nikku/lezer-feel/pull/66))
