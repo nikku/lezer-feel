@@ -13,6 +13,10 @@ import {
   toEntriesContextValue
 } from './custom-context.js';
 
+/**
+ * @typedef { import('@lezer/lr').ContextTracker } ContextTracker
+ */
+
 
 describe('lezer-feel', function() {
 
@@ -144,16 +148,23 @@ describe('lezer-feel', function() {
     }
 
 
-    function verifyParse({ context: contextOrBuilder, expression }) {
+    /**
+     * @param { {
+     *   context?: any,
+     *   tracker?: ContextTracker,
+     *   expression: string
+     * } } options
+     *
+     * @return Function
+     */
+    function verifyParse({ context: _context = undefined, tracker = undefined, expression }) {
 
       return function() {
 
         // given
-        const tracker = trackVariables(
-          typeof contextOrBuilder === 'function'
-            ? contextOrBuilder()
-            : contextOrBuilder
-        );
+        _context = typeof _context === 'function' ? _context() : _context;
+
+        tracker = tracker || trackVariables(_context);
 
         // when
         const configuredParser = parser.configure({
@@ -171,6 +182,20 @@ describe('lezer-feel', function() {
     });
 
 
+    describe('with shared context', function() {
+
+      const tracker = trackVariables(
+        createContext(1000)
+      );
+
+      testParse({
+        name: 'default',
+        tracker
+      });
+
+    });
+
+
     testParse({
       name: 'custom entries context',
       context: () => toEntriesContextValue(
@@ -179,7 +204,16 @@ describe('lezer-feel', function() {
     });
 
 
-    function testParse({ name, context }) {
+    /**
+     * @param { {
+     *   name: string
+     *   context?: any,
+     *   tracker?: ContextTracker,
+     * } } options
+     *
+     * @return Function
+     */
+    function testParse({ name, context = undefined, tracker = undefined }) {
 
       describe(name, function() {
 
@@ -188,12 +222,14 @@ describe('lezer-feel', function() {
 
         it('basic', verifyParse({
           context,
+          tracker,
           expression: 'key_191 + key_999'
         }));
 
 
         it('many keys', verifyParse({
           context,
+          tracker,
           expression: `
             key_191 +
             key_999 +
@@ -213,6 +249,7 @@ describe('lezer-feel', function() {
 
         it('many keys (special)', verifyParse({
           context,
+          tracker,
           expression: `
             key_191 key_190 +
             key_999 key_998 +
@@ -232,6 +269,7 @@ describe('lezer-feel', function() {
 
         it('FEEL context', verifyParse({
           context,
+          tracker,
           expression: `
             {
               a: key_191,
@@ -253,6 +291,7 @@ describe('lezer-feel', function() {
 
         it('FEEL context (special)', verifyParse({
           context,
+          tracker,
           expression: `
             {
               a: key_191 key_190,
@@ -274,6 +313,7 @@ describe('lezer-feel', function() {
 
         it('nested FEEL contexts', verifyParse({
           context,
+          tracker,
           expression: `
             {
               a: {
