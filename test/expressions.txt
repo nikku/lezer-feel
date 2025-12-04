@@ -908,6 +908,18 @@ Expression(
   )
 )
 
+
+# List (union type, external) { "context": { "list": [ { "a+": 1 }, { "b+": 1 } ] } }
+
+list.b+
+
+==>
+
+Expression(
+  PathExpression(VariableName(...),VariableName(...))
+)
+
+
 # Interval / List (error) { "top": "Expressions" }
 
 [a;

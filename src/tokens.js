@@ -622,24 +622,29 @@ export class VariableContext {
    */
   static __merge(context, other) {
 
-    const merged = Object.assign({}, this.__unwrap(context));
+    const merged = {};
 
-    for (const [ key, value ] of Object.entries(this.__unwrap(other))) {
-      if (value instanceof ValueProducer) {
+    const contexts = [ context, other ].flat();
 
-        // keep value producers in tact
+    for (const ctx of contexts) {
+
+      for (const [ key, value ] of Object.entries(this.__unwrap(ctx))) {
+        if (value instanceof ValueProducer) {
+
+          // keep value producers in tact
+          merged[key] = value;
+          continue;
+        }
+
+        if (has(merged, key)) {
+
+          // deep merge nested contexts
+          merged[key] = this.__merge(merged[key], value);
+          continue;
+        }
+
         merged[key] = value;
-        continue;
       }
-
-      if (has(merged, key)) {
-
-        // deep merge nested contexts
-        merged[key] = this.__merge(merged[key], value);
-        continue;
-      }
-
-      merged[key] = value;
     }
 
     return merged;
