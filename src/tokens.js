@@ -580,7 +580,7 @@ export class VariableContext {
   /**
    * Return all defined keys of the context.
    *
-   * @returns {Array<string>} the keys of the context
+   * @returns {string[] } the keys of the context
    */
   getKeys() {
     return Object.keys(this.value);
@@ -592,7 +592,7 @@ export class VariableContext {
    * If the value represents a context itself, it should be wrapped in a
    * context class.
    *
-   * @param {String} key
+   * @param {string} key
    * @returns {VariableContext|ValueProducer|null}
    */
   get(key) {
@@ -610,7 +610,7 @@ export class VariableContext {
   /**
    * Creates a new context with the given key added.
    *
-   * @param {String} key
+   * @param {string} key
    * @param {any} value
    *
    * @returns {VariableContext} new context with the given key added
