@@ -606,19 +606,30 @@ describe('custom context', function() {
     });
 
 
-    it.skip('function', function() {
+    it('function definition', function() {
 
       // when
       const shape = computedValue(`
         {
           add: function(a, b) { result: a + b },
           n: add(1, 2)
-        }
+        }.n
       `);
 
       // then
-      // TODO(nikku): support this
-      expect(shape).to.eql();
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            result: {
+              value: {
+                atomicValue: 1,
+                entries: {}
+              }
+            }
+          }
+        }
+      });
     });
 
   });
