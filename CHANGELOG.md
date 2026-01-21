@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.2.0
+
+* `DEPS`: update to `@lezer/lr@1.4.7`
+* `DEPS`: update to `min-dash@5.0.0`
+
 ## 2.1.0
 
 * `CHORE`: improve performance with large contexts ([#73](https://github.com/nikku/lezer-feel/pull/73), [#70](https://github.com/nikku/lezer-feel/pull/70), [#59](https://github.com/nikku/lezer-feel/issues/59), [#67](https://github.com/nikku/lezer-feel/issues/67))
