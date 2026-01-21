@@ -1578,13 +1578,7 @@ Expression(
   ForExpression(for,
     InExpressions(
       InExpression(Name(...),in,IterationContext(
-        SimplePositiveUnaryTest(
-          Interval("[",⚠,
-            SimplePositiveUnaryTest(
-              Interval("]",⚠)
-            ),⚠
-          )
-        )
+        List("[",⚠,"]")
       ))
     ),⚠
   )

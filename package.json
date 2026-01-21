@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@lezer/highlight": "^1.2.3",
-    "@lezer/lr": "^1.4.4",
+    "@lezer/lr": "^1.4.7",
     "min-dash": "^5.0.0"
   },
   "engines": {
