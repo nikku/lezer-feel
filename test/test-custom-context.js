@@ -213,7 +213,7 @@ describe('custom context', function() {
     }
 
 
-    it('atomic value', function() {
+    it('atomic value (number)', function() {
 
       // then
       const shape = computedValue(`
@@ -222,6 +222,94 @@ describe('custom context', function() {
 
       // then
       expect(shape).to.eql(1);
+    });
+
+
+    it('atomic value (string)', function() {
+
+      // then
+      const shape = computedValue(`
+        "foo"
+      `);
+
+      // then
+      expect(shape).to.eql('foo');
+    });
+
+
+    it('atomic value (boolean)', function() {
+
+      // then
+      const shapeTrue = computedValue(`
+        true
+      `);
+      const shapeFalse = computedValue(`
+        false
+      `);
+
+      // then
+      expect(shapeTrue).to.eql(true);
+      expect(shapeFalse).to.eql(false);
+    });
+
+
+    it('boolean values in context', function() {
+
+      // when
+      const shape = computedValue(`
+        { booleanFalse: false, booleanTrue: true }
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            booleanFalse: {
+              value: {
+                atomicValue: false,
+                entries: {}
+              }
+            },
+            booleanTrue: {
+              value: {
+                atomicValue: true,
+                entries: {}
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('falsy values in context', function() {
+
+      // when
+      const shape = computedValue(`
+        { zero: 0, emptyString: "" }
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            zero: {
+              value: {
+                atomicValue: 0,
+                entries: {}
+              }
+            },
+            emptyString: {
+              value: {
+                atomicValue: '',
+                entries: {}
+              }
+            }
+          }
+        }
+      });
     });
 
 

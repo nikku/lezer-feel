@@ -1,6 +1,6 @@
 /* global process */
 
-import { has } from 'min-dash';
+import { has, isNil } from 'min-dash';
 
 import {
   insertSemi,
@@ -649,7 +649,8 @@ export class VariableContext {
    * @returns {Boolean}
    */
   static isAtomic(value) {
-    return !value ||
+    return value === null ||
+          value === undefined ||
           value instanceof this ||
           value instanceof ValueProducer ||
           typeof value !== 'object';
@@ -848,7 +849,7 @@ class Variables {
         return null;
       }
 
-      if (scope.value) {
+      if (!isNil(scope.value)) {
         return scope.value;
       }
     }
@@ -1098,7 +1099,7 @@ function wrap(variables, scopeName, code) {
   const valuePart = parts[Math.max(1, parts.length - 1)];
 
   const name = namePart?.computedValue();
-  const value = valuePart?.computedValue() || null;
+  const value = valuePart?.computedValue() ?? null;
 
   return variables
     .assign({
