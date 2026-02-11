@@ -96,7 +96,7 @@ QuantifiedInExpressions[@name=InExpressions] {
 }
 
 QuantifiedInExpression[@name=InExpression] {
-  inExpression<expression>
+  inExpression<IterationContext>
 }
 
 QuantifiedExpression {
