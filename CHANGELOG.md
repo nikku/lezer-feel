@@ -6,6 +6,11 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.3.0
+
+* `FEAT`: support `IterationContext` in `QuantifiedExpression` ([#79](https://github.com/nikku/lezer-feel/pull/79))
+* `DEPS`: update to `@lezer/lr@1.4.8`
+
 ## 2.2.1
 
 * `FIX`: correctly compute `atomicValue` for falsy values ([#78](https://github.com/nikku/lezer-feel/pull/78))
