@@ -1154,7 +1154,7 @@ satisfies
 Expression(
   QuantifiedExpression(
     every,InExpressions(
-      InExpression(Name(...),in,List("[","]"))
+      InExpression(Name(...),in,IterationContext(List("[","]")))
     ), satisfies, PathExpression(
       VariableName(...),
       VariableName(...)
@@ -1175,9 +1175,9 @@ satisfies
 Expression(
   QuantifiedExpression(
     every,InExpressions(
-      InExpression(Name(...),in,List("[",
+      InExpression(Name(...),in,IterationContext(List("[",
         Context("{",ContextEntry(Key(Name(...)),NumericLiteral),"}"),
-      "]"))
+      "]")))
     ),satisfies,
     PathExpression(
       VariableName(...),
@@ -1195,6 +1195,25 @@ every a in b satisfies
 
 Expression(
   QuantifiedExpression(every,InExpressions(...),satisfies,⚠),
+)
+
+
+# QuantifiedExpression (iteration context)
+
+some i in 1..10 satisfies i > 5
+
+==>
+
+Expression(
+  QuantifiedExpression(
+    some,InExpressions(
+      InExpression(Name(Identifier),in,IterationContext(
+        NumericLiteral,
+        NumericLiteral
+      ))
+    ),satisfies,
+    Comparison(...)
+  )
 )
 
 
@@ -2284,8 +2303,8 @@ every a a in b, dd in [] satisfies a a < dd - c
 Expression(
   QuantifiedExpression(
     every,InExpressions(
-      InExpression(Name(...),in,VariableName(...)),
-      InExpression(Name(...),in,List("[","]"))
+      InExpression(Name(...),in,IterationContext(VariableName(...))),
+      InExpression(Name(...),in,IterationContext(List("[","]")))
     ),satisfies,Comparison(
       VariableName(...),CompareOp,ArithmeticExpression(
         VariableName(...),ArithOp,VariableName(...)
