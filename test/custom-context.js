@@ -25,7 +25,7 @@ export class EntriesContext extends VariableContext {
         continue;
       }
 
-      entries[key] = EntriesContext.of(entry);
+      entries[key] = Array.isArray(entry) ? EntriesContext.of(...entry) : EntriesContext.of(entry);
     }
   }
 
@@ -118,6 +118,10 @@ export class EntriesContext extends VariableContext {
 
 
 export function toEntriesContextValue(context) {
+
+  if (Array.isArray(context)) {
+    return context.map(toEntriesContextValue);
+  }
 
   return context && Object.keys(context).reduce((result, key) => {
     const value = context[key];
