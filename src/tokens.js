@@ -1288,7 +1288,7 @@ export function trackVariables(context = {}, Context = VariableContext) {
       if (
         term === StringLiteral
       ) {
-        return variables.literal(code.replace(/^"|"$/g, ''));
+        return variables.literal(code.replace(/^"|"$/g, '').replace(/\\(["\\])/g, '$1'));
       }
 
       if (term === BooleanLiteral) {
