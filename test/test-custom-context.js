@@ -184,7 +184,7 @@ describe('custom context', function() {
 
   describe('should allow retrival of context value', function() {
 
-    function computedValue(expression, context = {}) {
+    function computedValue(expression, context = {}, dialect = 'feel') {
 
       const contextTracker = trackVariables(toEntriesContextValue(context), EntriesContext);
 
@@ -203,6 +203,7 @@ describe('custom context', function() {
       });
 
       const contextualParser = parser.configure({
+        dialect,
         contextTracker: customContextTracker,
         strict: true
       });
@@ -234,6 +235,66 @@ describe('custom context', function() {
 
       // then
       expect(shape).to.eql('foo');
+    });
+
+
+    it('atomic value (string with escaped quotes)', function() {
+
+      // when
+      const shape = computedValue(`
+        "\\"YES\\"\\"\\""
+      `);
+
+      // then
+      expect(shape).to.eql('"YES"""');
+    });
+
+
+    it('atomic value (string with escaped backslash)', function() {
+
+      // when
+      const shape = computedValue(`
+        "hello\\\\world"
+      `);
+
+      // then
+      expect(shape).to.eql('hello\\world');
+    });
+
+
+    it('atomic value (string with mixed escapes)', function() {
+
+      // when
+      const shape = computedValue(`
+        "hello\\"\\world\\"\\"
+      `);
+
+      // then
+      expect(shape).to.eql('hello"\\world"\\');
+    });
+
+
+    it('atomic value (string with escaped newline)', function() {
+
+      // when
+      const shape = computedValue(`
+        "hello\\nworld"
+      `);
+
+      // then
+      expect(shape).to.eql('hello\\nworld');
+    });
+
+
+    it('atomic value (multi-line string, camunda)', function() {
+
+      // when
+      const shape = computedValue(`
+        "hello\nworld"
+      `, {}, 'camunda');
+
+      // then
+      expect(shape).to.eql('hello\nworld');
     });
 
 
