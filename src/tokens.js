@@ -856,7 +856,7 @@ class Variables {
   }
 
   /**
-   * Get or compute the context cache for fast retrival
+   * Get or compute the context cache for fast retrieval
    * of keys, prefixes and original mappings.
    *
    * @returns {ContextCache}
@@ -1166,6 +1166,10 @@ export function trackVariables(context = {}, Context = VariableContext) {
         // preserve type information through `get value(context, key)` utility
         if (name?.raw === 'get value') {
           variables = getContextValue(variables, args);
+        } else {
+          variables = variables.assign({
+            value: name?.computedValue() || Context.of(undefined)
+          });
         }
       }
 

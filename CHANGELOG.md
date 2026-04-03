@@ -6,6 +6,8 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FIX`: do not leak function arguments as computed values ([#84](https://github.com/nikku/lezer-feel/pull/84), [camunda/camunda-modeler#5744](https://github.com/camunda/camunda-modeler/issues/5744))
+
 ## 2.3.2
 
 * `FIX`: correct backslash handling in string and identifier tokens ([#83](https://github.com/nikku/lezer-feel/pull/83))

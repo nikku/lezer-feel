@@ -182,7 +182,7 @@ describe('custom context', function() {
   });
 
 
-  describe('should allow retrival of context value', function() {
+  describe('should allow retrieval of context value', function() {
 
     function computedValue(expression, context = {}, dialect = 'feel') {
 
@@ -428,6 +428,176 @@ describe('custom context', function() {
               value: {
                 atomicValue: 10,
                 entries: {}
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('function invocation (single argument)', function() {
+
+      // when
+      const shape = computedValue(`
+        abs(-22)
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('function invocation (multiple arguments)', function() {
+
+      // when
+      const shape = computedValue(`
+        substring("foobar", 3)
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('function invocation (no arguments)', function() {
+
+      // when
+      const shape = computedValue(`
+        now()
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('function invocation (nested)', function() {
+
+      // when
+      const shape = computedValue(`
+        abs(round(-22.5))
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('function invocation (context-defined, preserves return shape)', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: function() { a+: { b-: 1 } },
+          b: a()
+        }.b
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'a +': {
+              value: {
+                atomicValue: undefined,
+                entries: {
+                  'b -': {
+                    value: {
+                      atomicValue: 1,
+                      entries: {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('function invocation (context-defined, nested unknown)', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: function() { a+: { b-: abs(x) } },
+          b: a()
+        }.b
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'a +': {
+              value: {
+                atomicValue: undefined,
+                entries: {
+                  'b -': {
+                    value: {
+                      atomicValue: undefined,
+                      entries: {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('function invocation (context-defined, nested unknown with provided context)', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: function() { a+: { b-: abs(x) } },
+          b: a()
+        }.b
+      `, { x: -5 });
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'a +': {
+              value: {
+                atomicValue: undefined,
+                entries: {
+                  'b -': {
+                    value: {
+                      atomicValue: undefined,
+                      entries: {}
+                    }
+                  }
+                }
               }
             }
           }
