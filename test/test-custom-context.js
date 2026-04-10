@@ -266,7 +266,7 @@ describe('custom context', function() {
 
       // when
       const shape = computedValue(`
-        "hello\\"\\world\\"\\"
+        "hello\\"\\\\world\\"\\\\"
       `);
 
       // then

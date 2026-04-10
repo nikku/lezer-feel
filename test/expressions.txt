@@ -2781,6 +2781,51 @@ Expression(
 )
 
 
+# String Literal (backslash)
+
+"\\"
+
+==>
+
+Expression(StringLiteral)
+
+
+# String Literal (backslash, double)
+
+"\\\\"
+
+==>
+
+Expression(StringLiteral)
+
+
+# String Literal (backslash, escaped quote)
+
+"\\\"" 
+
+==>
+
+Expression(StringLiteral)
+
+
+# ArithmeticExpression (string concatenation, backslash)
+
+"\\" + "B"
+
+==>
+
+Expression(ArithmeticExpression(StringLiteral,ArithOp,StringLiteral))
+
+
+# ArithmeticExpression (string concatenation, three parts with backslash)
+
+"A" + "\\" + "B"
+
+==>
+
+Expression(ArithmeticExpression(ArithmeticExpression(StringLiteral,ArithOp,StringLiteral),ArithOp,StringLiteral))
+
+
 # Backtick escaped variables (Camunda) { "top": "Expressions", "dialect": "camunda" }
 
 `foo`;

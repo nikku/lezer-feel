@@ -453,11 +453,11 @@ commaSep<Expr> {
   }
 
   string {
-    '"' (![\n"] | "\\" _)* '"'
+    '"' (![\n"\\] | "\\" _)* '"'
   }
 
   multilineString[@dialect=camunda] {
-    '"' (!["] | "\\" _)* '"'
+    '"' (!["\\] | "\\" _)* '"'
   }
 
   @precedence { multilineString, string }
@@ -467,7 +467,7 @@ commaSep<Expr> {
   }
 
   backtickIdentifier[@dialect=camunda] {
-    "`" (![`] | "\\" _)* "`"
+    "`" (![`])* "`"
   }
 
   @precedence { BlockComment, LineComment, divide }
