@@ -4,8 +4,7 @@
 foo.`bar`;
 foo.`bar-baz`;
 `foo
-baz`;
-`foo\``
+baz`
 
 ==>
 
@@ -13,9 +12,35 @@ Expressions(
   VariableName(BacktickIdentifier(...)),
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
   PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
-  VariableName(BacktickIdentifier(...)),
   VariableName(BacktickIdentifier(...))
 )
+
+
+# BacktickIdentifier (backslash is literal) { "dialect": "camunda" }
+
+`foo\bar`
+
+==>
+
+Expression(VariableName(BacktickIdentifier(...)))
+
+
+# BacktickIdentifier (backslash at end) { "dialect": "camunda" }
+
+`foo\`
+
+==>
+
+Expression(VariableName(BacktickIdentifier(...)))
+
+
+# BacktickIdentifier (double backslash) { "dialect": "camunda" }
+
+`foo\\bar`
+
+==>
+
+Expression(VariableName(BacktickIdentifier(...)))
 
 
 # String Literal (multi-line) { "dialect": "camunda" }
@@ -26,3 +51,48 @@ baz"
 ==>
 
 Expression(StringLiteral)
+
+
+# String Literal (backslash) { "dialect": "camunda" }
+
+"\\"
+
+==>
+
+Expression(StringLiteral)
+
+
+# String Literal (backslash, double) { "dialect": "camunda" }
+
+"\\\\"
+
+==>
+
+Expression(StringLiteral)
+
+
+# String Literal (backslash, escaped quote) { "dialect": "camunda" }
+
+"\\\"" 
+
+==>
+
+Expression(StringLiteral)
+
+
+# ArithmeticExpression (string concatenation, backslash) { "dialect": "camunda" }
+
+"\\" + "B"
+
+==>
+
+Expression(ArithmeticExpression(StringLiteral,ArithOp,StringLiteral))
+
+
+# ArithmeticExpression (string concatenation, three parts with backslash) { "dialect": "camunda" }
+
+"A" + "\\" + "B"
+
+==>
+
+Expression(ArithmeticExpression(ArithmeticExpression(StringLiteral,ArithOp,StringLiteral),ArithOp,StringLiteral))
