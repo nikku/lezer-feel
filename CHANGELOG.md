@@ -6,6 +6,8 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.3.2
+
 * `FIX`: correct backslash handling in string and identifier tokens ([#83](https://github.com/nikku/lezer-feel/pull/83))
 
 ## 2.3.1
