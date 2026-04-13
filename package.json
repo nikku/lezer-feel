@@ -18,7 +18,7 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.12.2",
-    "chai": "^6.2.1",
+    "chai": "^6.2.2",
     "chokidar-cli": "^3.0.0",
     "eslint": "^9.39.4",
     "eslint-plugin-bpmn-io": "^2.2.0",
