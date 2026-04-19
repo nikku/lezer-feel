@@ -6,8 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
-* `FEAT`: correctly handle function definition shapes ([#84](https://github.com/nikku/lezer-feel/pull/84), [#72](https://github.com/nikku/lezer-feel/pull/72))
-* `FIX`: do not leak function arguments as computed values ([#84](https://github.com/nikku/lezer-feel/pull/84), [camunda/camunda-modeler#5744](https://github.com/camunda/camunda-modeler/issues/5744))
+## 2.4.0
+
+* `FEAT`: correctly handle function definition shapes ([#71](https://github.com/nikku/lezer-feel/issues/71), [#72](https://github.com/nikku/lezer-feel/pull/72), [#84](https://github.com/nikku/lezer-feel/pull/84))
+* `FIX`: do not leak function arguments as computed values ([#84](https://github.com/nikku/lezer-feel/pull/84))
 
 ## 2.3.2
 
