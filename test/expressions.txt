@@ -271,7 +271,7 @@ Expression(
 )
 
 
-# Built in (get value) { "top": "Expressions" }
+# Built-in (get value) { "top": "Expressions" }
 
 get value();
 get value(null, 1);
@@ -296,7 +296,7 @@ Expressions(
 )
 
 
-# Built in (get value, literal key) { "context": { "x": { "a+b": { "c+": 1 } } } }
+# Built-in (get value, literal key) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
 get value(x, "a+b").c+
 
@@ -316,7 +316,7 @@ Expression(
 )
 
 
-# Built in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
+# Built-in (get value, literal key, named args) { "context": { "x": { "a+b": { "c+": 1 } } } }
 
 get value(key: "a+b", m: x).c+;
 
@@ -334,7 +334,7 @@ Expression(
 )
 
 
-# Built in (get value, special key)
+# Built-in (get value, special key)
 
 get value({
   foo-bar: {
@@ -369,7 +369,7 @@ Expression(
 )
 
 
-# Built in (get value, special key, named args)
+# Built-in (get value, special key, named args)
 
 get value(key: "foo-bar", m: {
   foo-bar: {
@@ -400,6 +400,175 @@ Expression(
     ")"),
     VariableName(...)
   )
+)
+
+
+# Built-in (context)
+
+context([
+  { key: "b+", value: { c-: 1} }
+]).b+.c-
+
+==>
+
+Expression(...)
+
+
+# Built-in (context, referenced)
+
+{
+  entries: [
+    {
+      "key": "a + b",
+      "value": 1
+    },
+    {
+      "key": "b--",
+      "value": 2
+    }
+  ],
+  ctx: context(entries),
+  value: ctx.a + b + ctx.b--
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),List(...)
+    ),
+    ContextEntry(
+      Key(...),FunctionInvocation(...)
+    ),
+    ContextEntry(
+      Key(...),ArithmeticExpression(
+        PathExpression(
+          VariableName(...),
+          VariableName(...)
+        ),
+        ArithOp,
+        PathExpression(
+          VariableName(...),
+          VariableName(...)
+        )
+      )
+    ),
+  "}")
+)
+
+
+# Built-in (context, dynamic entry)
+
+{
+  dynamicEntry: {
+    "key": "a + b",
+    "value": {
+      d-e: 1000
+    }
+  },
+  entries: [
+    dynamicEntry
+  ],
+  ctx: context(entries),
+  value: ctx.a+b.d-e
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),Context(...)
+    ),
+    ContextEntry(
+      Key(...),List("[",
+        VariableName(...),
+      "]")
+    ),
+    ContextEntry(
+      Key(...),FunctionInvocation(...)
+    ),
+    ContextEntry(
+      Key(Name(...)),PathExpression(
+        PathExpression(
+          VariableName(...),
+          VariableName(...)
+        ),
+        VariableName(...)
+      )
+    ),
+  "}")
+)
+
+
+# Built-in (context, dynamic key/value)
+
+{
+  dynamicKey: "a + b",
+  dynamicValue: {
+    d-e: 1000
+  },
+  entries: [
+    {
+      "key": dynamicKey,
+      "value": dynamicValue
+    }
+  ],
+  ctx: context(entries),
+  value: ctx.a + b.d-e
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),StringLiteral
+    ),
+    ContextEntry(
+      Key(...),Context(...)
+    ),
+    ContextEntry(
+      Key(...),List("[",
+        Context("{",
+          ContextEntry(...),
+          ContextEntry(...),
+        "}")
+      "]")
+    ),
+    ContextEntry(
+      Key(...),FunctionInvocation(...)
+    ),
+    ContextEntry(
+      Key(Name(...)),PathExpression(
+        PathExpression(
+          VariableName(...),
+          VariableName(...)
+        ),
+        VariableName(...)
+      )
+    ),
+  "}")
+)
+
+
+# Built-in (context, error)
+
+[
+  context(),
+  context(null),
+  context([]),
+  context([ { foo: bar }, 1 ]),
+  context([ nope ]),
+  context([ { key: nope, value: 100 } ]),
+  context([ { key: 'abc' } ])
+]
+
+==>
+
+Expression(
+  List(...)
 )
 
 
@@ -2223,6 +2392,20 @@ Expression(
   Conjunction(
     Comparison(...),and,FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")")
   )
+)
+
+
+# Context (simple)
+
+{
+  a: 1,
+  b: "BAR"
+}
+
+==>
+
+Expression(
+  Context(...)
 )
 
 
