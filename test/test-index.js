@@ -334,6 +334,44 @@ describe('lezer-feel', function() {
             }
           `
         }));
+
+
+        it('nested branched FEEL contexts', verifyParse({
+          context,
+          tracker,
+          expression: `
+            {
+              a: if x0 then {
+                bb: if x1 then key_11 else {
+                  cc: key_444
+                },
+                b: if x2 then {
+                  cc: key_999,
+                  c: if x3 then {
+                    dd: key_51,
+                    d: if x10 then {
+                      ee: key_113,
+                      e: {
+                        f: key_191
+                      }
+                    } else {
+                      e: if x11 then key1333 else key50000
+                    }
+                  } else {
+                    d: if x4 then key_15 else {
+                      cc: key_441
+                    }
+                  }
+                } else {
+                  cc: key_1112
+                }
+              } else {
+                other: key_123
+              }
+            }
+          `
+        }));
+
       });
 
     }
