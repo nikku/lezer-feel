@@ -847,15 +847,24 @@ Expression(
 )
 
 
-# Interval (error) { "top": "Expressions" }
+# Interval (error, unclosed)
 
-[a..b;
+[a..b
+
+==>
+
+Expression(
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),VariableName(...),⚠))
+)
+
+
+# Interval (error, to missing)
+
 [a..
 
 ==>
 
-Expressions(
-  SimplePositiveUnaryTest(Interval("[",VariableName(...),VariableName(...),⚠)),
+Expression(
   SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠))
 )
 
@@ -908,15 +917,25 @@ Expression(
   )
 )
 
-# Interval / List (error) { "top": "Expressions" }
 
-[a;
+# Interval / List (error, unclosed)
+
+[a
+
+==>
+
+Expression(
+  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠))
+)
+
+
+# Interval / List (error, open char)
+
 [
 
 ==>
 
-Expressions(
-  SimplePositiveUnaryTest(Interval("[",VariableName(...),⚠)),
+Expression(
   List("[",⚠)
 )
 
