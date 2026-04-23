@@ -91,7 +91,7 @@ describe('custom context', function() {
   });
 
 
-  it('should merge contexts', function() {
+  it('should create union from contexts', function() {
 
     // when
     const context = EntriesContext.of(
@@ -112,15 +112,41 @@ describe('custom context', function() {
     );
 
     // then
-    expect(
-      context.value.entries.a.value.entries
-    ).to.have.keys([
-      'ab', 'ac'
-    ]);
+    expect(context).to.eql({
+      value: {},
+      variants: [
+        {
+          value: {
+            entries: {
+              a: {
+                value: {
+                  entries: {
+                    ab: { value: { atomicValue: 10, entries: {} } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          value: {
+            entries: {
+              a: {
+                value: {
+                  entries: {
+                    ac: { value: { atomicValue: 20, entries: {} } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    });
   });
 
 
-  it('should merge, unwraping nested contexts', function() {
+  it('should create union, unwrapping nested contexts', function() {
 
     const context = EntriesContext.of(
       EntriesContext.of({
@@ -146,11 +172,37 @@ describe('custom context', function() {
     );
 
     // then
-    expect(
-      context.value.entries.a.value.entries
-    ).to.have.keys([
-      'ab', 'ac'
-    ]);
+    expect(context).to.eql({
+      value: {},
+      variants: [
+        {
+          value: {
+            entries: {
+              a: {
+                value: {
+                  entries: {
+                    ab: { value: { atomicValue: 10, entries: {} } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          value: {
+            entries: {
+              a: {
+                value: {
+                  entries: {
+                    ac: { value: { atomicValue: 20, entries: {} } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    });
   });
 
 
@@ -175,9 +227,11 @@ describe('custom context', function() {
 
     // then
     expect(context).to.eql({
-      value: {
-        entries: { }
-      }
+      value: {},
+      variants: [
+        { value: { entries: {} } },
+        { value: { entries: {} } }
+      ]
     });
   });
 
@@ -223,6 +277,18 @@ describe('custom context', function() {
 
       // then
       expect(shape).to.eql(1);
+    });
+
+
+    it('atomic value (null)', function() {
+
+      // then
+      const shape = computedValue(`
+        null
+      `);
+
+      // then
+      expect(shape).to.eql(null);
     });
 
 
@@ -348,7 +414,7 @@ describe('custom context', function() {
 
       // when
       const shape = computedValue(`
-        { zero: 0, emptyString: "" }
+        { zero: 0, emptyString: "", n: null }
       `);
 
       // then
@@ -367,6 +433,12 @@ describe('custom context', function() {
                 atomicValue: '',
                 entries: {}
               }
+            },
+            n: {
+              value: {
+                atomicValue: null,
+                entries: {}
+              }
             }
           }
         }
@@ -383,24 +455,177 @@ describe('custom context', function() {
 
       // then
       expect(shape).to.eql({
+        value: {},
+        variants: [
+          {
+            value: { atomicValue: 1, entries: {} }
+          },
+          {
+            value: { atomicValue: null, entries: {} }
+          },
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                'a +': {
+                  value: { atomicValue: 1, entries: {} }
+                }
+              }
+            }
+          },
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                'b +': {
+                  value: { atomicValue: 2, entries: {} }
+                }
+              }
+            }
+          }
+        ]
+      });
+    });
+
+
+    it('list (preserves distinct atomic shapes)', function() {
+
+      // when
+      const shape = computedValue(`
+        [ 1, true ]
+      `);
+
+      // then
+      // distinct shapes are preserved as variants, not merged
+      expect(shape).to.eql({
+        value: {},
+        variants: [
+          {
+            value: { atomicValue: 1, entries: {} }
+          },
+          {
+            value: { atomicValue: true, entries: {} }
+          }
+        ]
+      });
+    });
+
+
+    it('if expression (preserves branch shapes)', function() {
+
+      // when
+      const shape = computedValue(`
+        if true then { a: 1 } else { b: 2 }
+      `);
+
+      // then
+      // then/else branches are kept as distinct variants
+      expect(shape).to.eql({
+        value: {},
+        variants: [
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                a: { value: { atomicValue: 1, entries: {} } }
+              }
+            }
+          },
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                b: { value: { atomicValue: 2, entries: {} } }
+              }
+            }
+          }
+        ]
+      });
+    });
+
+
+    it('path expression (single branch)', function() {
+
+      // when
+      const shape = computedValue(`
+        [ { a: { c: 1 } }, { b: 2 } ].a
+      `);
+
+      // then
+      expect(shape).to.eql({
         value: {
           atomicValue: undefined,
           entries: {
-            'a +': {
+            c: {
               value: {
                 atomicValue: 1,
-                entries: {}
-              }
-            },
-            'b +': {
-              value: {
-                atomicValue: 2,
                 entries: {}
               }
             }
           }
         }
       });
+    });
+
+
+    it('path expression (single branch yields <null>)', function() {
+
+      // when
+      const shape = computedValue(`
+        [ { a: null }, { b: 1 } ].a
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: null,
+          entries: {}
+        }
+      });
+    });
+
+
+    it('path expression (multiple branches)', function() {
+
+      // when
+      const shape = computedValue(`
+        [ { a: { c: 1 } }, { a: { b: 2 } } ].a
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {},
+        variants: [
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                c: { value: { atomicValue: 1, entries: {} } }
+              }
+            }
+          },
+          {
+            value: {
+              atomicValue: undefined,
+              entries: {
+                b: { value: { atomicValue: 2, entries: {} } }
+              }
+            }
+          }
+        ]
+      });
+    });
+
+
+    it('list (keys accessible across all variants)', function() {
+
+      // when
+      const shape = computedValue(`
+        [ { a: 1 }, { b: 2 } ]
+      `);
+
+      // then
+      expect(shape.getKeys()).to.include.members([ 'a', 'b' ]);
     });
 
 
