@@ -170,11 +170,6 @@ export class EntriesContext extends VariableContext {
   /**
    * Create a context from one or more values.
    *
-   * When called with multiple non-nil values, returns a UnionContext that preserves
-   * each variant's distinct shape instead of merging them.
-   * When called with zero or one non-nil value, uses the original merge-based
-   * behavior for backward compatibility.
-   *
    * @param { ...(VariableContext | EntriesContextValue | any) } contexts
    * @returns { EntriesContext | UnionContext }
    */
