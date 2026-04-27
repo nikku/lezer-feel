@@ -1167,8 +1167,15 @@ export function trackVariables(context = {}, Context = VariableContext) {
         if (name?.raw === 'get value') {
           variables = getContextValue(variables, args);
         } else {
+          const resolved = name?.computedValue();
+
           variables = variables.assign({
-            value: name?.computedValue() || Context.of(undefined)
+            value: resolved || new Context({
+              atomicValue: undefined,
+
+              // @ts-expect-error internal method
+              expression: input.read(input.pos, stack.pos)
+            })
           });
         }
       }
