@@ -6,6 +6,8 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: highlight function names in call position ([#90](https://github.com/nikku/lezer-feel/pull/90))
+
 ## 2.4.0
 
 * `FEAT`: correctly handle function definition shapes ([#71](https://github.com/nikku/lezer-feel/issues/71), [#72](https://github.com/nikku/lezer-feel/pull/72), [#84](https://github.com/nikku/lezer-feel/pull/84))

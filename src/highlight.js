@@ -24,6 +24,7 @@ export const feelHighlighting = styleTags({
   'Key/Name! ContextEntryType/Name!': t.definition(t.propertyName),
   'PathExpression/VariableName!': t.function(t.propertyName),
   'FormalParameter/ParameterName!': t.function(t.definition(t.variableName)),
+  'FunctionInvocation/VariableName!': t.function(t.variableName),
   '( )': t.paren,
   '[ ]': t.squareBracket,
   '{ }': t.brace,
