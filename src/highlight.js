@@ -16,7 +16,7 @@ export const feelHighlighting = styleTags({
   LineComment: t.lineComment,
   BlockComment: t.blockComment,
   'VariableName!': t.variableName,
-  '"?"': t.special(t.variableName),
+  '"?"': t.self,
   'DateTimeConstructor! SpecialFunctionName!': t.standard(t.function(t.variableName)),
   'FunctionInvocation/VariableName!': t.function(t.variableName),
   'Name!': t.definition(t.variableName),

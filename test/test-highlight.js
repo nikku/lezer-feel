@@ -7,7 +7,7 @@ const highlighter = tagHighlighter([
   { tag: t.function(t.variableName), class: 'function' },
   { tag: t.variableName, class: 'variable' },
   { tag: t.propertyName, class: 'property' },
-  { tag: t.special(t.variableName), class: 'special-variable' },
+  { tag: t.self, class: 'this' },
   { tag: t.modifier, class: 'modifier' },
   { tag: t.special(t.string), class: 'special-string' },
   { tag: t.arithmeticOperator, class: 'arithmetic-operator' },
@@ -355,7 +355,7 @@ for a in b return c`;
       const spans = getHighlights(expression, { top: 'UnaryTests' });
 
       // then
-      expect(spans).to.deep.include({ text: '?', cls: 'special-variable' });
+      expect(spans).to.deep.include({ text: '?', cls: 'this' });
     });
 
 
@@ -368,7 +368,7 @@ for a in b return c`;
       const spans = getHighlights(expression, { top: 'UnaryTests' });
 
       // then
-      expect(spans).to.deep.include({ text: '?', cls: 'special-variable' });
+      expect(spans).to.deep.include({ text: '?', cls: 'this' });
     });
 
 
