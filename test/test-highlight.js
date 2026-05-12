@@ -6,18 +6,26 @@ const highlighter = tagHighlighter([
   { tag: t.standard(t.function(t.variableName)), class: 'standard-function' },
   { tag: t.function(t.variableName), class: 'function' },
   { tag: t.variableName, class: 'variable' },
-  { tag: t.propertyName, class: 'property' }
+  { tag: t.propertyName, class: 'property' },
+  { tag: t.special(t.variableName), class: 'special-variable' }
 ]);
 
 /**
  * Returns highlight spans for the given expression.
  *
- * @param {string} expression
+ * @param { string } expression
+ * @param { { top?: 'Expression'| 'UnaryTests' } } [options]
+ *
  * @return {{ text: string, cls: string }[]}
  */
-function getHighlights(expression) {
+function getHighlights(expression, options = { top: 'Expression' }) {
   const spans = [];
-  highlightTree(parser.parse(expression), highlighter, (from, to, cls) => {
+
+  const {
+    top = 'Expression'
+  } = options;
+
+  highlightTree(parser.configure({ top }).parse(expression), highlighter, (from, to, cls) => {
     spans.push({ text: expression.slice(from, to), cls });
   });
   return spans;
@@ -118,6 +126,36 @@ describe('feel highlighting', function() {
       // then
       expect(spans).to.deep.include({ text: 'foo', cls: 'property' });
       expect(spans).to.deep.include({ text: 'bar', cls: 'property' });
+    });
+
+  });
+
+
+  describe('unary test', function() {
+
+    it('should highlight ?', function() {
+
+      // given
+      const expression = '?';
+
+      // when
+      const spans = getHighlights(expression, { top: 'UnaryTests' });
+
+      // then
+      expect(spans).to.deep.include({ text: '?', cls: 'special-variable' });
+    });
+
+
+    it('should highlight ? in comparison', function() {
+
+      // given
+      const expression = '? > 10';
+
+      // when
+      const spans = getHighlights(expression, { top: 'UnaryTests' });
+
+      // then
+      expect(spans).to.deep.include({ text: '?', cls: 'special-variable' });
     });
 
   });
