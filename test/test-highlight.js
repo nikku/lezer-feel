@@ -87,6 +87,24 @@ describe('feel highlighting', function() {
   });
 
 
+  describe('arithmetic operations', function() {
+
+    it('should highlight variables referenced', function() {
+
+      // given
+      const expression = 'a + b';
+
+      // when
+      const spans = getHighlights(expression);
+
+      // then
+      expect(spans).to.deep.include({ text: 'a', cls: 'variable' });
+      expect(spans).to.deep.include({ text: 'b', cls: 'variable' });
+    });
+
+  });
+
+
   describe('path expression', function() {
 
     it('should highlight accessed property', function() {
