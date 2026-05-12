@@ -80,7 +80,7 @@ describe('feel highlighting', function() {
       const spans = getHighlights(expression);
 
       // then
-      expect(spans).to.deep.include({ text: 'foo', cls: 'property' });
+      expect(spans).to.deep.include({ text: 'foo', cls: 'variable' });
       expect(spans).to.deep.include({ text: 'bar', cls: 'property' });
       expect(spans).to.deep.include({ text: 'a', cls: 'variable' });
     });
@@ -320,7 +320,7 @@ for a in b return c`;
       const spans = getHighlights(expression);
 
       // then
-      expect(spans).to.deep.include({ text: 'foo', cls: 'property' });
+      expect(spans).to.deep.include({ text: 'foo', cls: 'variable' });
       expect(spans).to.deep.include({ text: 'bar', cls: 'property' });
     });
 

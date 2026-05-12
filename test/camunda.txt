@@ -10,8 +10,8 @@ baz`
 
 Expressions(
   VariableName(BacktickIdentifier(...)),
-  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
-  PathExpression(VariableName(...), VariableName(BacktickIdentifier(...))),
+  PathExpression(VariableName(...), PathName(BacktickIdentifier(...))),
+  PathExpression(VariableName(...), PathName(BacktickIdentifier(...))),
   VariableName(BacktickIdentifier(...))
 )
 
