@@ -108,7 +108,7 @@ pathExpressionStart[@export] {
 }
 
 PathExpression[@dynamicPrecedence=1] {
-  expression !path pathExpressionStart VariableName
+  expression !path pathExpressionStart PathName
 }
 
 filterExpressionStart[@export] {
@@ -327,6 +327,10 @@ Identifier {
 
 BacktickIdentifier {
   backtickIdentifier
+}
+
+PathName {
+  (!name Identifier ~ident)+ | BacktickIdentifier
 }
 
 VariableName {

@@ -253,10 +253,10 @@ Expression(
             ),
           "}"),
         ")"),
-        VariableName(...)
+        PathName(...)
       ),
     ")"),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -311,7 +311,7 @@ Expression(
         ),
       ")"
     ),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -329,7 +329,7 @@ Expression(
         NamedParameter(ParameterName(...),StringLiteral),
         NamedParameter(ParameterName(...),VariableName(...))
       ),")"
-    ),VariableName(...)
+    ),PathName(...)
   )
 )
 
@@ -364,7 +364,7 @@ Expression(
         ),
       ")"
     ),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -398,7 +398,7 @@ Expression(
         "}"))
       ),
     ")"),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -415,15 +415,15 @@ null and true;
 
 Expressions(
   FilterExpression(null,"[",NumericLiteral,"]"),
-  PathExpression(null,VariableName(...)),
+  PathExpression(null,PathName(...)),
   PathExpression(
     PathExpression(
       Context("{",
         ContextEntry(Key(Name(...)),null),
       "}"),
-      VariableName(...)
+      PathName(...)
     ),
-    VariableName(...)
+    PathName(...)
   ),
   Conjunction(null,and,BooleanLiteral),
   ArithmeticExpression(NumericLiteral,ArithOp,null)
@@ -624,7 +624,7 @@ Expression(
     Context("{",
       ContextEntry(Key(Name(...)),NumericLiteral),
     "}"),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -679,7 +679,7 @@ Expression(
       Context("{",
         ContextEntry(Key(Name(...)),NumericLiteral),
       "}"),
-      VariableName(...)
+      PathName(...)
     ),
     ArithOp,
     VariableName(...)
@@ -698,7 +698,7 @@ Expression(
 Expression(
   PathExpression(
     Context(ContextEntry(Key(...), ⚠)),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -730,7 +730,7 @@ Expression(
       ArithmeticExpression(
         PathExpression(
           VariableName(...),
-          VariableName(...)
+          PathName(...)
         ),
         ArithOp,
         NumericLiteral
@@ -808,7 +808,7 @@ Expression(
         ),
       "}"),
     ")"),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -842,7 +842,7 @@ Expressions(
 
 Expression(
   SimplePositiveUnaryTest(
-    Interval("[",PathExpression(VariableName(...),VariableName(...)),VariableName(...),"]")
+    Interval("[",PathExpression(VariableName(...),PathName(...)),VariableName(...),"]")
   )
 )
 
@@ -898,7 +898,7 @@ Expressions(
 Expression(
   PathExpression(
     List(...),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -913,7 +913,7 @@ Expression(
 Expression(
   PathExpression(
     List(...),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -1176,7 +1176,7 @@ Expression(
       InExpression(Name(...),in,IterationContext(List("[","]")))
     ), satisfies, PathExpression(
       VariableName(...),
-      VariableName(...)
+      PathName(...)
     )
   )
 )
@@ -1200,7 +1200,7 @@ Expression(
     ),satisfies,
     PathExpression(
       VariableName(...),
-      VariableName(...)
+      PathName(...)
     )
   )
 )
@@ -1249,7 +1249,7 @@ null[1]
 
 Expressions(
   FilterExpression(VariableName(...),"[",VariableName(...),"]"),
-  PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),VariableName(...)),
+  PathExpression(FilterExpression(VariableName(...),"[",VariableName(...),"]"),PathName(...)),
   FilterExpression(List("[",StringLiteral,StringLiteral,"]"),"[",StringLiteral,"]"),
   FilterExpression(List(...),"[",NumericLiteral,"]"),
   FilterExpression(List(...),"[",BooleanLiteral,"]"),
@@ -1313,9 +1313,9 @@ Expression(
       Comparison(
         PathExpression(
           PathExpression(
-            VariableName(...),VariableName(...)
+            VariableName(...),PathName(...)
           ),
-          VariableName(...)
+          PathName(...)
         ),CompareOp,NumericLiteral
       ),
     "]"
@@ -1336,8 +1336,8 @@ Expression(
 Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
-    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
-    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...)))
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),PathName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),PathName(...)))
   "}")
 )
 
@@ -1356,9 +1356,9 @@ Expression(
 Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
-    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
-    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
-    ContextEntry(Key(...),PathExpression(FilterExpression(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),PathName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),PathName(...))),
+    ContextEntry(Key(...),PathExpression(FilterExpression(...),PathName(...))),
   "}")
 )
 
@@ -1373,13 +1373,13 @@ a+b.c
 ==>
 
 Expressions(
-  PathExpression(VariableName(...),VariableName(...)),
-  PathExpression(ParenthesizedExpression(...),VariableName(...)),
+  PathExpression(VariableName(...),PathName(...)),
+  PathExpression(ParenthesizedExpression(...),PathName(...)),
   PathExpression(
-    PathExpression(ParenthesizedExpression(...),VariableName(...)),VariableName(...)
+    PathExpression(ParenthesizedExpression(...),PathName(...)),PathName(...)
   ),
   ArithmeticExpression(
-    VariableName(...),ArithOp,PathExpression(VariableName(...),VariableName(...))
+    VariableName(...),ArithOp,PathExpression(VariableName(...),PathName(...))
   )
 )
 
@@ -1394,9 +1394,9 @@ Expression(
   PathExpression(
     PathExpression(
       VariableName(...),
-      VariableName(...)
+      PathName(...)
     ),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -1415,9 +1415,9 @@ Expression(
 Expression(
   Context("{",
     ContextEntry(Key(...),List(...)),
-    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
-    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
-    ContextEntry(Key(...),PathExpression(VariableName(...),VariableName(...))),
+    ContextEntry(Key(...),PathExpression(VariableName(...),PathName(...))),
+    ContextEntry(Key(...),PathExpression(VariableName(...),PathName(...))),
+    ContextEntry(Key(...),PathExpression(VariableName(...),PathName(...))),
   "}")
 )
 
@@ -1434,7 +1434,7 @@ Expression(
       List(
         "[", "NumericLiteral", "]"
       ),
-      VariableName(...)
+      PathName(...)
     ),
     ArithOp,
     VariableName(...)
@@ -1522,7 +1522,7 @@ Expression(
     ))
   ),return,PathExpression(
     VariableName(...),
-    VariableName(...)
+    PathName(...)
   ))
 )
 
@@ -1563,7 +1563,7 @@ Expression(
         else,
           PathExpression(
             FilterExpression(VariableName(...),"[",NumericLiteral(...),"]"),
-            VariableName(...)
+            PathName(...)
           )
       )
   )
@@ -1583,7 +1583,7 @@ Expression(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(...))
-    ),return,PathExpression(VariableName(...), VariableName(...))
+    ),return,PathExpression(VariableName(...), PathName(...))
   )
 )
 
@@ -1601,7 +1601,7 @@ Expression(
   ForExpression(
     for,InExpressions(
       InExpression(Name(...),in,IterationContext(...))
-    ),return,PathExpression(VariableName(...), VariableName(...))
+    ),return,PathExpression(VariableName(...), PathName(...))
   )
 )
 
@@ -1693,7 +1693,7 @@ Expression(
 Expression(
   PathExpression(
     ParenthesizedExpression(...),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -1707,7 +1707,7 @@ Expression(
 Expression(
   PathExpression(
     ParenthesizedExpression(...),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -1722,9 +1722,9 @@ Expression(
   PathExpression(
     PathExpression(
       ParenthesizedExpression(...),
-      VariableName(...)
+      PathName(...)
     ),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -1817,9 +1817,9 @@ Expression(
           FunctionInvocation(
             VariableName(...),"(",PositionalParameters,")"
           ),
-          VariableName(...)
+          PathName(...)
         ),
-        VariableName(...)
+        PathName(...)
       )
     ),
   "}")
@@ -1942,7 +1942,7 @@ Expressions(
     NamedParameters(
       NamedParameter(
         ParameterName(...),
-        PathExpression(VariableName(...),⚠,VariableName(...))
+        PathExpression(VariableName(...),⚠,PathName(...))
       )
     ),
   ")"),
@@ -1951,7 +1951,7 @@ Expressions(
     NamedParameters(
       NamedParameter(
         ParameterName(...),
-        PathExpression(VariableName(...),⚠,VariableName(...))
+        PathExpression(VariableName(...),⚠,PathName(...))
       )
     ),
   ")")
@@ -2119,9 +2119,9 @@ Expression(
   PathExpression(
     PathExpression(
       DateTimeLiteral(...),
-      VariableName(...)
+      PathName(...)
     ),
-    VariableName(...)
+    PathName(...)
   )
 )
 
@@ -2259,7 +2259,7 @@ Expression(
   Context("{",
     ContextEntry(Key(Name(...)),FunctionDefinition(function,"(",FormalParameters(FormalParameter(ParameterName(...))),")",FunctionBody(ArithmeticExpression(VariableName(...),ArithOp,NumericLiteral)))),
     ContextEntry(Key(Name(...)),FunctionInvocation(VariableName(...),"(",PositionalParameters(VariableName(...)),")")),
-    ContextEntry(Key(Name(...)),FilterExpression(PathExpression(VariableName(...),VariableName(...)),"[",Comparison(VariableName(...),CompareOp,NumericLiteral),"]")),"}")
+    ContextEntry(Key(Name(...)),FilterExpression(PathExpression(VariableName(...),PathName(...)),"[",Comparison(VariableName(...),CompareOp,NumericLiteral),"]")),"}")
 )
 
 
@@ -2281,7 +2281,7 @@ Expression(
     "}")),
     ContextEntry(Key(Name(...)),PathExpression(
       VariableName(...),
-      VariableName(...)
+      PathName(...)
     )),
   "}")
 )
@@ -2308,7 +2308,7 @@ Expressions(
       FormalParameter(ParameterName(Name(Identifier)))
     ),
   ")",FunctionBody(
-    ArithmeticExpression(FunctionInvocation(PathExpression(VariableName(Identifier),VariableName(Identifier)),"(",PositionalParameters,")"),ArithOp,VariableName(Identifier))
+    ArithmeticExpression(FunctionInvocation(PathExpression(VariableName(Identifier),PathName(Identifier)),"(",PositionalParameters,")"),ArithOp,VariableName(Identifier))
   ))
 )
 
@@ -2383,7 +2383,7 @@ a + foo.bar[foo=1]
 Expression(
   ArithmeticExpression(
     VariableName(...),ArithOp,FilterExpression(
-      PathExpression(VariableName(...),VariableName(...)),"[",Comparison(
+      PathExpression(VariableName(...),PathName(...)),"[",Comparison(
         VariableName(...),CompareOp,NumericLiteral
       ),"]"
     )
@@ -2462,7 +2462,7 @@ Expressions(
   DateTimeLiteral(...),
   FunctionInvocation(SpecialFunctionName(...),"(",PositionalParameters,")"),
 
-  PathExpression(FunctionInvocation(...),VariableName(...)),
+  PathExpression(FunctionInvocation(...),PathName(...)),
 
   FunctionInvocation(...),
   FunctionInvocation(...),
@@ -2867,6 +2867,6 @@ foo.`bar-baz`;
 
 Expressions(
   VariableName(...),
-  PathExpression(VariableName(...), VariableName(...)),
-  PathExpression(VariableName(...), VariableName(...))
+  PathExpression(VariableName(...), PathName(...)),
+  PathExpression(VariableName(...), PathName(...))
 )

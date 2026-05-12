@@ -46,7 +46,8 @@ import {
   nil,
   AdditionalIdentifier,
   FunctionInvocation,
-  functionInvocationStart
+  functionInvocationStart,
+  PathName
 } from './parser.terms.js';
 
 import {
@@ -901,7 +902,7 @@ class Variables {
     }
   }
 
-  resolveName() {
+  resolveName(name) {
 
     const variable = this.tokens.join(' ');
     const tokens = [];
@@ -911,13 +912,13 @@ class Variables {
     });
 
     const variableScope = this.of({
-      name: 'VariableName',
+      name,
       parent: parentScope,
       value: this.get(variable),
       raw: variable
     });
 
-    LOG_VARS && console.log('[%s] resolve name <%s=%s>', variableScope.path, variable, this.get(variable));
+    LOG_VARS && console.log('[%s] resolve %s <%s=%s>', name, variableScope.path, variable, variableScope.value);
 
     return parentScope.pushChild(variableScope);
   }
@@ -1310,7 +1311,13 @@ export function trackVariables(context = {}, Context = VariableContext) {
       if (
         term === VariableName
       ) {
-        return variables.resolveName();
+        return variables.resolveName('VariableName');
+      }
+
+      if (
+        term === PathName
+      ) {
+        return variables.resolveName('PathName');
       }
 
       if (
