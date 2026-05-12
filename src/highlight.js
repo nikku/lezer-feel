@@ -19,7 +19,6 @@ export const feelHighlighting = styleTags({
   'VariableName! "?"': t.variableName,
   'DateTimeConstructor! SpecialFunctionName!': t.function(t.special(t.variableName)),
   'List Interval': t.list,
-  Context: t.definition(t.literal),
   'Name!': t.definition(t.variableName),
   'Key/Name! ContextEntryType/Name!': t.definition(t.propertyName),
   'PathExpression/VariableName!': t.function(t.propertyName),
