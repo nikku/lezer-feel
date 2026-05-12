@@ -6,6 +6,14 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: introduce `PathName` token in a `PathExpression` ([#93](https://github.com/nikku/lezer-feel/pull/93))
+* `FIX`: improve grammer to be able to distinguish parts of a `PathExpression` ([#92](https://github.com/nikku/lezer-feel/issues/92))
+* `FIX`: correct parsing of nested positional parameters ([#80](https://github.com/nikku/lezer-feel/issues/80))
+
+### Breaking Changes
+
+* Introduces `PathName` as a token inside of `PathExpression` ([#93](https://github.com/nikku/lezer-feel/pull/93))
+
 ## 2.5.0
 
 _Many highlighter / tagging related adjustments to improve compatibility with standard themes._
