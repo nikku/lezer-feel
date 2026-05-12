@@ -11,7 +11,7 @@ export const feelHighlighting = styleTags({
   'in instance of and or satisfies between as': t.operatorKeyword,
   function: t.definitionKeyword,
   'Type/...': t.typeName,
-  Wildcard: t.special(t.variableName),
+  'Wildcard!': t.modifier,
   null: t.null,
   LineComment: t.lineComment,
   BlockComment: t.blockComment,

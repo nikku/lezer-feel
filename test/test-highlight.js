@@ -7,7 +7,8 @@ const highlighter = tagHighlighter([
   { tag: t.function(t.variableName), class: 'function' },
   { tag: t.variableName, class: 'variable' },
   { tag: t.propertyName, class: 'property' },
-  { tag: t.special(t.variableName), class: 'special-variable' }
+  { tag: t.special(t.variableName), class: 'special-variable' },
+  { tag: t.modifier, class: 'modifier' }
 ]);
 
 /**
@@ -156,6 +157,19 @@ describe('feel highlighting', function() {
 
       // then
       expect(spans).to.deep.include({ text: '?', cls: 'special-variable' });
+    });
+
+
+    it('should highlight -', function() {
+
+      // given
+      const expression = '-';
+
+      // when
+      const spans = getHighlights(expression, { top: 'UnaryTests' });
+
+      // then
+      expect(spans).to.deep.include({ text: '-', cls: 'modifier' });
     });
 
   });
