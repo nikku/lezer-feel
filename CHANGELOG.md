@@ -6,6 +6,21 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 2.5.0
+
+_Many highlighter / tagging related adjustments to improve compatibility with standard themes._
+
+* `FEAT`: better align highlight tags with other languages ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FEAT`: tag built-in functions as standard functions ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FEAT`: tag `as`, `between` and `satisfies` as operator keywords ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FEAT`: tag function names ([#91](https://github.com/nikku/lezer-feel/pull/91), [#90](https://github.com/nikku/lezer-feel/pull/90))
+* `FEAT`: tag `?` as special variable ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FEAT`: tag `Wildcard` as modifier ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FIX`: remove misleading `Context` tagging ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FIX`: remove misleading `List` and `Interval` tagging ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `FIX`: remove `function` tag from `PathExpression` ([#91](https://github.com/nikku/lezer-feel/pull/91))
+* `DEPS`: update to `@lezer/lr@1.4.10`
+
 ## 2.4.0
 
 * `FEAT`: correctly handle function definition shapes ([#71](https://github.com/nikku/lezer-feel/issues/71), [#72](https://github.com/nikku/lezer-feel/pull/72), [#84](https://github.com/nikku/lezer-feel/pull/84))
