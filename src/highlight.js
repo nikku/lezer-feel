@@ -18,7 +18,6 @@ export const feelHighlighting = styleTags({
   BlockComment: t.blockComment,
   'VariableName! "?"': t.variableName,
   'DateTimeConstructor! SpecialFunctionName!': t.function(t.special(t.variableName)),
-  'List Interval': t.list,
   'Name!': t.definition(t.variableName),
   'Key/Name! ContextEntryType/Name!': t.definition(t.propertyName),
   'PathExpression/VariableName!': t.function(t.propertyName),
