@@ -42,6 +42,19 @@ describe('feel highlighting', function() {
     });
 
 
+    it('should highlight builtin function call', function() {
+
+      // given
+      const expression = 'date("2026-09-05")';
+
+      // when
+      const spans = getHighlights(expression);
+
+      // then
+      expect(spans).to.deep.include({ text: 'date', cls: 'standard-function' });
+    });
+
+
     it('should not highlight path expression call components as function', function() {
 
       // given
