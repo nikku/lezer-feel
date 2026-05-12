@@ -86,4 +86,22 @@ describe('feel highlighting', function() {
 
   });
 
+
+  describe('path expression', function() {
+
+    it('should highlight accessed property', function() {
+
+      // given
+      const expression = 'foo.bar';
+
+      // when
+      const spans = getHighlights(expression);
+
+      // then
+      expect(spans).to.deep.include({ text: 'foo', cls: 'property' });
+      expect(spans).to.deep.include({ text: 'bar', cls: 'property' });
+    });
+
+  });
+
 });
