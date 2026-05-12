@@ -11,7 +11,6 @@ ___Note:__ Yet to be released changes appear here._
 * `FEAT`: introduce `PathName` token in a `PathExpression` ([#93](https://github.com/nikku/lezer-feel/pull/93))
 * `FEAT`: tag `?` as `self` to better semantically align with other languages ([#94](https://github.com/nikku/lezer-feel/pull/94))
 * `FIX`: improve grammer to be able to distinguish parts of a `PathExpression` ([#92](https://github.com/nikku/lezer-feel/issues/92))
-* `FIX`: correct parsing of nested positional parameters ([#80](https://github.com/nikku/lezer-feel/issues/80))
 
 ### Breaking Changes
 
