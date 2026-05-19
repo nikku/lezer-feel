@@ -16,7 +16,9 @@ const highlighter = tagHighlighter([
   { tag: t.definition(t.propertyName), class: 'property-definition' },
   { tag: t.definition(t.variableName), class: 'variable-definition' },
   { tag: t.blockComment, class: 'block-comment' },
-  { tag: t.lineComment, class: 'line-comment' }
+  { tag: t.lineComment, class: 'line-comment' },
+  { tag: t.derefOperator, class: 'deref-operator' },
+  { tag: t.punctuation, class: 'punctuation' }
 ]);
 
 /**
@@ -324,6 +326,36 @@ for a in b return c`;
       expect(spans).to.deep.include({ text: 'bar', cls: 'property' });
     });
 
+
+    describe('should highlight operator', function() {
+
+      it('variable access', function() {
+
+        // given
+        const expression = 'a.b';
+
+        // when
+        const spans = getHighlights(expression);
+
+        // then
+        expect(spans).to.deep.include({ text: '.', cls: 'deref-operator' });
+      });
+
+
+      it('context access', function() {
+
+        // given
+        const expression = '{ a: b }.a';
+
+        // when
+        const spans = getHighlights(expression);
+
+        // then
+        expect(spans).to.deep.include({ text: '.', cls: 'deref-operator' });
+      });
+
+    });
+
   });
 
 
@@ -339,6 +371,23 @@ for a in b return c`;
 
       // then
       expect(spans).to.deep.include({ text: 'a + 1', cls: 'property-definition' });
+    });
+
+  });
+
+
+  describe('interval', function() {
+
+    it('should highlight punctuation', function() {
+
+      // given
+      const expression = '[ a .. b ]';
+
+      // when
+      const spans = getHighlights(expression);
+
+      // then
+      expect(spans).to.deep.include({ text: '..', cls: 'punctuation' });
     });
 
   });
