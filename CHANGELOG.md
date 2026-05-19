@@ -6,6 +6,10 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+## 3.0.1
+
+* `FIX`: highlight `.` and `..` characters
+
 ## 3.0.0
 
 * `FEAT`: introduce `PathName` token in a `PathExpression` ([#93](https://github.com/nikku/lezer-feel/pull/93))
