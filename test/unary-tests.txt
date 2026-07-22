@@ -88,8 +88,6 @@ UnaryTests(
 
 # Comparison { "top": "UnaryTests" }
 
-= 10,
-!= 10,
 < 10,
 <= 10,
 > 10,
@@ -101,10 +99,25 @@ UnaryTests(PositiveUnaryTests(
   PositiveUnaryTest(...),
   PositiveUnaryTest(...),
   PositiveUnaryTest(...),
-  PositiveUnaryTest(...),
-  PositiveUnaryTest(...),
   PositiveUnaryTest(...)
 ))
+
+
+# Comparison (error, "=" and "!=" are not valid unary test operators) { "top": "UnaryTests" }
+
+= 10,
+!= 10
+
+==>
+
+UnaryTests(
+  ⚠(CompareOp),
+  PositiveUnaryTests(
+    PositiveUnaryTest(NumericLiteral),
+    ⚠(CompareOp),
+    PositiveUnaryTest(NumericLiteral)
+  )
+)
 
 
 # Negation { "top": "UnaryTests" }

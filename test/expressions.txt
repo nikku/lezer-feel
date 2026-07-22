@@ -159,9 +159,9 @@ Expressions(
 
 # Comparison (simple positive unary tests) { "top": "Expressions" }
 
-(=10) = [10..10];
-(=10) = (=10);
-(!=10) = (!=10)
+(<10) = [10..10];
+(<10) = (<10);
+(>=10) = (>=10)
 
 ==>
 
@@ -2691,6 +2691,17 @@ Expressions(
   SimplePositiveUnaryTest(CompareOp,NumericLiteral),
   SimplePositiveUnaryTest(CompareOp,VariableName(...)),
   SimplePositiveUnaryTest(CompareOp,PathExpression(...))
+)
+
+
+# Simple Positive Unary Test (error, "=" and "!=" are not valid prefix operators)
+
+= "foo"
+
+==>
+
+Expression(
+  ⚠(CompareOp),StringLiteral
 )
 
 
