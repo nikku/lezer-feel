@@ -198,7 +198,7 @@ describe('feel parsing', function() {
         it(name, () => run(createParser(), contextTracker));
       }
 
-
+      // eslint-disable-next-line "mocha/consistent-spacing-between-blocks"
       contextTracker && describe('custom variable context', function() {
 
         const EntriesTracker = (context) => {
