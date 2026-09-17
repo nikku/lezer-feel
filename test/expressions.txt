@@ -1749,6 +1749,26 @@ Expressions(
 )
 
 
+# FunctionDefinition (external)
+
+{
+  a: function(n1) external { anything: "goes" }
+}
+
+==>
+
+Expression(
+  Context("{",
+    ContextEntry(
+      Key(...),
+      FunctionDefinition(function,"(",FormalParameters(...),")",external,FunctionBody(
+        Context(...)
+      ))
+    ),
+  "}")
+)
+
+
 # FunctionDefinition (special) { "top": "Expressions" }
 
 function(a+b) a+b;
