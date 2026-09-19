@@ -672,6 +672,7 @@ describe('custom context', function() {
       expect(shape).to.eql({
         value: {
           atomicValue: undefined,
+          expression: 'abs(-22)',
           entries: {}
         }
       });
@@ -689,6 +690,7 @@ describe('custom context', function() {
       expect(shape).to.eql({
         value: {
           atomicValue: undefined,
+          expression: 'substring("foobar", 3)',
           entries: {}
         }
       });
@@ -706,6 +708,7 @@ describe('custom context', function() {
       expect(shape).to.eql({
         value: {
           atomicValue: undefined,
+          expression: 'now()',
           entries: {}
         }
       });
@@ -723,6 +726,7 @@ describe('custom context', function() {
       expect(shape).to.eql({
         value: {
           atomicValue: undefined,
+          expression: 'abs(round(-22.5))',
           entries: {}
         }
       });
@@ -785,6 +789,7 @@ describe('custom context', function() {
                   'b -': {
                     value: {
                       atomicValue: undefined,
+                      expression: 'abs(x)',
                       entries: {}
                     }
                   }
@@ -819,8 +824,145 @@ describe('custom context', function() {
                   'b -': {
                     value: {
                       atomicValue: undefined,
+                      expression: 'abs(x)',
                       entries: {}
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
+
+    it('function invocation (nested branching context via if-else)', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: function() {
+            result: if true then { x: abs(1) } else { y: now() }
+          },
+          b: a()
+        }.b
+      `);
+
+      // then - branches preserved as variants with expressions on unresolved leaves
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'result': {
+              value: {},
+              variants: [
+                {
+                  value: {
+                    atomicValue: undefined,
+                    entries: {
+                      'x': {
+                        value: {
+                          atomicValue: undefined,
+                          expression: 'abs(1)',
+                          entries: {}
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  value: {
+                    atomicValue: undefined,
+                    entries: {
+                      'y': {
+                        value: {
+                          atomicValue: undefined,
+                          expression: 'now()',
+                          entries: {}
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      });
+    });
+
+
+    it('function invocation (deeply nested branching with mixed resolved and unresolved)', function() {
+
+      // when
+      const shape = computedValue(`
+        {
+          a: function() {
+            level1: {
+              resolved: 42,
+              unresolved: abs(x),
+              nested: if true then { deep: now() } else { deep: round(y) }
+            }
+          },
+          b: a()
+        }.b
+      `);
+
+      // then
+      expect(shape).to.eql({
+        value: {
+          atomicValue: undefined,
+          entries: {
+            'level1': {
+              value: {
+                atomicValue: undefined,
+                entries: {
+                  'resolved': {
+                    value: {
+                      atomicValue: 42,
+                      entries: {}
+                    }
+                  },
+                  'unresolved': {
+                    value: {
+                      atomicValue: undefined,
+                      expression: 'abs(x)',
+                      entries: {}
+                    }
+                  },
+                  'nested': {
+                    value: {},
+                    variants: [
+                      {
+                        value: {
+                          atomicValue: undefined,
+                          entries: {
+                            'deep': {
+                              value: {
+                                atomicValue: undefined,
+                                expression: 'now()',
+                                entries: {}
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        value: {
+                          atomicValue: undefined,
+                          entries: {
+                            'deep': {
+                              value: {
+                                atomicValue: undefined,
+                                expression: 'round(y)',
+                                entries: {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               }
