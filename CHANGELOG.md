@@ -6,6 +6,9 @@ All notable changes to [lezer-feel](https://github.com/nikku/lezer-feel) are doc
 
 ___Note:__ Yet to be released changes appear here._
 
+* `DEPS`: update to `@lezer/highlight@1.2.5`
+* `DEPS`: update to `@lezer/lr@1.4.12`
+
 ## 3.0.1
 
 * `FIX`: highlight `.` and `..` characters
